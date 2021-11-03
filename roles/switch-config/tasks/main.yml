@@ -14,7 +14,7 @@
     domain_name: networklab.com
     lookup_source: vlan100
     lookup_enabled: yes 
-  when: ansible_network_os == 'cisco.ios'
+  when: ansible_network_os == 'ios'
   tags:
     - config
 
