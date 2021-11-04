@@ -14,12 +14,16 @@
     - dns
 
 - name: IOS configure NTP servers
-  cisco.ios.ios_ntp_global: 
-    config:
-      servers:
-        - server: ntp.talend.com 
-      source: vlan100
-    state: replaced 
+# cisco.ios.ios_ntp_global: 
+#   config:
+#     servers:
+#       - server: ntp.talend.com 
+#     source: vlan100
+#     state: replaced 
+  ios_ntp:
+    server: ntp.talend.com
+    source_int: vlan100
+    state: present
   when: ansible_network_os == 'ios'
   tags:
     - config
@@ -72,7 +76,7 @@
         severity: notifications
       console:
         severity: critical
-    state: replaced 
+    state: merged 
     when: ansible_network_os == 'ios'
     tags:
       - config
