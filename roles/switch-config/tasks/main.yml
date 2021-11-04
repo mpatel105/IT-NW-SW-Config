@@ -1,21 +1,80 @@
 ---
 # tasks file for switch-config
 #
-- name: IOS configure name servers
-  ios_system:
-    name_servers: "{{ emea_region_dns }}"
-  when: ansible_network_os == 'ios'
-  tags:
-    - config
-
-- name: IOS configure hostname and domain name
+- name: IOS configure dns 
   ios_system:
 #    hostname: "{{ inventory_hostname }}"
     domain_name: networklab.com
     lookup_source: vlan100
     lookup_enabled: yes 
+    name_servers: "{{ emea_region_dns }}"
   when: ansible_network_os == 'ios'
   tags:
     - config
+    - dns
 
+- name: IOS configure NTP servers
+  cisco.ios.ios_ntp_global: 
+    config:
+      servers:
+        - server: ntp.talend.com 
+      source: vlan100
+    state: replaced 
+  when: ansible_network_os == 'ios'
+  tags:
+    - config
+    - ntp
+
+- name: IOS UTC Timezone
+  ios_command:
+    commands:
+      - configure terminal
+      - "clock timezone UTC 0 0"
+      - "no clock summer-time"
+      - exit
+  when: ansible_network_os == 'ios'
+  tags:
+    - config
+    - clock
+
+- name: IOS disable unused service 
+  ios_command:
+    commands:
+      - configure terminal
+      - no ip http server
+      - no ip http secure-server
+      - no ip http authentication
+      - vtp mode off
+      - exit
+  when: ansible_network_os == 'ios'
+  tags:
+    - config
+    - services
+
+- name: IOS configure SNMP 
+  ios_command:
+    commands:
+      - configure terminal
+      - access-list 98 permit any
+      - snmp-server community talend-sw RO 98
+      - snmp-server location {{ inventory_hostname[:3]|upper }} 
+      - exit
+  when: ansible_network_os == 'ios'
+  tags:
+    - config
+    - snmp
+
+- name: IOS configure logging
+  cisco.ios.ios_logging_global:
+    config:
+      buffered:
+        size: 16384
+        severity: notifications
+      console:
+        severity: critical
+    state: replaced 
+    when: ansible_network_os == 'ios'
+    tags:
+      - config
+      - logs
 
