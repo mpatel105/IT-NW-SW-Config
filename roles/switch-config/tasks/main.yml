@@ -41,13 +41,15 @@
     - config
     - clock
 
-- name: IOS disable unused service 
+- name: IOS configure some service / disable unused service 
   ios_command:
     commands:
       - configure terminal
       - no ip http server
       - no ip http secure-server
       - no ip http authentication
+      - service timestamps log datetime msec show-timezone
+      - service timestamps debug datetime msec show-timezone
       - vtp mode off
       - exit
   when: ansible_network_os == 'ios'
@@ -79,6 +81,8 @@
   ios_logging:
     dest: buffered
     size: 16384 
+    source_int: vlan100
+    name: tal-ip121.talend.com
     state: present
   when: ansible_network_os == 'ios'
   tags:
