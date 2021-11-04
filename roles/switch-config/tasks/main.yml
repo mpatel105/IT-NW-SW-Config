@@ -79,9 +79,9 @@
 #  console:
 #        severity: critical
   ios_logging:
-    dest: buffered
-    size: 16384 
-    name: tal-ip121.talend.com
+    aggregate: 
+      - {dest: buffered, size: 16384}
+      - {dest: host, name: tal-ip121.talend.com}
     state: present
   when: ansible_network_os == 'ios'
   tags:
