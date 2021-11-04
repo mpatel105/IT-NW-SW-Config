@@ -69,16 +69,19 @@
     - snmp
 
 - name: IOS configure logging
-  cisco.ios.ios_logging_global:
-    config:
-      buffered:
-        size: 16384
-        severity: notifications
-      console:
-        severity: critical
-    state: merged 
-    when: ansible_network_os == 'ios'
-    tags:
-      - config
-      - logs
+#  cisco.ios.ios_logging_global:
+#    config:
+#      buffered:
+#      size: 16384
+#    severity: notifications
+#  console:
+#        severity: critical
+  ios_logging:
+    dest: buffered
+    size: 16384 
+    state: present
+  when: ansible_network_os == 'ios'
+  tags:
+    - config
+    - logs
 
