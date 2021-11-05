@@ -89,7 +89,6 @@
       - logging buffered 16384
       - logging host tal-ip121.talend.com
       - logging source-interface Vlan999
-  ignore_errors: yes
   when: ansible_network_os == 'ios'
   tags:
     - config
