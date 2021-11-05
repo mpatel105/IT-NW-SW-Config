@@ -79,10 +79,18 @@
 #  console:
 #        severity: critical
   ios_logging:
+    dest: host
+    state: absent
+  ios_logging:
     aggregate: 
       - {dest: buffered, size: 16384}
       - {dest: host, name: tal-ip121.talend.com}
     state: present
+  ios_logging:
+    aggregate:
+      - {dest: console}
+      - {dest: monitor}
+    state: absent
   when: ansible_network_os == 'ios'
   tags:
     - config
