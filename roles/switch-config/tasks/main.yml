@@ -78,19 +78,18 @@
 #    severity: notifications
 #  console:
 #        severity: critical
-  ios_logging:
-    dest: host
-    state: absent
-  ios_logging:
-    aggregate: 
-      - {dest: buffered, size: 16384}
-      - {dest: host, name: tal-ip121.talend.com}
-    state: present
-  ios_logging:
-    aggregate:
-      - {dest: console}
-      - {dest: monitor}
-    state: absent
+  cisco.ios.ios_config:
+    lines:
+      - no logging monitor
+      - no logging console
+#      - no logging host 192.168.30.145
+#      - no logging host 192.168.15.55
+#      - no logging host 192.168.100.211
+      - no logging host 10.42.150.250
+      - logging buffered 16384
+      - logging host tal-ip121.talend.com
+      - logging source-interface Vlan999
+  ignore_errors: yes
   when: ansible_network_os == 'ios'
   tags:
     - config
