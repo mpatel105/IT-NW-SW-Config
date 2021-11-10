@@ -99,8 +99,8 @@
   ios_command:
     commands:
       - configure terminal
-      - ip ssh rsa keypair-name talend
       - crypto key generate rsa usage-keys label talend modulus 2048
+      - ip ssh rsa keypair-name talend
       - ip ssh dh min size 2048
       - ip ssh version 2
       - exit
@@ -130,3 +130,84 @@
   tags:
     - config
     - banner
+- name: Disable AUX login
+  ios_command:
+    commands:
+      - configure terminal
+      - line aux 0
+      - transport input none
+      - transport output none 
+      - no exec 
+      - exec-timeout 0 1
+      - no password
+      - exit
+  when: ansible_network_os == 'ios'
+  tags: 
+    - config
+    - aux
+
+- name: Error recovery
+  ios_command:
+    commands:
+      - configure terminal
+      - errdisable recovery cause bpduguard
+      - exit
+  when: ansible_network_os == 'ios'
+  tags: 
+    - config
+    - error
+
+- name: remove all users except admin
+  ios_user:
+    purge: yes
+  tags:
+    - config
+    - remove
+- name: remove all credentials
+  ios_command:
+    commands:
+      - configure terminal
+      - no ip ssh pubkey-chain
+      - no ip ftp username
+      - no enable password
+      - exit
+  # ignore_errors: yes
+  when: ansible_network_os == 'ios'
+  tags: 
+    - config
+    - remove
+
+- name: Add a user with  hashed password
+  ios_user:
+    name: admin1
+    hashed_password:
+      type: 9
+      value: $9$WnArItcQHW/uuE$x5WTLbu7PbzGDuv0fSwGKS/KURsy5a3WCQckmJp0MbE
+      #have to add this value in the vault and remove admin1 its just for testing
+  tags: 
+    - config
+    - add
+
+- name: set multiple users to privilege level 15
+  ios_user:
+    aggregate:
+      - name: admin1
+    privilege: 15
+    state: present
+  tags: 
+    - config
+    - add
+
+- name: enable secret scrypt
+  ios_command:
+    commands:
+      - configure terminal
+      - enable algorithm-type scrypt secret admin 
+      #need to create seperate secret jkey and update that in the vault
+      - exit
+  # ignore_errors: yes
+  when: ansible_network_os == 'ios'
+  tags: 
+    - config
+    - secret
+
