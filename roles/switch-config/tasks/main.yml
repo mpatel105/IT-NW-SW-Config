@@ -99,16 +99,16 @@
   ios_command:
     commands:
       - configure terminal
-      - ip ssh version 2
       - ip ssh rsa keypair-name talend
       - crypto key generate rsa usage-keys label talend modulus 2048
       - ip ssh dh min size 2048
+      - ip ssh version 2
       - exit
   when: ansible_network_os == 'ios'
   tags: 
     - config
     - ssh
-- name: IOS Loggin banner
+- name: IOS Login banner
   ios_banner:
     banner: login
     text: |
