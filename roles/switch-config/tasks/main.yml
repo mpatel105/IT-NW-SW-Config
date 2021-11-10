@@ -96,8 +96,7 @@
     - config
     - logs
 
-=======
-- name: SSH configiration
+- name: SSH configuration
   ios_command:
     commands:
       - configure terminal
