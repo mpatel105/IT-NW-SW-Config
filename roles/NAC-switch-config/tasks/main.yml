@@ -1,0 +1,74 @@
+---
+# tasks file for NAC-switch-config
+
+- name: Configure NAC for global config
+  ios_command:
+    commands:
+      - configure terminal
+      - aaa new-model
+      - aaa authentication dot1x default group Portnox-RADIUS-group
+      - aaa authorization network default group Portnox-RADIUS-Group
+      - aaa accounting update newinfo periodic 2880
+      - aaa accounting dot1x default start-stop group Portnox-RADIUS-Group
+      - aaa group server radius Portnox-RADIUS-Group
+      - server name Portnox-US
+      - server name Portnox-EU
+      - deadtime 5
+      - aaa server radius dynamic-author
+      - client 13.90.229.234 server-key 7 132F3338203E203E3B0B3223060F18081C330D035B725A44183A0205006B0607
+      - client 52.232.122.157 server-key 7 023F305F5B2D06074A482D48561408213E021E1E3202072500170D4724316341
+      - ip radius source-interface Vlan999
+      - radius server Portnox-US
+      - address ipv4 13.90.229.234 auth-port 10444 acct-port 10445
+      - timeout 3
+      - key 7 062C2B0B677C2D0D1538081B3F2921242E183F6020390E0615384C4A0160055A
+      - radius server Portnox-EU
+      - address ipv4 52.232.122.157 auth-port 10356 acct-port 10357
+      - timeout 3
+      - key 7 0818784A59320C31140D285579283E0201331626113C3711745D5202733E3600
+      - radius-server vsa send authentication
+      - radius-server vsa send accounting
+      - radius-server dead-criteria time 10 tries 3
+      - radius-server deadtime 5
+      # commented because doesn't work on lab IOSv
+      #- device-tracking policy ip_device_tracking_policy
+      #- tracking enable
+      - dot1x system-auth-control
+      - exit
+  when: ansible_network_os == 'ios'
+  tags:
+    - nacglobal
+    - config
+
+- name: IOS get fact
+  ios_facts:
+    gather_network_resources:
+      - 'l2_interfaces'
+  tags:
+    - nacint
+    - get_fact
+    - config
+
+- name: Configure interface for NAC
+  ios_config:
+    lines:
+      - authentication event fail action next-method
+      - authentication event server dead action reinitialize vlan 8
+      - authentication timer reauthenticate server
+      - authentication timer inactivity server
+      - authentication open
+      - authentication order dot1x mab
+      - authentication priority dot1x mab
+      - authentication port-control auto
+      - authentication violation restrict
+      - authentication periodic
+      - mab
+      - dot1x pae authenticator
+      - dot1x timeout tx-period 10
+    parents: interface {{ item.name }}
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - (item.mode is defined and item.mode == 'access' and item.access.vlan == 8)
+  tags:
+    - nacint
+    - config
