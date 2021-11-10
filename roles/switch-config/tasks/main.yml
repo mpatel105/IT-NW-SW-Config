@@ -1,12 +1,12 @@
 ---
 # tasks file for switch-config
 #
-- name: IOS configure dns 
+- name: IOS configure dns
   ios_system:
 #    hostname: "{{ inventory_hostname }}"
     domain_name: networklab.com
     lookup_source: vlan100
-    lookup_enabled: yes 
+    lookup_enabled: yes
     name_servers: "{{ emea_region_dns }}"
   when: ansible_network_os == 'ios'
   tags:
@@ -14,12 +14,12 @@
     - dns
 
 - name: IOS configure NTP servers
-# cisco.ios.ios_ntp_global: 
+# cisco.ios.ios_ntp_global:
 #   config:
 #     servers:
-#       - server: ntp.talend.com 
+#       - server: ntp.talend.com
 #     source: vlan100
-#     state: replaced 
+#     state: replaced
   ios_ntp:
     server: ntp.talend.com
     source_int: vlan100
@@ -41,7 +41,7 @@
     - config
     - clock
 
-- name: IOS configure some service / disable unused service 
+- name: IOS configure some service / disable unused service
   ios_command:
     commands:
       - configure terminal
@@ -57,13 +57,13 @@
     - config
     - services
 
-- name: IOS configure SNMP 
+- name: IOS configure SNMP
   ios_command:
     commands:
       - configure terminal
       - access-list 98 permit any
       - snmp-server community talend-sw RO 98
-      - snmp-server location {{ inventory_hostname[:3]|upper }} 
+      - snmp-server location {{ inventory_hostname[:3]|upper }}
       - exit
   when: ansible_network_os == 'ios'
   tags:
@@ -95,6 +95,7 @@
   tags:
     - config
     - logs
+
 - name: SSH configuration
   ios_command:
     commands:
@@ -130,3 +131,58 @@
   tags:
     - config
     - banner
+
+
+- name: IOS get fact
+  ios_facts:
+#    gather_subset:
+#      - '!all'
+#      - '!min'
+#    gather_network_resources:
+#      - 'l2_interfaces'
+#      - 'lldp_interfaces'
+#       - 'all'
+#  register: output
+  tags:
+    - config
+    - get_fact
+    - get_fact_debug
+
+
+- debug:
+    #msg: "{{ item.value[0].host }}"
+    #msg: "{{ output.ansible_facts.ansible_net_neighbors | type_debug }}"
+    msg: "{{ ansible_facts }}"
+    #loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
+  loop: "{{ ansible_facts.ansible_net_neighbors | dict2items }}"
+#  when: ansible_network_os == 'ios'
+  tags:
+    - config
+    - get_fact_debug
+
+
+- name: Set IOS Interface Description from CDP
+  ios_config:
+    lines:
+      - description Connected to {{ item.value[0].host }} int {{ item.value[0].port }}
+    parents: interface {{ item.key }}
+  loop: "{{ ansible_facts.ansible_net_neighbors | dict2items }}"
+  when: ansible_network_os == 'ios'
+  tags:
+    - config
+    - get_fact
+
+- name: Configure interface in vlan 8 - End Users
+  ios_config:
+    lines:
+      - description End User Vlan
+      - switchport mode access
+      - spanning-tree portfast edge
+    parents: interface {{ item.name }}
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - (item.mode is defined and item.mode == 'access' and item.access.vlan == 300) or
+      (item.mode is not defined and item.access.vlan is defined and item.access.vlan == 300)
+  tags:
+    - config
+    - get_fact
