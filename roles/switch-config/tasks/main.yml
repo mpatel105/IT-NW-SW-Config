@@ -96,6 +96,44 @@
     - config
     - logs
 
+=======
+- name: SSH configiration
+  ios_command:
+    commands:
+      - configure terminal
+      - ip ssh rsa keypair-name talend
+      - crypto key generate rsa usage-keys label talend modulus 2048
+      - ip ssh dh min size 2048
+      - ip ssh version 2
+      - exit
+  when: ansible_network_os == 'ios'
+  tags: 
+    - config
+    - ssh
+- name: IOS Login banner
+  ios_banner:
+    banner: login
+    text: |
+      *******************************  SECURITY NOTICE  **************************
+      *  Use of this system, its equipment, and resources is monitored at all    *
+      *  times. All programs and information held on this system are private and *
+      *  confidential to Talend, and are only lawfully available to              *
+      *  authorised users for authorised purposes only.                          *
+      *                                                                          *
+      *  It is a criminal offence to obtain unauthorised access to any program   *
+      *  or information within this system and/or to make any unauthorised       *
+      *  modifications whatsoever to the contents of this computer system.       *
+      *                                                                          *
+      *  If you are not an authorised user you are violating the regulations of  *
+      *  this system and can, and will be prosecuted to the full extent of the   *
+      *  law. Please disconnect immediately.                                     *
+      ****************************************************************************
+    state: present
+  tags:
+    - config
+    - banner
+
+
 - name: IOS get fact
   ios_facts:
 #    gather_subset:
