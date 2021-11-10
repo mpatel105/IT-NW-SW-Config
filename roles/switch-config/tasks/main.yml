@@ -164,7 +164,7 @@
   loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
   when:
     - ansible_network_os == "ios"
-    - ("Cisco" in item.value[0].platform)
+    - item.value[0].platform is match ("Cisco")
   tags:
     - config
     - intdescr
