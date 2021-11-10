@@ -106,7 +106,7 @@
       - ip ssh version 2
       - exit
   when: ansible_network_os == 'ios'
-  tags: 
+  tags:
     - config
     - ssh
 - name: IOS Login banner
@@ -135,27 +135,23 @@
 
 - name: IOS get fact
   ios_facts:
-#    gather_subset:
-#      - '!all'
-#      - '!min'
-#    gather_network_resources:
-#      - 'l2_interfaces'
-#      - 'lldp_interfaces'
-#       - 'all'
-#  register: output
+    gather_network_resources:
+      - 'l2_interfaces'
+  register: output
   tags:
     - config
     - get_fact
     - get_fact_debug
+    - intdescr
+    - endusers
+    - wifi
 
 
 - debug:
-    #msg: "{{ item.value[0].host }}"
+    msg: "{{ item.value[0].host }}"
     #msg: "{{ output.ansible_facts.ansible_net_neighbors | type_debug }}"
-    msg: "{{ ansible_facts }}"
-    #loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
-  loop: "{{ ansible_facts.ansible_net_neighbors | dict2items }}"
-#  when: ansible_network_os == 'ios'
+  loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
+  when: ansible_network_os == 'ios'
   tags:
     - config
     - get_fact_debug
@@ -166,11 +162,13 @@
     lines:
       - description Connected to {{ item.value[0].host }} int {{ item.value[0].port }}
     parents: interface {{ item.key }}
-  loop: "{{ ansible_facts.ansible_net_neighbors | dict2items }}"
-  when: ansible_network_os == 'ios'
+  loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
+  when:
+    - ansible_network_os == "ios"
+    - ("Cisco" in item.value[0].platform)
   tags:
     - config
-    - get_fact
+    - intdescr
 
 - name: Configure interface in vlan 8 - End Users
   ios_config:
@@ -185,4 +183,20 @@
       (item.mode is not defined and item.access.vlan is defined and item.access.vlan == 300)
   tags:
     - config
-    - get_fact
+    - endusers
+
+- name: Configure interface for Cisco Meraki
+  ios_config:
+    lines:
+      - description Wifi AP {{ item.value[0].host }}
+      - switchport trunk native vlan 999
+      - switchport trunk allowed vlan 16,24,240,999
+      - switchport mode trunk
+    parents: interface {{ item.key }}
+  loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
+  when:
+    - ansible_network_os == "ios"
+    - ("Meraki" in item.value[0].platform)
+  tags:
+    - config
+    - wifi
