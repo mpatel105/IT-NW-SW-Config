@@ -283,5 +283,20 @@
     - config
     - secret
 
+- name: STP Global configuration
+  ios_command:
+    commands:
+      - configure terminal
+      - spanning-tree mode Rapid-pvst
+      - spanning-tree extend system-id 
+      - spanning-tree portfast bpduguard default
+      - spanning-tree vlan 1-4094 priority 32768	
+      - exit
+  # ignore_errors: yes
+  when: ansible_network_os == 'ios'
+  tags: 
+    - config
+    - STP
+
 
 
