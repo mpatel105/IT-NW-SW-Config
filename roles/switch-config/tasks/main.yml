@@ -165,7 +165,8 @@
   loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
   when:
     - ansible_network_os == "ios"
-    - item.value[0].platform is match ("Cisco")
+    - item.value[0].platform is defined
+    - "Cisco" in item.value[0].platform
   tags:
     - config
     - intdescr
@@ -195,7 +196,9 @@
     parents: interface {{ item.key }}
   loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
   when:
-    - (ansible_network_os == "ios") and (item.value[0].platform is defined) and ("Cisco" in item.value[0].platform)
+    - ansible_network_os == "ios"
+    - item.value[0].platform is defined
+    - "Cisco" in item.value[0].platform
   tags:
     - config
     - wifi
