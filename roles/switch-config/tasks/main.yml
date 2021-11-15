@@ -198,7 +198,7 @@
   when:
     - ansible_network_os == "ios"
     - item.value[0].platform is defined
-    - "Cisco" in item.value[0].platform
+    - ("Cisco" in item.value[0].platform)
   tags:
     - config
     - wifi
