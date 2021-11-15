@@ -189,13 +189,13 @@
   ios_config:
     lines:
       - description Wifi AP {{ item.value[0].host }}
-      - switchport trunk native vlan 999
-      - switchport trunk allowed vlan 16,24,240,999
-      - switchport mode trunk
+    #  - switchport trunk native vlan 999
+    #  - switchport trunk allowed vlan 16,24,240,999
+    #  - switchport mode trunk
     parents: interface {{ item.key }}
   loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
   when:
-    - (ansible_network_os == "ios") and (item.value[0].platform is defined) and ("Meraki" in item.value[0].platform)
+    - (ansible_network_os == "ios") and (item.value[0].platform is defined) and ("Cisco" in item.value[0].platform)
   tags:
     - config
     - wifi
