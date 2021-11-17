@@ -149,8 +149,8 @@
 
 - debug:
     #msg: "host is {{ item.value[0].host }} and platform is {{ item.value[0].platform }}"
-    msg: "host is {{ item.value[0] }} "
-    #msg: "{{ output.ansible_facts.ansible_net_neighbors | type_debug }}"
+    # msg: "host is {{ item.value[0] }} "
+    msg: "{{ output.ansible_facts.ansible_net_neighbors | type_debug }}"
   loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
   when:
     - ansible_network_os == "ios"
