@@ -2,4 +2,4 @@
   gather_facts: no
   roles:
     - { role: switch-config, tags: config }
-    - { role: NAC-switch-config, tags: config }
+  #  - { role: NAC-switch-config, tags: configNAC }

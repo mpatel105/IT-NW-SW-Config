@@ -38,7 +38,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - nacglobal
-    - config
+    - configNAC
 
 - name: IOS get fact
   ios_facts:
@@ -71,4 +71,4 @@
     - (item.mode is defined and item.mode == 'access') and (item.access.vlan == 8 or item.access.vlan == 16 or item.access.vlan == 24 or item.access.vlan == 48)
   tags:
     - nacint
-    - config
+    - configNAC
