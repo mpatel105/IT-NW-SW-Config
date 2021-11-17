@@ -1,5 +1,8 @@
 all:
   children:
+    lab-eve-ng:
+      hosts:
+        10.1.164.2:
     ios_devices:
       hosts:
         bei-sw-001.talend.com:
@@ -229,4 +232,39 @@ all:
         sin-sw-002.talend.com:
         rwc-sw-002.talend.com:
         rwc-sw-003.talend.com:
-        
+    EMEA:
+      children:
+        SUR:
+        NAN:
+        PA7:
+        MDH:
+        BON:
+    NORAM:
+      children:
+        RWC:
+        SV2:
+        IRV:
+        PHI:
+        BOS:
+    APAC:
+      children:
+        BLR:
+        SIN:
+        BEI:
+    DC:
+      children:
+        PA7:
+        SV2:
+        BEI:
+    OFFICE:
+      children:
+        SUR:
+        NAN:
+        MDH:
+        BON:
+        RWC:
+        IRV:
+        PHI:
+        BOS:
+        BLR:
+        SIN:
