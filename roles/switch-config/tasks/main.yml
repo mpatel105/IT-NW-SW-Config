@@ -88,7 +88,7 @@
 #      - no logging host 192.168.100.211
 #      - no logging host 10.42.150.250
       - logging buffered 16384
-      - logging host tal-ip121.talend.com
+      - logging host {{ talend_logs }}
       - logging source-interface Vlan999
       - exit
   when: ansible_network_os == 'ios'

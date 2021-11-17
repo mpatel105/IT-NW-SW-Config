@@ -1,2 +1,3 @@
 ansible_connection: network_cli
 talend_ntp: ntp.talend.com
+talend_logs: tal-ip121.talend.com
