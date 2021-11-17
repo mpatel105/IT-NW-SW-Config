@@ -53,7 +53,7 @@
   ios_config:
     lines:
       - authentication event fail action next-method
-      - authentication event server dead action reinitialize vlan 8
+      #- authentication event server dead action reinitialize vlan 8
       - authentication timer reauthenticate server
       - authentication timer inactivity server
       - authentication open
@@ -68,7 +68,7 @@
     parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
-    - (item.mode is defined and item.mode == 'access' and item.access.vlan == 8)
+    - (item.mode is defined and item.mode == 'access') and (item.access.vlan == 8 or item.access.vlan == 16 or item.access.vlan == 24 or or item.access.vlan == 48)
   tags:
     - nacint
     - config
