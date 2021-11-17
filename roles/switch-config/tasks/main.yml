@@ -50,6 +50,7 @@
       - service timestamps log datetime msec show-timezone
       - service timestamps debug datetime msec show-timezone
       - vtp mode off
+      - errdisable recovery cause bpduguard
       - exit
   when: ansible_network_os == 'ios'
   tags:
@@ -108,6 +109,7 @@
   tags:
     - config
     - ssh
+
 - name: IOS Login banner
   ios_banner:
     banner: login
@@ -224,23 +226,13 @@
     - config
     - aux
 
-- name: Error recovery
-  ios_command:
-    commands:
-      - configure terminal
-      - errdisable recovery cause bpduguard
-      - exit
-  when: ansible_network_os == 'ios'
-  tags:
-    - config
-    - error
-
 - name: remove all users except admin
   ios_user:
     purge: yes
   tags:
     - config
-    - remove
+    - removelocalusers
+    - configusers
 
 - name: remove all credentials
   ios_command:
@@ -254,7 +246,8 @@
   when: ansible_network_os == 'ios'
   tags:
     - config
-    - remove
+    - removecredentials
+    - configusers
 
 - name: Add a user with  hashed password
   ios_user:
@@ -265,7 +258,8 @@
       #have to add this value in the vault and remove admin1 its just for testing
   tags:
     - config
-    - add
+    - configusers
+    - adduser
 
 - name: set multiple users to privilege level 15
   ios_user:
@@ -275,7 +269,8 @@
     state: present
   tags:
     - config
-    - addprivilege
+    - configusers
+    - adduserprivilege
 
 - name: enable secret scrypt
   ios_command:
@@ -288,7 +283,8 @@
   when: ansible_network_os == 'ios'
   tags:
     - config
-    - secret
+    - configusers
+    - configenable
 
 - name: STP Global configuration
   ios_command:
@@ -300,7 +296,7 @@
       - spanning-tree vlan 1-4094 priority 32768
       - exit
   # ignore_errors: yes
-  when: ansible_network_os == 'ios'
+  when: ansible_network_os == 'ios' and 'ACCESS' in group_names
   tags:
     - config
     - STP
