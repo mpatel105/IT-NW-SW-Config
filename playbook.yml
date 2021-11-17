@@ -1,4 +1,4 @@
-- hosts: all
+- hosts: lab-eve-ng
   gather_facts: no
   roles:
     - { role: switch-config, tags: config }
