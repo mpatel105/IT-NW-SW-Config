@@ -1,0 +1,9 @@
+talend_dns:
+  - 10.42.100.100
+  - 192.168.15.30
+
+talend_radius_1: 10.42.20.105
+talend_radius_2: 192.168.15.210
+
+talend_portnox_EMEA: 52.232.122.157
+talend_portnox_US: 13.90.229.234

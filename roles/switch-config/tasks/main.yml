@@ -21,7 +21,7 @@
 #     source: vlan100
 #     state: replaced
   ios_ntp:
-    server: ntp.talend.com
+    server: {{ talend_ntp }}
     source_int: vlan100
     state: present
   when: ansible_network_os == 'ios'
@@ -215,13 +215,13 @@
       - configure terminal
       - line aux 0
       - transport input none
-      - transport output none 
-      - no exec 
+      - transport output none
+      - no exec
       - exec-timeout 0 1
       - no password
       - exit
   when: ansible_network_os == 'ios'
-  tags: 
+  tags:
     - config
     - aux
 
@@ -232,7 +232,7 @@
       - errdisable recovery cause bpduguard
       - exit
   when: ansible_network_os == 'ios'
-  tags: 
+  tags:
     - config
     - error
 
@@ -242,7 +242,7 @@
   tags:
     - config
     - remove
-    
+
 - name: remove all credentials
   ios_command:
     commands:
@@ -253,7 +253,7 @@
       - exit
   # ignore_errors: yes
   when: ansible_network_os == 'ios'
-  tags: 
+  tags:
     - config
     - remove
 
@@ -264,7 +264,7 @@
       type: 9
       value: $9$WnArItcQHW/uuE$x5WTLbu7PbzGDuv0fSwGKS/KURsy5a3WCQckmJp0MbE
       #have to add this value in the vault and remove admin1 its just for testing
-  tags: 
+  tags:
     - config
     - add
 
@@ -274,7 +274,7 @@
       - name: admin1
     privilege: 15
     state: present
-  tags: 
+  tags:
     - config
     - addprivilege
 
@@ -282,12 +282,12 @@
   ios_command:
     commands:
       - configure terminal
-      - enable algorithm-type scrypt secret admin 
+      - enable algorithm-type scrypt secret admin
       #need to create seperate secret jkey and update that in the vault
       - exit
   # ignore_errors: yes
   when: ansible_network_os == 'ios'
-  tags: 
+  tags:
     - config
     - secret
 
@@ -296,15 +296,12 @@
     commands:
       - configure terminal
       - spanning-tree mode Rapid-pvst
-      - spanning-tree extend system-id 
+      - spanning-tree extend system-id
       - spanning-tree portfast bpduguard default
-      - spanning-tree vlan 1-4094 priority 32768	
+      - spanning-tree vlan 1-4094 priority 32768
       - exit
   # ignore_errors: yes
   when: ansible_network_os == 'ios'
-  tags: 
+  tags:
     - config
     - STP
-
-
-
