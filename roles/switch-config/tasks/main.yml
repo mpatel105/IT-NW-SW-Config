@@ -180,6 +180,8 @@
       - description End User Vlan
       - switchport mode access
       - spanning-tree portfast edge
+      - no spanning-tree guard loop
+      - no spanning-tree bpduguard enable
     parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
