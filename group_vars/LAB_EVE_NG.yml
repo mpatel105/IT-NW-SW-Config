@@ -4,6 +4,3 @@ ansible_become: yes
 ansible_become_method: enable
 ansible_become_password: admin
 ansible_network_os: ios
-talend_dns:
-  - 10.42.100.100
-  - 192.168.15.30
