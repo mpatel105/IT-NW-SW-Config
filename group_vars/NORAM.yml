@@ -5,5 +5,9 @@ talend_dns:
 talend_radius_1: 192.168.15.210
 talend_radius_2: 10.42.20.105
 
-talend_portnox_US: 13.90.229.234
 talend_portnox_EMEA: 52.232.122.157
+talend_portnox_US: 13.90.229.234
+talend_portnox_1: 13.90.229.234
+talend_portnox_2: 52.232.122.157
+talend_portnox_name1: Portnox-US
+talend_portnox_name2: Portnox-EU

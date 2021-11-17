@@ -3,7 +3,7 @@
 #
 - name: IOS configure dns
   ios_system:
-#    hostname: "{{ inventory_hostname }}"
+  #  hostname: "{{ inventory_hostname }}"
     domain_name: networklab.com
     lookup_source: vlan100
     lookup_enabled: yes
@@ -150,7 +150,8 @@
 - debug:
     #msg: "host is {{ item.value[0].host }} and platform is {{ item.value[0].platform }}"
     # msg: "host is {{ item.value[0] }} "
-    msg: "{{ output.ansible_facts.ansible_net_neighbors | type_debug }}"
+    # msg: "{{ output.ansible_facts.ansible_net_neighbors | type_debug }}"
+    msg: "{{ group_names }}"
   loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
   when:
     - ansible_network_os == "ios"
@@ -286,7 +287,7 @@
     - configusers
     - configenable
 
-- name: STP Global configuration
+- name: STP Global configuration for IOS Access switches
   ios_command:
     commands:
       - configure terminal
@@ -299,4 +300,19 @@
   when: ansible_network_os == 'ios' and 'ACCESS' in group_names
   tags:
     - config
-    - STP
+    - STPaccess
+
+- name: STP Global configuration for IOS Core switches
+  ios_command:
+    commands:
+      - configure terminal
+      - spanning-tree mode Rapid-pvst
+      - spanning-tree extend system-id
+      - spanning-tree portfast bpduguard default
+      - spanning-tree vlan 1-4094 root primary
+      - exit
+  # ignore_errors: yes
+  when: ansible_network_os == 'ios' and 'CORE' in group_names
+  tags:
+    - config
+    - STPcore

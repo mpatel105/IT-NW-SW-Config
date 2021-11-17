@@ -7,3 +7,7 @@ talend_radius_2: 192.168.15.210
 
 talend_portnox_EMEA: 52.232.122.157
 talend_portnox_US: 13.90.229.234
+talend_portnox_1: 52.232.122.157
+talend_portnox_2: 13.90.229.234
+talend_portnox_name1: Portnox-EU
+talend_portnox_name2: Portnox-US
