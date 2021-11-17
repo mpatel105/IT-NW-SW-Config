@@ -21,7 +21,7 @@
 #     source: vlan100
 #     state: replaced
   ios_ntp:
-    server: {{ talend_ntp }}
+    server: "{{ talend_ntp }}"
     source_int: vlan100
     state: present
   when: ansible_network_os == 'ios'
