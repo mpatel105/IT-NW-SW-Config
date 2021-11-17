@@ -151,7 +151,7 @@
     #msg: "host is {{ item.value[0].host }} and platform is {{ item.value[0].platform }}"
     # msg: "host is {{ item.value[0] }} "
     # msg: "{{ output.ansible_facts.ansible_net_neighbors | type_debug }}"
-    msg: "{{ group_names }}"
+    # msg: "{{ group_names }}"
   loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
   when:
     - ansible_network_os == "ios"
@@ -179,7 +179,7 @@
 - name: Configure interface in vlan 8 - End Users
   ios_config:
     lines:
-      - description End User Vlan
+      - description {% if item.access.vlan == 8 %} Users VLAN {% elif item.access.vlan == 48 %} Audio/Video VLAN {% endif %}
       - switchport mode access
       - spanning-tree portfast edge
       - no spanning-tree guard loop
@@ -187,8 +187,8 @@
     parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
-    - (item.mode is defined and item.mode == 'access' and item.access.vlan == 300) or
-      (item.mode is not defined and item.access.vlan is defined and item.access.vlan == 300)
+    - (item.mode is defined and item.mode == 'access' and (item.access.vlan == 8 or item.access.vlan == 48)) or
+      (item.mode is not defined and item.access.vlan is defined and (item.access.vlan == 8 or item.access.vlan == 48) )
   tags:
     - config
     - endusers
