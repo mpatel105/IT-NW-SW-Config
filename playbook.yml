@@ -1,4 +1,4 @@
-- hosts: blr-sw-002
+- hosts: blr-sw-002.talend.com
   gather_facts: no
   roles:
     - { role: switch-config, tags: config }
