@@ -47,7 +47,6 @@
       - configure terminal
       - no ip http server
       - no ip http secure-server
-      - no ip http authentication
       - service timestamps log datetime msec show-timezone
       - service timestamps debug datetime msec show-timezone
       - vtp mode off
