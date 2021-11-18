@@ -174,6 +174,8 @@
   register: output
   tags:
     - config
+    - configswitchports
+    - configswitchports2
     - get_fact
     - get_fact_debug
     - intdescr
@@ -235,16 +237,16 @@
       - spanning-tree portfast edge
       - no spanning-tree guard loop
       - no spanning-tree bpduguard enable
-    parents: interface {{ item.name }}
-  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
-  #loop: "{{ ansible_network_resources['l2_interfaces'] | product(output.ansible_facts.ansible_net_interfaces) | list }}"
+    parents: interface {{ item.0.name }}
+  #loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  loop: "{{ ansible_network_resources['l2_interfaces'] | product(output.ansible_facts.ansible_net_interfaces|dict2items) | list }}"
   #loop: "{{ list_one|product(list_two)|list }}"
   when:
-    - (item.mode is defined and item.mode == 'access' and (item.access.vlan == 24 or item.access.vlan == 48)) or
-      (item.mode is not defined and item.access.vlan is defined and (item.access.vlan == 24 or item.access.vlan == 48) )
+    - (item.0.mode is defined and item.0.mode == 'access' and (item.0.access.vlan == 24 or item.0.access.vlan == 48)) or
+      (item.0.mode is not defined and item.0.access.vlan is defined and (item.0.access.vlan == 24 or item.0.access.vlan == 48) )
   tags:
     - config
-    - configswitchports
+    - configswitchports2
 
 - name: Configure interface for Cisco Meraki
   ios_config:
