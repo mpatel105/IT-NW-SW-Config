@@ -242,7 +242,7 @@
   loop: "{{ ansible_network_resources['l2_interfaces'] | product(output.ansible_facts.ansible_net_interfaces|dict2items) | list }}"
   #loop: "{{ list_one|product(list_two)|list }}"
   when:
-    - (item.0.mode is defined and item.0.mode == 'access' and (item.0.access.vlan == 24 or item.0.access.vlan == 48)) or
+    - (item.0.name == item.1.key) and (item.0.mode is defined and item.0.mode == 'access' and (item.0.access.vlan == 24 or item.0.access.vlan == 48)) or
       (item.0.mode is not defined and item.0.access.vlan is defined and (item.0.access.vlan == 24 or item.0.access.vlan == 48) )
   tags:
     - config
