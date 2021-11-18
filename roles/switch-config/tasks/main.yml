@@ -78,19 +78,26 @@
 #    severity: notifications
 #  console:
 #        severity: critical
-  ios_command:
-    commands:
-      - configure terminal
-      - no logging monitor
-      - no logging console
+#  ios_command:
+#    commands:
+#      - configure terminal
+#      - no logging monitor
+#      - no logging console
 #      - no logging host 192.168.30.145
 #      - no logging host 192.168.15.55
 #      - no logging host 192.168.100.211
 #      - no logging host 10.42.150.250
+#      - logging buffered 16384
+#      - logging host {{ talend_logs }}
+#      - logging source-interface Vlan999
+#      - exit
+  ios_config:
+    lines:
+      - no logging monitor
+      - no logging console
       - logging buffered 16384
       - logging host {{ talend_logs }}
       - logging source-interface Vlan999
-      - exit
   when: ansible_network_os == 'ios'
   tags:
     - config
@@ -179,7 +186,7 @@
 - name: Configure interface in vlan 8 - End Users
   ios_config:
     lines:
-      - description {% if item.access.vlan == 8 %} Users VLAN {% elif item.access.vlan == 48 %} Audio/Video VLAN {% endif %}
+      - description Wired Users VLAN
       - switchport mode access
       - spanning-tree portfast edge
       - no spanning-tree guard loop
@@ -187,11 +194,27 @@
     parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
-    - (item.mode is defined and item.mode == 'access' and (item.access.vlan == 8 or item.access.vlan == 48)) or
-      (item.mode is not defined and item.access.vlan is defined and (item.access.vlan == 8 or item.access.vlan == 48) )
+    - (item.mode is defined and item.mode == 'access' and item.access.vlan == 8) or
+      (item.mode is not defined and item.access.vlan is defined and item.access.vlan == 8)
   tags:
     - config
-    - endusers
+    - configswitchports
+
+- name: Configure interface in vlan 24/48 - Ops devices & A/V
+  ios_config:
+    lines:
+      - switchport mode access
+      - spanning-tree portfast edge
+      - no spanning-tree guard loop
+      - no spanning-tree bpduguard enable
+    parents: interface {{ item.name }}
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - (item.mode is defined and item.mode == 'access' and (item.access.vlan == 24 or item.access.vlan == 48)) or
+      (item.mode is not defined and item.access.vlan is defined and (item.access.vlan == 24 or item.access.vlan == 48) )
+  tags:
+    - config
+    - configswitchports
 
 - name: Configure interface for Cisco Meraki
   ios_config:
