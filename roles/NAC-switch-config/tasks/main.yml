@@ -49,16 +49,6 @@
     - get_fact
     - configNAC
 
-
-- debug:
-    msg: "{{ item }}"
-  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
-  when:
-    - ansible_network_os == "ios"
-  tags:
-    - configNAC
-    - nacint
-
 - name: Configure interface for NAC
   ios_config:
     lines:
