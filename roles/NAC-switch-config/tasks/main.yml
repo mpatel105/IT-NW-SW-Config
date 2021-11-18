@@ -53,7 +53,7 @@
   ios_config:
     lines:
       - authentication event fail action next-method
-      #- authentication event server dead action reinitialize vlan 8
+      - authentication event server dead action reinitialize vlan {{ item.access.vlan }}
       - authentication timer reauthenticate server
       - authentication timer inactivity server
       - authentication open
