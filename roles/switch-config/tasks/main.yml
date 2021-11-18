@@ -79,18 +79,10 @@
     - config
     - logsxml
 
-- name: Read an element's attribute values
-  xml:
-    xmlstring: raw_logxml.stdout[0]
-    xpath: /
-    content: attribute
-  register: xmlresp
-  tags:
-    - logsxml
-
 - name: Show an attribute value
   debug:
-    var: xmlresp.matches[0].validxhtml.validatedon
+    #var: xmlresp.matches[0].validxhtml.validatedon
+    #msg: "{{ raw_logxml.stdout[0] | type_debug }}"
   tags:
     - logsxml
 
@@ -309,40 +301,43 @@
     - configusers
 
 - name: Add a user with  hashed password
+  no_log: true
   ios_user:
-    name: admin1
+    name: "{{ admin_user }}"
     hashed_password:
       type: 9
-      value: $9$WnArItcQHW/uuE$x5WTLbu7PbzGDuv0fSwGKS/KURsy5a3WCQckmJp0MbE
+      value: "{{ admin_hash_password }}"
       #have to add this value in the vault and remove admin1 its just for testing
   tags:
     - config
-    - configusers
+    - addadminuser
     - adduser
 
 - name: set multiple users to privilege level 15
+  no_log: true
   ios_user:
     aggregate:
-      - name: admin1
+      - name: "{{ admin_user }}"
     privilege: 15
     state: present
   tags:
     - config
-    - configusers
+    - addadminuser
     - adduserprivilege
 
 - name: enable secret scrypt
+  no_log: true
   ios_command:
     commands:
       - configure terminal
-      - enable algorithm-type scrypt secret admin
+      - enable secret 9 {{ admin_hash_password }}
       #need to create seperate secret jkey and update that in the vault
       - exit
   # ignore_errors: yes
   when: ansible_network_os == 'ios'
   tags:
     - config
-    - configusers
+    - addadminuser
     - configenable
 
 - name: STP Global configuration for IOS Access switches
