@@ -70,6 +70,41 @@
     - config
     - snmp
 
+- name: IOS configure logging task1
+  ios_command:
+    commands: show logging xml
+  register: raw_logxml
+  when: ansible_network_os == 'ios'
+  tags:
+    - config
+    - logsxml
+
+- name: Read an element's attribute values
+  xml:
+    xmlstring: raw_logxml.stdout[0]
+    xpath: /
+    content: attribute
+  register: xmlresp
+  tags:
+    - logsxml
+
+- name: Show an attribute value
+  debug:
+    var: xmlresp.matches[0].validxhtml.validatedon
+  tags:
+    - logsxml
+
+- debug:
+    #msg: "LOGXML: {{ raw_logxml | type_debug }}"
+    #msg: "{{ raw_logxml.stdout_lines | type_debug }}"
+    #msg: "{{ raw_logxml.stdout_lines[0][13] }}"
+    msg: "{{ raw_logxml.stdout[0] }}"
+    #msg: "{{ raw_logxml.stdout_lines | select('regex', '^<msg-discriminator (.*)$') }}"
+  tags:
+    - config
+    - logsxml
+
+
 - name: IOS configure logging
 #  cisco.ios.ios_logging_global:
 #    config:
