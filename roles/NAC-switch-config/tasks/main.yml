@@ -42,8 +42,8 @@
 
 - name: IOS get fact
   ios_facts:
-    gather_network_resources:
-      - 'l2_interfaces'
+#    gather_network_resources:
+#      - 'l2_interfaces'
   register: output
   tags:
     - nacint
