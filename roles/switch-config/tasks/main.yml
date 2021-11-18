@@ -186,7 +186,8 @@
     # msg: "host is {{ item.value[0] }} "
     # msg: "{{ output.ansible_facts.ansible_net_neighbors | type_debug }}"
     # msg: "{{ group_names }}"
-  loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
+    msg: {{ output.ansible_facts.ansible_net_interfaces | type_debug }}
+  #loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
   when:
     - ansible_network_os == "ios"
     #- item.value[0].platform is defined
@@ -236,6 +237,8 @@
       - no spanning-tree bpduguard enable
     parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  #loop: "{{ ansible_network_resources['l2_interfaces'] | product(output.ansible_facts.ansible_net_interfaces) | list }}"
+  #loop: "{{ list_one|product(list_two)|list }}"
   when:
     - (item.mode is defined and item.mode == 'access' and (item.access.vlan == 24 or item.access.vlan == 48)) or
       (item.mode is not defined and item.access.vlan is defined and (item.access.vlan == 24 or item.access.vlan == 48) )
