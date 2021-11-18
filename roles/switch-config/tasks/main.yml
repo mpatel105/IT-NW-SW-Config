@@ -186,7 +186,7 @@
     # msg: "host is {{ item.value[0] }} "
     # msg: "{{ output.ansible_facts.ansible_net_neighbors | type_debug }}"
     # msg: "{{ group_names }}"
-    msg: "{{ output.ansible_facts.ansible_net_interfaces | type_debug }}"
+    msg: "{{ output.ansible_facts.ansible_net_interfaces }}"
   #loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
   when:
     - ansible_network_os == "ios"
