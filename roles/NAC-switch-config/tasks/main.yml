@@ -57,6 +57,7 @@
     - ansible_network_os == "ios"
   tags:
     - configNAC
+    - nacint
 
 - name: Configure interface for NAC
   ios_config:
