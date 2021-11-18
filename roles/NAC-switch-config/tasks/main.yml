@@ -54,11 +54,9 @@
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
     - ansible_network_os == "ios"
-    #- item.value[0].platform is defined
-    #- ("Cisco" in item.value[0].platform)
   tags:
-    - config
-    - get_fact_debug
+    - configNAC
+    - nacint
 
 - name: Configure interface for NAC
   ios_config:
