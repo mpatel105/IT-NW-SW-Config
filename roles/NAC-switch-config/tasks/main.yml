@@ -11,21 +11,21 @@
       - aaa accounting update newinfo periodic 2880
       - aaa accounting dot1x default start-stop group Portnox-RADIUS-Group
       - aaa group server radius Portnox-RADIUS-Group
-      - server name Portnox-US
-      - server name Portnox-EU
+      - server name {{ talend_portnox_1_name }}
+      - server name {{ talend_portnox_2_name }}
       - deadtime 5
       - aaa server radius dynamic-author
-      - client 13.90.229.234 server-key 7 132F3338203E203E3B0B3223060F18081C330D035B725A44183A0205006B0607
-      - client 52.232.122.157 server-key 7 023F305F5B2D06074A482D48561408213E021E1E3202072500170D4724316341
+      - client {{ talend_portnox_1 }} server-key 7 {{ talend_CoA_radius_server_key_1 }}
+      - client {{ talend_portnox_2 }} server-key 7 {{ talend_CoA_radius_server_key_2 }}
       - ip radius source-interface Vlan999
-      - radius server Portnox-US
-      - address ipv4 13.90.229.234 auth-port 10444 acct-port 10445
+      - radius server {{ talend_portnox_1_name }}
+      - address ipv4 {{ talend_portnox_1 }} auth-port {{ talend_portnox_auth-port_1 }} acct-port {{ talend_portnox_acct-port_1 }}
       - timeout 3
-      - key 7 062C2B0B677C2D0D1538081B3F2921242E183F6020390E0615384C4A0160055A
-      - radius server Portnox-EU
-      - address ipv4 52.232.122.157 auth-port 10356 acct-port 10357
+      - key 7 {{ talend_portnox_radius_key_1 }}
+      - radius server {{ talend_portnox_2_name }}
+      - address ipv4 {{ talend_portnox_2 }} auth-port {{ talend_portnox_auth-port_2 }} acct-port {{ talend_portnox_acct-port_2 }}
       - timeout 3
-      - key 7 0818784A59320C31140D285579283E0201331626113C3711745D5202733E3600
+      - key 7 {{ talend_portnox_radius_key_2 }}
       - radius-server vsa send authentication
       - radius-server vsa send accounting
       - radius-server dead-criteria time 10 tries 3
