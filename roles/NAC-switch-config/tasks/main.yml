@@ -51,7 +51,7 @@
 
 
 - debug:
-    msg: {{ item }}
+    msg: "{{ item }}"
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
     - ansible_network_os == "ios"
