@@ -19,11 +19,11 @@
       - client {{ talend_portnox_2 }} server-key 7 {{ talend_CoA_radius_server_key_2 }}
       - ip radius source-interface Vlan999
       - radius server {{ talend_portnox_1_name }}
-      - address ipv4 {{ talend_portnox_1 }} auth-port {{ talend_portnox_auth-port_1 }} acct-port {{ talend_portnox_acct-port_1 }}
+      - address ipv4 {{ talend_portnox_1 }} auth-port {{ talend_portnox_auth_port_1 }} acct-port {{ talend_portnox_acct_port_1 }}
       - timeout 3
       - key 7 {{ talend_portnox_radius_key_1 }}
       - radius server {{ talend_portnox_2_name }}
-      - address ipv4 {{ talend_portnox_2 }} auth-port {{ talend_portnox_auth-port_2 }} acct-port {{ talend_portnox_acct-port_2 }}
+      - address ipv4 {{ talend_portnox_2 }} auth-port {{ talend_portnox_auth_port_2 }} acct-port {{ talend_portnox_acct_port_2 }}
       - timeout 3
       - key 7 {{ talend_portnox_radius_key_2 }}
       - radius-server vsa send authentication

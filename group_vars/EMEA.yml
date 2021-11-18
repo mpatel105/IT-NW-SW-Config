@@ -11,10 +11,10 @@ talend_portnox_1: 52.232.122.157
 talend_portnox_2: 13.90.229.234
 talend_portnox_1_name: Portnox-EU
 talend_portnox_2_name: Portnox-US
-talend_portnox_auth-port_1: 10356
-talend_portnox_acct-port_1: 10357
-talend_portnox_auth-port_2: 10444
-talend_portnox_acct-port_2: 10445
+talend_portnox_auth_port_1: 10356
+talend_portnox_acct_port_1: 10357
+talend_portnox_auth_port_2: 10444
+talend_portnox_acct_port_2: 10445
 talend_CoA_radius_server_key_1: 023F305F5B2D06074A482D48561408213E021E1E3202072500170D4724316341
 talend_CoA_radius_server_key_2: 132F3338203E203E3B0B3223060F18081C330D035B725A44183A0205006B0607
 talend_portnox_radius_key_1: 0818784A59320C31140D285579283E0201331626113C3711745D5202733E3600
