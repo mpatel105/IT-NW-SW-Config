@@ -18,10 +18,10 @@
 - name: Configure SV2-Radius
   ios_config:
     lines:
-      - address ipv4 192.168.15.210 auth-port 1812 acct-port 1813
+      - address ipv4 {{ talend_radius_SV2 }} auth-port {{ talend_radius_auth_port }} acct-port {{ talend_radius_acct_port }}
       - timeout 3
-      - key 7 111E142132110F543C2E03332D72780741
-    parents: radius server SV2-Radius
+      - key 7 {{ talend_radius_server_key }}
+    parents: radius server {{ talend_radius_SV2_name }}
   when: ansible_network_os == 'ios'
   tags:
     - config
@@ -30,10 +30,10 @@
 - name: Configure PA7-Radius
   ios_config:
     lines:
-      - address ipv4 10.42.20.105 auth-port 1812 acct-port 1813
+      - address ipv4 {{ talend_radius_PA7 }} auth-port {{ talend_radius_auth_port }} acct-port {{ talend_radius_acct_port }}
       - timeout 3
-      - key 7 111E142132110F543C2E03332D72780741
-    parents: radius server PA7-Radius
+      - key 7 {{ talend_radius_server_key }}
+    parents: radius server {{ talend_radius_PA7_name }}
   when: ansible_network_os == 'ios'
   tags:
     - config
@@ -42,8 +42,8 @@
 - name: Configure Global-Radius-Servers
   ios_config:
     lines:
-      - server name PA7-Radius
-      - server name SV2-Radius
+      - server name {{ talend_radius_1_name }}
+      - server name {{ talend_radius_2_name }}
       - deadtime 5
     parents: aaa group server radius Global-Radius-Servers
   when: ansible_network_os == 'ios'

@@ -19,3 +19,15 @@ talend_CoA_radius_server_key_1: 023F305F5B2D06074A482D48561408213E021E1E32020725
 talend_CoA_radius_server_key_2: 132F3338203E203E3B0B3223060F18081C330D035B725A44183A0205006B0607
 talend_portnox_radius_key_1: 0818784A59320C31140D285579283E0201331626113C3711745D5202733E3600
 talend_portnox_radius_key_2: 062C2B0B677C2D0D1538081B3F2921242E183F6020390E0615384C4A0160055A
+
+talend_radius_PA7_name: PA7-Radius
+talend_radius_SV2_name: SV2-Radius
+talend_radius_PA7: 10.42.20.105
+talend_radius_SV2: 192.168.15.210
+talend_radius_1: 10.42.20.105
+talend_radius_2: 192.168.15.210
+talend_radius_1_name: PA7-Radius
+talend_radius_2_name: SV2-Radius
+talend_radius_auth_port: 1812
+talend_radius_acct_port: 1813
+talend_radius_server_key: 111E142132110F543C2E03332D72780741
