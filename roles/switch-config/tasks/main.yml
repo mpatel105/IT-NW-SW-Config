@@ -67,8 +67,8 @@
 - name: IOS configure dns
   ios_system:
   #  hostname: "{{ inventory_hostname }}"
-    domain_name: networklab.com
-    lookup_source: vlan100
+    domain_name: "{{ talend_domain_name }}"
+    lookup_source: vlan999
     lookup_enabled: yes
     name_servers: "{{ talend_dns }}"
   when: ansible_network_os == 'ios'
@@ -85,7 +85,7 @@
 #     state: replaced
   ios_ntp:
     server: "{{ talend_ntp }}"
-    source_int: vlan100
+    source_int: vlan999
     state: present
   when: ansible_network_os == 'ios'
   tags:
@@ -105,16 +105,14 @@
     - clock
 
 - name: IOS configure some service / disable unused service
-  ios_command:
-    commands:
-      - configure terminal
+  ios_config:
+    lines:
       - no ip http server
       - no ip http secure-server
       - service timestamps log datetime msec show-timezone
       - service timestamps debug datetime msec show-timezone
       - vtp mode off
       - errdisable recovery cause bpduguard
-      - exit
   when: ansible_network_os == 'ios'
   tags:
     - config
@@ -139,7 +137,6 @@
   register: raw_logxml
   when: ansible_network_os == 'ios'
   tags:
-    - config
     - logsxml
 
 - name: Show an attribute value
@@ -156,7 +153,6 @@
     msg: "{{ raw_logxml.stdout[0] }}"
     #msg: "{{ raw_logxml.stdout_lines | select('regex', '^<msg-discriminator (.*)$') }}"
   tags:
-    - config
     - logsxml
 
 
@@ -271,7 +267,7 @@
   when:
     - ansible_network_os == "ios"
     - item.value[0].platform is defined
-    - ("Cisco" in item.value[0].platform)
+    - ("cisco" in item.value[0].platform)
   tags:
     - config
     - intdescr
@@ -302,13 +298,12 @@
       - no spanning-tree bpduguard enable
     parents: interface {{ item.0.name }}
   #loop: "{{ ansible_network_resources['l2_interfaces']  }}"
-  loop: "{{ ansible_network_resources['l2_interfaces'] | product(output.ansible_facts.ansible_net_interfaces|dict2items) | list }}"
+  loop: "{{ ansible_network_resources['l2_interfaces'] | product(output.ansible_facts.ansible_net_interfaces|dict2iterms) | list }}"
   #loop: "{{ list_one|product(list_two)|list }}"
   when:
     - (item.0.name == item.1.key) and (item.0.mode is defined and item.0.mode == 'access' and (item.0.access.vlan == 24 or item.0.access.vlan == 48)) or
       (item.0.mode is not defined and item.0.access.vlan is defined and (item.0.access.vlan == 24 or item.0.access.vlan == 48) )
   tags:
-    - config
     - configswitchports2
 
 - name: Configure interface for Cisco Meraki
