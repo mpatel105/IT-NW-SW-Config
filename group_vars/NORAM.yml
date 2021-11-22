@@ -21,10 +21,10 @@ talend_radius_PA7_name: PA7-Radius
 talend_radius_SV2_name: SV2-Radius
 talend_radius_PA7: 10.42.20.105
 talend_radius_SV2: 192.168.15.210
-talend_radius_1: {{ talend_radius_SV2 }}
-talend_radius_2: {{ talend_radius_PA7 }}
-talend_radius_1_name: {{ talend_radius_SV2_name }}
-talend_radius_2_name: {{ talend_radius_PA7_name }}
+talend_radius_1: "{{ talend_radius_SV2 }}"
+talend_radius_2: "{{ talend_radius_PA7 }}"
+talend_radius_1_name: "{{ talend_radius_SV2_name }}"
+talend_radius_2_name: "{{ talend_radius_PA7_name }}"
 talend_radius_auth_port: 1812
 talend_radius_acct_port: 1813
 talend_radius_server_key: 111E142132110F543C2E03332D72780741
