@@ -1,6 +1,33 @@
 ---
 # tasks file for switch-config
 #
+
+- name: Configure radius
+  ios_config:
+    lines:
+      - radius server SV2-radius
+  when: ansible_network_os == 'ios'
+  tags:
+    - config
+    - radius
+
+
+- name: Configure radius
+  ios_config:
+    lines:
+      - address ipv4 192.168.15.210 auth-port 1812 acct-port 1813
+      - timeout 3
+      - key 7 111E142132110F543C2E03332D72780741
+    parents: radius server SV2-radius
+  when: ansible_network_os == 'ios'
+  tags:
+    - config
+    - radius
+
+
+
+
+
 - name: IOS configure dns
   ios_system:
   #  hostname: "{{ inventory_hostname }}"
