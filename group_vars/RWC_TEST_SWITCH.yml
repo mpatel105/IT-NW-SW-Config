@@ -1,0 +1,6 @@
+ansible_user: netcom
+ansible_password: netninja
+ansible_become: yes
+ansible_become_method: enable
+#ansible_become_password: admin
+ansible_network_os: ios
