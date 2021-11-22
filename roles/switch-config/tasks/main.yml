@@ -2,29 +2,54 @@
 # tasks file for switch-config
 #
 
-- name: Configure radius
+- name: Configure Radius group
   ios_config:
     lines:
-      - radius server SV2-radius
+      - aaa new-model
+      - radius server SV2-Radius
+      - radius server PA7-Radius
+      - aaa group server radius Global-Radius-Servers
   when: ansible_network_os == 'ios'
   tags:
     - config
     - radius
 
 
-- name: Configure radius
+- name: Configure SV2-Radius
   ios_config:
     lines:
       - address ipv4 192.168.15.210 auth-port 1812 acct-port 1813
       - timeout 3
       - key 7 111E142132110F543C2E03332D72780741
-    parents: radius server SV2-radius
+    parents: radius server SV2-Radius
   when: ansible_network_os == 'ios'
   tags:
     - config
     - radius
 
+- name: Configure PA7-Radius
+  ios_config:
+    lines:
+      - address ipv4 10.42.20.105 auth-port 1812 acct-port 1813
+      - timeout 3
+      - key 7 111E142132110F543C2E03332D72780741
+    parents: radius server PA7-Radius
+  when: ansible_network_os == 'ios'
+  tags:
+    - config
+    - radius
 
+- name: Configure Global-Radius-Servers
+  ios_config:
+    lines:
+      - server name PA7-Radius
+      - server name SV2-Radius
+      - deadtime 5
+    parents: aaa group server radius Global-Radius-Servers
+  when: ansible_network_os == 'ios'
+  tags:
+    - config
+    - radius
 
 
 
