@@ -46,6 +46,7 @@
       - server name {{ talend_radius_2_name }}
       - deadtime 5
     parents: aaa group server radius Global-Radius-Servers
+    match: strict
   when: ansible_network_os == 'ios'
   tags:
     - config
