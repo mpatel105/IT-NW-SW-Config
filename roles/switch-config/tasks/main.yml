@@ -51,6 +51,18 @@
     - config
     - radius
 
+- name: Configure Radius Global Config
+  ios_config:
+    lines:
+      - aaa authentication login default group Global-Radius-Servers local
+      - aaa authorization console
+      - aaa authorization exec default group Global-Radius-Servers local
+      - aaa accounting exec default start-stop group Global-Radius-Servers
+      - aaa accounting system default start-stop group Global-Radius-Servers
+  when: ansible_network_os == 'ios'
+  tags:
+    - config
+    - radius
 
 
 - name: IOS configure dns
