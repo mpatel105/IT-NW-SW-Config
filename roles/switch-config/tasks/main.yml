@@ -6,9 +6,9 @@
   ios_config:
     lines:
       - aaa new-model
-      - radius server SV2-Radius
-      - radius server PA7-Radius
-      - aaa group server radius Global-Radius-Servers
+#      - radius server SV2-Radius
+#      - radius server PA7-Radius
+#      - aaa group server radius Global-Radius-Servers
   when: ansible_network_os == 'ios'
   tags:
     - config
@@ -46,6 +46,7 @@
       - server name {{ talend_radius_2_name }}
       - deadtime 5
     parents: aaa group server radius Global-Radius-Servers
+    before: no aaa group server radius Global-Radius-Servers
     match: strict
   when: ansible_network_os == 'ios'
   tags:
