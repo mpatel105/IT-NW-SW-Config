@@ -320,7 +320,7 @@
 - name: Configure interface in vlan 24/48 - Ops devices & A/V
   ios_config:
     lines:
-      - description {{ output.ansible_facts.ansible_net_interfaces[item.name].description }} vlan 24
+      - description VLAN24 {{ output.ansible_facts.ansible_net_interfaces[item.name].description }} 
       - switchport mode access
       - spanning-tree portfast
       - no spanning-tree guard loop
