@@ -25,9 +25,9 @@ vlan_list_core:
   Users.Guest: 240
 
 vlan_list_remove:
-  900
-  910
-  920
-  930
-  998
-  24
+  - 900
+  - 910
+  - 920
+  - 930
+  - 998
+  - 24
