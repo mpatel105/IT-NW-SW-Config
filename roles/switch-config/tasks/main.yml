@@ -9,11 +9,11 @@
         vlan_id: "{{ item.value }}"
         state: active
         shutdown: disabled
-      state: merged
-    loop: "{{ vlan_list_core | dict2items }}"
-    #when: ansible_network_os == 'ios' and 'CORE' in group_names
-    when: ansible_network_os == 'ios'
-    tags:
+    state: merged
+  loop: "{{ vlan_list_core | dict2items }}"
+  #when: ansible_network_os == 'ios' and 'CORE' in group_names
+  when: ansible_network_os == 'ios'
+  tags:
 #      - config
       - configvlan
 
