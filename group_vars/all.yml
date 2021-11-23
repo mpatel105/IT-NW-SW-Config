@@ -31,3 +31,6 @@ vlan_list_access_remove:
   - 930
   - 998
   - 224
+
+vlan_tag_24: VLAN24
+vlan_tag_48: VLAN48
