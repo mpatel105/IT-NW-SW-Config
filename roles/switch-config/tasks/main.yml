@@ -2,6 +2,21 @@
 # tasks file for switch-config
 #
 
+- name: Configure standard Vlan for CORE Switches
+  ios_vlans:
+    config:
+      - name: "{{ item.key }}"
+        vlan_id: "{{ item.value }}"
+        state: active
+        shutdown: disabled
+      state: merged
+    loop: "{{ vlan_list_core | dict2items }}"
+    #when: ansible_network_os == 'ios' and 'CORE' in group_names
+    when: ansible_network_os == 'ios'
+    tags:
+#      - config
+      - configvlan
+
 - name: Configure aaa new-model
   ios_config:
     lines:
@@ -58,6 +73,7 @@
       - aaa authorization exec default group Global-Radius-Servers local
       - aaa accounting exec default start-stop group Global-Radius-Servers
       - aaa accounting system default start-stop group Global-Radius-Servers
+      - ip radius source-interface Vlan999
   when: ansible_network_os == 'ios'
   tags:
     - config
@@ -150,7 +166,7 @@
     #msg: "LOGXML: {{ raw_logxml | type_debug }}"
     #msg: "{{ raw_logxml.stdout_lines | type_debug }}"
     #msg: "{{ raw_logxml.stdout_lines[0][13] }}"
-    msg: "{{ raw_logxml.stdout[0] }}"
+    #msg: "{{ raw_logxml.stdout[0] }}"
     #msg: "{{ raw_logxml.stdout_lines | select('regex', '^<msg-discriminator (.*)$') }}"
   tags:
     - logsxml
@@ -247,7 +263,7 @@
     # msg: "host is {{ item.value[0] }} "
     # msg: "{{ output.ansible_facts.ansible_net_neighbors | type_debug }}"
     # msg: "{{ group_names }}"
-    msg: "{{ output.ansible_facts.ansible_net_interfaces }}"
+    # msg: "{{ output.ansible_facts.ansible_net_interfaces }}"
   #loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
   when:
     - ansible_network_os == "ios"
@@ -344,6 +360,7 @@
     - aux
 
 - name: remove all users except admin
+  no_log: true
   ios_user:
     purge: yes
   tags:
