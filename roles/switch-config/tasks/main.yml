@@ -343,7 +343,7 @@
   when:
     - ((item.mode is defined and item.mode == 'access' and item.access.vlan == 24) or
       (item.mode is not defined and item.access.vlan is defined and item.access.vlan == 24)) and
-      ( not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith(vlan_tag_24) )
+      ( not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith("{{vlan_tag_24}}") )
   tags:
     - config
     - configswitchports3
