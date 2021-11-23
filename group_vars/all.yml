@@ -24,8 +24,8 @@ vlan_list_core:
   SSL.VPN.Network: 224
   Users.Guest: 240
 
-vlan_list_remove: [ ]
-  
+vlan_list_remove: 
+
 
 #vlan_list_remove:
 #  - 900

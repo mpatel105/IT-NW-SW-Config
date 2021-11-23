@@ -24,7 +24,7 @@
     state: deleted
   loop: "{{ vlan_list_remove }}"
   #when: ansible_network_os == 'ios' and 'ACCESS' in group_names
-  when: ansible_network_os == 'ios'
+  when: (ansible_network_os == 'ios') and (vlan_list_remove | length > 0)
   tags:
 #      - config
       - configvlan2
