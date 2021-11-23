@@ -23,3 +23,11 @@ vlan_list_core:
   Audio.Video: 48
   SSL.VPN.Network: 224
   Users.Guest: 240
+
+vlan_list_remove:
+  ISP1.WAN: 900
+  ISP1.LAN: 910
+  ISP2.WAN: 920
+  ISP2.LAN: 930
+  Firewall.Management: 998
+  SSL.VPN.Network: 224

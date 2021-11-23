@@ -17,6 +17,18 @@
 #      - config
       - configvlan
 
+- name: Remove Infra Vlan from ACCESS Switches
+  ios_vlans:
+    config:
+      - name: "{{ item.key }}"
+    state: deleted
+  loop: "{{ vlan_list_remove | dict2items }}"
+  #when: ansible_network_os == 'ios' and 'ACCESS' in group_names
+  when: ansible_network_os == 'ios'
+  tags:
+#      - config
+      - configvlan2
+
 - name: Configure aaa new-model
   ios_config:
     lines:
