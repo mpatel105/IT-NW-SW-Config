@@ -25,6 +25,7 @@ vlan_list_core:
   Users.Guest: 240
 
 vlan_list_remove:
+  - 900
 
 #vlan_list_remove:
 #  - 900
