@@ -20,7 +20,7 @@
 - name: Remove Infra Vlan from ACCESS Switches
   ios_vlans:
     config:
-      - name: "{{ item.key }}"
+      - vlan_id: "{{ item.value }}"
     state: deleted
   loop: "{{ vlan_list_remove | dict2items }}"
   #when: ansible_network_os == 'ios' and 'ACCESS' in group_names
