@@ -337,13 +337,13 @@
 - name: Configure description tags in vlan 24/48 - Ops devices & A/V
   ios_config:
     lines:
-      - description VLAN24 - {{ output.ansible_facts.ansible_net_interfaces[item.name].description }}
+      - description VLAN{{ item.access.vlan }} - {{ output.ansible_facts.ansible_net_interfaces[item.name].description }}
     parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
     - ((item.mode is defined and item.mode == 'access' and item.access.vlan == 24) or
       (item.mode is not defined and item.access.vlan is defined and item.access.vlan == 24)) and
-      ( not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith('VLAN24 - ') )
+      ( not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith('VLAN{{ item.access.vlan }} - ') )
   tags:
     - config
     - configswitchports3
