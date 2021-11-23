@@ -22,9 +22,9 @@
     config:
       - vlan_id: "{{ item }}"
     state: deleted
-  loop: "{{ vlan_list_remove }}"
+  loop: "{{ vlan_list_remove if vlan_list_remove is iterable }}"
   #when: ansible_network_os == 'ios' and 'ACCESS' in group_names
-  when: (ansible_network_os == 'ios') and (vlan_list_remove | length > 0)
+  when: ansible_network_os == 'ios'
   tags:
 #      - config
       - configvlan2
