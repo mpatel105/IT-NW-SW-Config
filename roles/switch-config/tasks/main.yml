@@ -22,9 +22,9 @@
     config:
       - vlan_id: "{{ item }}"
     state: deleted
-  loop: "{{ vlan_list_remove if vlan_list_remove is iterable else [] }}"
-  #when: ansible_network_os == 'ios' and 'ACCESS' in group_names
-  when: ansible_network_os == 'ios'
+  loop: "{{ vlan_list_access_remove if vlan_list_access_remove is iterable else [] }}"
+  when: ansible_network_os == 'ios' and 'ACCESS' in group_names
+  #when: ansible_network_os == 'ios'
   tags:
 #      - config
       - configvlan2
@@ -311,8 +311,8 @@
     parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
-    - (item.mode is defined and item.mode == 'access' and item.access.vlan == 8) or
-      (item.mode is not defined and item.access.vlan is defined and item.access.vlan == 8)
+    - ((item.mode is defined and item.mode == 'access' and item.access.vlan == 8) or
+      (item.mode is not defined and item.access is defined and item.access.vlan == 8))
   tags:
     - config
     - configswitchports
@@ -320,17 +320,18 @@
 - name: Configure interface in vlan 24/48 - Ops devices & A/V
   ios_config:
     lines:
+#      - description {{ output.ansible_facts.ansible_net_interfaces[item.name].description }} vlan 24
       - switchport mode access
       - spanning-tree portfast
       - no spanning-tree guard loop
       - no spanning-tree bpduguard enable
-    parents: interface {{ item.0.name }}
+    parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
 #  loop: "{{ ansible_network_resources['l2_interfaces'] | product(output.ansible_facts.ansible_net_interfaces|dict2items) | list }}"
   #loop: "{{ list_one|product(list_two)|list }}"
   when:
-    - (item.mode is defined and item.mode == 'access' and (item.access.vlan == 24 or item.access.vlan == 48) ) or
-      (item.mode is not defined and item.access.vlan is defined and (item.access.vlan == 24 or item.access.vlan == 48) )
+    - (item.mode is defined and item.mode == 'access' and item.access.vlan == 24) or
+      (item.mode is not defined and item.access.vlan is defined and item.access.vlan == 24)
 #    - (item.0.name == item.1.key) and (item.0.mode is defined and item.0.mode == 'access' and (item.0.access.vlan == 24 or item.0.access.vlan == 48)) or
 #      (item.0.mode is not defined and item.0.access.vlan is defined and (item.0.access.vlan == 24 or item.0.access.vlan == 48) )
   tags:
