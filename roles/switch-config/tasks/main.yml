@@ -311,8 +311,8 @@
     parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
-    - ((item.mode is defined and item.mode == 'access' and item.access.vlan == 8) or
-      (item.mode is not defined and item.access is defined and item.access.vlan == 8))
+    - (item.mode is defined and item.mode == 'access' and item.access.vlan == 8) or
+      (item.mode is not defined and item.access is defined and item.access.vlan == 8)
   tags:
     - config
     - configswitchports
@@ -320,7 +320,7 @@
 - name: Configure interface in vlan 24/48 - Ops devices & A/V
   ios_config:
     lines:
-#      - description {{ output.ansible_facts.ansible_net_interfaces[item.name].description }} vlan 24
+      - description {{ output.ansible_facts.ansible_net_interfaces[item.name].description }} vlan 24
       - switchport mode access
       - spanning-tree portfast
       - no spanning-tree guard loop
