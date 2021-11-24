@@ -7,8 +7,6 @@
     gather_network_resources:
       - 'l2_interfaces'
   register: output
-  set_fact:
-    model: "{{ ansible_net_model *2 }}"
   tags:
     - config
     - configswitchports

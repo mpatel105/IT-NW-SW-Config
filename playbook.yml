@@ -1,5 +1,5 @@
 - hosts: "{{ devices }}"
   gather_facts: no
   roles:
-    - { role: Base-config, tags: fullconfig }
+    - { role: Base-config, tags: baseconfig }
     - { role: NAC-config, tags: configNAC }
