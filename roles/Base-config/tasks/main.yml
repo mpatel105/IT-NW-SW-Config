@@ -493,8 +493,8 @@
 
 - name: Save config
   ios_config:
+    save_when: always
   when: ansible_network_os == 'ios'
-  save_when: always
   tags:
     - config
     - saveconfig
