@@ -491,7 +491,7 @@
     - config
     - radius
 
--name: Save config
+- name: Save config
   ios_config:
   when: ansible_network_os == 'ios'
   save_when: always
