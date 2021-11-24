@@ -7,6 +7,8 @@
     gather_network_resources:
       - 'l2_interfaces'
   register: output
+  set_fact:
+    model: {{ ansible_net_model *2 }}
   tags:
     - config
     - configswitchports
@@ -25,7 +27,7 @@
     # msg: "{{ group_names }}"
     # msg: "{{ output.ansible_facts.ansible_net_interfaces }}"
   #loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
-    msg: "{{ ansible_net_model }}"
+    msg: "{{ model }}"
   when:
     - ansible_network_os == "ios"
     #- item.value[0].platform is defined
