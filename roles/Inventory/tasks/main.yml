@@ -7,7 +7,7 @@
   tags:
     - inventory
 
- debug:
+- debug:
     msg: "{{ ansible_net_hostname }}"
     msg: "{{ ansible_net_model }}"
     msg: "{{ ansible_net_serialnum }}"
