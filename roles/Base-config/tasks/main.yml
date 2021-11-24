@@ -29,69 +29,6 @@
 #      - config
       - removevlan
 
-- name: Configure aaa new-model
-  ios_config:
-    lines:
-      - aaa new-model
-  when: ansible_network_os == 'ios'
-  tags:
-    - config
-    - radius
-
-
-- name: Configure SV2-Radius
-  ios_config:
-    lines:
-      - address ipv4 {{ talend_radius_SV2 }} auth-port {{ talend_radius_auth_port }} acct-port {{ talend_radius_acct_port }}
-      - timeout 3
-      - key 7 {{ talend_radius_server_key }}
-    parents: radius server {{ talend_radius_SV2_name }}
-  when: ansible_network_os == 'ios'
-  tags:
-    - config
-    - radius
-
-- name: Configure PA7-Radius
-  ios_config:
-    lines:
-      - address ipv4 {{ talend_radius_PA7 }} auth-port {{ talend_radius_auth_port }} acct-port {{ talend_radius_acct_port }}
-      - timeout 3
-      - key 7 {{ talend_radius_server_key }}
-    parents: radius server {{ talend_radius_PA7_name }}
-  when: ansible_network_os == 'ios'
-  tags:
-    - config
-    - radius
-
-- name: Configure Global-Radius-Servers
-  ios_config:
-    lines:
-      - server name {{ talend_radius_1_name }}
-      - server name {{ talend_radius_2_name }}
-      - deadtime 5
-    parents: aaa group server radius Global-Radius-Servers
-    before: no aaa group server radius Global-Radius-Servers
-    match: strict
-  when: ansible_network_os == 'ios'
-  tags:
-    - config
-    - radius
-
-- name: Configure Radius Global Config
-  ios_config:
-    lines:
-      - aaa authentication login default group Global-Radius-Servers local
-      - aaa authorization console
-      - aaa authorization exec default group Global-Radius-Servers local
-      - aaa accounting exec default start-stop group Global-Radius-Servers
-      - aaa accounting system default start-stop group Global-Radius-Servers
-      - ip radius source-interface Vlan999
-  when: ansible_network_os == 'ios'
-  tags:
-    - config
-    - radius
-
-
 - name: IOS configure dns
   ios_system:
   #  hostname: "{{ inventory_hostname }}"
@@ -492,3 +429,72 @@
   tags:
     - config
     - STPcore
+
+- name: Configure aaa new-model
+  ios_config:
+    lines:
+      - aaa new-model
+  when: ansible_network_os == 'ios'
+  tags:
+    - config
+    - radius
+
+- name: Configure SV2-Radius
+  ios_config:
+    lines:
+      - address ipv4 {{ talend_radius_SV2 }} auth-port {{ talend_radius_auth_port }} acct-port {{ talend_radius_acct_port }}
+      - timeout 3
+      - key 7 {{ talend_radius_server_key }}
+    parents: radius server {{ talend_radius_SV2_name }}
+  when: ansible_network_os == 'ios'
+  tags:
+    - config
+    - radius
+
+- name: Configure PA7-Radius
+  ios_config:
+    lines:
+      - address ipv4 {{ talend_radius_PA7 }} auth-port {{ talend_radius_auth_port }} acct-port {{ talend_radius_acct_port }}
+      - timeout 3
+      - key 7 {{ talend_radius_server_key }}
+    parents: radius server {{ talend_radius_PA7_name }}
+  when: ansible_network_os == 'ios'
+  tags:
+    - config
+    - radius
+
+- name: Configure Global-Radius-Servers
+  ios_config:
+    lines:
+      - server name {{ talend_radius_1_name }}
+      - server name {{ talend_radius_2_name }}
+      - deadtime 5
+    parents: aaa group server radius Global-Radius-Servers
+    before: no aaa group server radius Global-Radius-Servers
+    match: strict
+  when: ansible_network_os == 'ios'
+  tags:
+    - config
+    - radius
+
+- name: Configure Radius Global Config
+  ios_config:
+    lines:
+      - aaa authentication login default group Global-Radius-Servers local
+      - aaa authorization console
+      - aaa authorization exec default group Global-Radius-Servers local
+      - aaa accounting exec default start-stop group Global-Radius-Servers
+      - aaa accounting system default start-stop group Global-Radius-Servers
+      - ip radius source-interface Vlan999
+  when: ansible_network_os == 'ios'
+  tags:
+    - config
+    - radius
+
+-name: Save config
+  ios_config:
+  when: ansible_network_os == 'ios'
+  save_when: always
+  tags:
+    - config
+    - saveconfig
