@@ -69,6 +69,36 @@
     - config
     - clock
 
+- name: STP Global configuration for IOS Access switches
+  ios_command:
+    commands:
+      - configure terminal
+      - spanning-tree mode Rapid-pvst
+      - spanning-tree extend system-id
+      - spanning-tree portfast bpduguard default
+      - spanning-tree vlan 1-4094 priority 32768
+      - exit
+  # ignore_errors: yes
+  when: ansible_network_os == 'ios' and 'ACCESS' in group_names
+  tags:
+    - config
+    - STPaccess
+
+- name: STP Global configuration for IOS Core switches
+  ios_command:
+    commands:
+      - configure terminal
+      - spanning-tree mode Rapid-pvst
+      - spanning-tree extend system-id
+      - spanning-tree portfast bpduguard default
+      - spanning-tree vlan 1-4094 root primary
+      - exit
+  # ignore_errors: yes
+  when: ansible_network_os == 'ios' and 'CORE' in group_names
+  tags:
+    - config
+    - STPcore
+
 - name: IOS configure some service / disable unused service
   ios_config:
     lines:
@@ -332,6 +362,7 @@
       - exec-timeout 0 1
       - no password
       - exit
+  ignore_errors: yes
   when: ansible_network_os == 'ios'
   tags:
     - config
@@ -400,36 +431,6 @@
     - config
     - addadminuser
     - configenable
-
-- name: STP Global configuration for IOS Access switches
-  ios_command:
-    commands:
-      - configure terminal
-      - spanning-tree mode Rapid-pvst
-      - spanning-tree extend system-id
-      - spanning-tree portfast bpduguard default
-      - spanning-tree vlan 1-4094 priority 32768
-      - exit
-  # ignore_errors: yes
-  when: ansible_network_os == 'ios' and 'ACCESS' in group_names
-  tags:
-    - config
-    - STPaccess
-
-- name: STP Global configuration for IOS Core switches
-  ios_command:
-    commands:
-      - configure terminal
-      - spanning-tree mode Rapid-pvst
-      - spanning-tree extend system-id
-      - spanning-tree portfast bpduguard default
-      - spanning-tree vlan 1-4094 root primary
-      - exit
-  # ignore_errors: yes
-  when: ansible_network_os == 'ios' and 'CORE' in group_names
-  tags:
-    - config
-    - STPcore
 
 - name: Configure aaa new-model
   ios_config:
