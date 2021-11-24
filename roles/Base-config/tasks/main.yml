@@ -19,14 +19,12 @@
     - wifi
 
 - name: set fact for portfast
-  vars:
-    #edge: ""
   set_fact:
     edge: "{% if item in ansible_net_model %}edge{% else %}{% endif %}"
   loop: "{{ model_stp_edge }}"
-  #when: edge == ""
-  tags:
+    tags:
     - get_fact_debug
+    - config
 
 - debug:
     #msg: "host is {{ item.value[0].host }} and platform is {{ item.value[0].platform }}"

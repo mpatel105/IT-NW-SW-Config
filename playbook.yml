@@ -3,3 +3,4 @@
   roles:
     - { role: Base-config, tags: baseconfig }
     - { role: NAC-config, tags: configNAC }
+    - { role: Inventory, tags: inventory }

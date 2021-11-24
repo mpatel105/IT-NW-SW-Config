@@ -36,6 +36,4 @@ vlan_tag_24: VLAN24
 vlan_tag_48: VLAN48
 
 model_stp_edge:
-  - C3659X
-  - C2960X
-  - C3400X
+  - WS-C2960X-48FPD-L

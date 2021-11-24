@@ -1,0 +1,18 @@
+---
+# tasks file for Inventory
+
+- name: IOS get fact
+  ios_facts:
+  register: output
+  tags:
+    - inventory
+
+ debug:
+    msg: "{{ ansible_net_hostname }}"
+    msg: "{{ ansible_net_model }}"
+    msg: "{{ ansible_net_serialnum }}"
+    msg: "{{ ansible_net_version }}"
+  when:
+    - ansible_network_os == "ios"
+  tags:
+    - inventory
