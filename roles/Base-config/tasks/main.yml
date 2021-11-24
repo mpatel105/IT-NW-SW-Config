@@ -328,7 +328,7 @@
     parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
-    - (item.mode is defined and item.mode == 'access' and (item.access.vlan == 24 or item.access.vlan == 48) or
+    - (item.mode is defined and item.mode == 'access' and (item.access.vlan == 24 or item.access.vlan == 48)) or
       (item.mode is not defined and item.access.vlan is defined and (item.access.vlan == 24 or item.access.vlan == 48))
   tags:
     - config
