@@ -20,11 +20,11 @@
 
 - name: set fact for portfast
   vars:
-    i: 0
+    #edge: ""
   set_fact:
-    model: '{% if item in ansible_net_model %}edge{% else %} {% endif %}'
+    edge: "{% if item in ansible_net_model %}edge{% else %}{% endif %}"
   loop: "{{ model_stp_edge }}"
-  #when:
+  #when: edge == ""
   tags:
     - get_fact_debug
 
@@ -35,7 +35,7 @@
     # msg: "{{ group_names }}"
     # msg: "{{ output.ansible_facts.ansible_net_interfaces }}"
   #loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
-    msg: "{{ model }}"
+    msg: "{{ edge }}"
   when:
     - ansible_network_os == "ios"
     #- item.value[0].platform is defined
@@ -118,7 +118,7 @@
       - configure terminal
       - spanning-tree mode Rapid-pvst
       - spanning-tree extend system-id
-      - spanning-tree portfast bpduguard default
+      - spanning-tree portfast {{ edge }} bpduguard default
       - spanning-tree vlan 1-4094 priority 32768
       - exit
   # ignore_errors: yes
@@ -133,7 +133,7 @@
       - configure terminal
       - spanning-tree mode Rapid-pvst
       - spanning-tree extend system-id
-      - spanning-tree portfast bpduguard default
+      - spanning-tree portfast {{ edge }} bpduguard default
       - spanning-tree vlan 1-4094 root primary
       - exit
   # ignore_errors: yes
@@ -288,7 +288,7 @@
     lines:
       - description Wired Users VLAN
       - switchport mode access
-      - spanning-tree portfast
+      - spanning-tree portfast {{ edge }}
       - no spanning-tree guard loop
       - no spanning-tree bpduguard enable
     parents: interface {{ item.name }}
@@ -304,7 +304,7 @@
   ios_config:
     lines:
       - switchport mode access
-      - spanning-tree portfast
+      - spanning-tree portfast {{ edge }}
       - no spanning-tree guard loop
       - no spanning-tree bpduguard enable
     parents: interface {{ item.name }}
