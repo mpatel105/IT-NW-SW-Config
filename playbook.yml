@@ -1,4 +1,4 @@
-- hosts: {{ devices }}
+- hosts: "{{ devices }}"
   gather_facts: no
   roles:
     - { role: Base-config, tags: config }
