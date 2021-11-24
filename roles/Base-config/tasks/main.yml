@@ -25,7 +25,7 @@
     # msg: "{{ group_names }}"
     # msg: "{{ output.ansible_facts.ansible_net_interfaces }}"
   #loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
-    msg: {{ ansible_net_model }}
+    msg: "{{ ansible_net_model }}"
   when:
     - ansible_network_os == "ios"
     #- item.value[0].platform is defined
