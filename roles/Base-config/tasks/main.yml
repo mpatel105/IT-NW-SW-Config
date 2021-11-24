@@ -20,7 +20,7 @@
 
 - name: set fact for portfast
   set_fact:
-    model: "{{ ansible_net_model *2 }}"
+    model: "edge" if '2960' in ansible_net_model else "none"
   tags:
     - get_fact_debug
 
