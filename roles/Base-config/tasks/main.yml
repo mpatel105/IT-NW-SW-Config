@@ -343,9 +343,10 @@
   when:
     - ((item.mode is defined and item.mode == 'access' and item.access.vlan == 24) or
       (item.mode is not defined and item.access.vlan is defined and item.access.vlan == 24)) and
-      ( not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith('VLAN24 - ') )
+      ( output.ansible_facts.ansible_net_interfaces[item.name].description is defined and
+      not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith('VLAN24 - ') )
   tags:
-    - config
+#    - config
     - configswitchports24
 
 - name: Configure description tags in vlan 48 - Audio/Video
@@ -357,9 +358,10 @@
   when:
     - ((item.mode is defined and item.mode == 'access' and item.access.vlan == 48) or
       (item.mode is not defined and item.access.vlan is defined and item.access.vlan == 48)) and
-      ( not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith('VLAN48 - ') )
+      ( output.ansible_facts.ansible_net_interfaces[item.name].description is defined and
+      not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith('VLAN48 - ') )
   tags:
-    - config
+#    - config
     - configswitchports48
 
 
