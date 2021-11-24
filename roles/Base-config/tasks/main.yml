@@ -22,7 +22,7 @@
   set_fact:
     edge: "{% if item in ansible_net_model %}edge{% else %}{% endif %}"
   loop: "{{ model_stp_edge }}"
-    tags:
+  tags:
     - get_fact_debug
     - config
 
