@@ -14,7 +14,7 @@
   #when: ansible_network_os == 'ios' and 'CORE' in group_names
   when: ansible_network_os == 'ios'
   tags:
-#      - config
+      - config
       - configvlan
 
 - name: Remove Infra Vlan from ACCESS Switches
@@ -27,7 +27,7 @@
   #when: ansible_network_os == 'ios'
   tags:
 #      - config
-      - configvlan2
+      - removevlan
 
 - name: Configure aaa new-model
   ios_config:
@@ -316,7 +316,7 @@
       (item.mode is not defined and item.access is defined and item.access.vlan == 8)
   tags:
     - config
-    - configswitchports
+    - configswitchports8
 
 - name: Configure interface in vlan 24/48 - Ops devices & A/V
   ios_config:
@@ -332,7 +332,7 @@
       (item.mode is not defined and item.access.vlan is defined and (item.access.vlan == 24 or item.access.vlan == 48))
   tags:
     - config
-    - configswitchports2
+    - configswitchports2448
 
 - name: Configure description tags in vlan 24 - Ops devices
   ios_config:
@@ -346,7 +346,22 @@
       ( not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith('VLAN24 - ') )
   tags:
     - config
-    - configswitchports3
+    - configswitchports24
+
+- name: Configure description tags in vlan 48 - Audio/Video
+  ios_config:
+    lines:
+      - description VLAN48 - {{ output.ansible_facts.ansible_net_interfaces[item.name].description }}
+    parents: interface {{ item.name }}
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - ((item.mode is defined and item.mode == 'access' and item.access.vlan == 48) or
+      (item.mode is not defined and item.access.vlan is defined and item.access.vlan == 48)) and
+      ( not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith('VLAN48 - ') )
+  tags:
+    - config
+    - configswitchports48
+
 
 - name: Configure interface for Cisco Meraki
   ios_config:
