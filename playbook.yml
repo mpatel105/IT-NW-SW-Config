@@ -1,4 +1,4 @@
-- hosts: RWC_TEST_SWITCH
+- hosts: {{ devices }}
   gather_facts: no
   roles:
     - { role: Base-config, tags: config }
