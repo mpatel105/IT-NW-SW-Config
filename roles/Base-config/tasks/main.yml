@@ -163,6 +163,7 @@
       - ip ssh dh min size 2048
       - ip ssh version 2
       - exit
+    timeout: 120
   when: ansible_network_os == 'ios'
   tags:
     - config
