@@ -2,6 +2,39 @@
 # tasks file for switch-config
 #
 
+- name: IOS get fact
+  ios_facts:
+    gather_network_resources:
+      - 'l2_interfaces'
+  register: output
+  tags:
+    - config
+    - configswitchports
+    - configswitchports2
+    - configswitchports3
+    - get_fact
+    - get_fact_debug
+    - intdescr
+    - endusers
+    - wifi
+
+- debug:
+    #msg: "host is {{ item.value[0].host }} and platform is {{ item.value[0].platform }}"
+    # msg: "host is {{ item.value[0] }} "
+    # msg: "{{ output.ansible_facts.ansible_net_neighbors | type_debug }}"
+    # msg: "{{ group_names }}"
+    # msg: "{{ output.ansible_facts.ansible_net_interfaces }}"
+  #loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
+    msg: {{ ansible_net_model }}
+  when:
+    - ansible_network_os == "ios"
+    #- item.value[0].platform is defined
+    #- ("Cisco" in item.value[0].platform)
+  tags:
+    - config
+    - get_fact_debug
+
+
 - name: Configure standard Vlan for CORE Switches
   ios_vlans:
     config:
@@ -126,6 +159,10 @@
     - config
     - snmp
 
+
+####################################################
+#### Logging testing - under progress
+####################################################
 - name: IOS configure logging task1
   ios_command:
     commands: show logging xml
@@ -221,39 +258,6 @@
   tags:
     - config
     - banner
-
-- name: IOS get fact
-  ios_facts:
-    gather_network_resources:
-      - 'l2_interfaces'
-  register: output
-  tags:
-    - config
-    - configswitchports
-    - configswitchports2
-    - configswitchports3
-    - get_fact
-    - get_fact_debug
-    - intdescr
-    - endusers
-    - wifi
-
-
-- debug:
-    #msg: "host is {{ item.value[0].host }} and platform is {{ item.value[0].platform }}"
-    # msg: "host is {{ item.value[0] }} "
-    # msg: "{{ output.ansible_facts.ansible_net_neighbors | type_debug }}"
-    # msg: "{{ group_names }}"
-    # msg: "{{ output.ansible_facts.ansible_net_interfaces }}"
-  #loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
-  when:
-    - ansible_network_os == "ios"
-    #- item.value[0].platform is defined
-    #- ("Cisco" in item.value[0].platform)
-  tags:
-    - config
-    - get_fact_debug
-
 
 - name: Set IOS Interface Description from CDP
   ios_config:
