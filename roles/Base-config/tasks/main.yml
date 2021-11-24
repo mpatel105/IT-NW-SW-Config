@@ -21,6 +21,8 @@
 - name: set fact for portfast
   set_fact:
     model: "{{ ansible_net_model *2 }}"
+  tags:
+    - get_fact_debug
 
 - debug:
     #msg: "host is {{ item.value[0].host }} and platform is {{ item.value[0].platform }}"
