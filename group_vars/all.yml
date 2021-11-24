@@ -37,4 +37,4 @@ vlan_tag_48: VLAN48
 
 model_stp_edge:
   - C3659X
-  - C2960X
+#  - C2960X
