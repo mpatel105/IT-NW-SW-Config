@@ -12,9 +12,6 @@
     - inventory
   when: ansible_network_os == 'nxos'
 
-- debug:
-    msg: "{{ ansible_net_stacked_models | type_debug }}"
-
 - name: clone repository
   run_once: true
   git: >
@@ -41,7 +38,7 @@
   ansible.builtin.lineinfile:
     path: "{{ dest_folder}}/inventory.csv"
     line: "{{ ansible_net_hostname[:3]|upper }},
-           {{ ansible_net_hostname }}{% if ansible_loop.index0 > 0 %}ansible_loop.index0{% else %}{% endif %},
+           {{ ansible_net_hostname }}{% if ansible_loop.index0 > 0 %}_{{ansible_loop.index0}}{% else %}{% endif %},
            {{ item }},
            {{ ansible_net_stacked_serialnums[ansible_loop.index0] }},
            {{ ansible_net_stacked_serialnums[ansible_loop.index0][3:5] | int + 1996 }},
