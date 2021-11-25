@@ -30,15 +30,17 @@
   run_once: true
   lineinfile:
     path: "{{ dest_folder}}/inventory.csv"
-    line: Hostname,Model,Serial_Number,IOS_Type,OS_Version
+    line: Site,Hostname,Model,Serial_Number,Year,OS_Type,OS_Version
     create: yes
 
 - name: writing to file
   ansible.builtin.lineinfile:
     path: "{{ dest_folder}}/inventory.csv"
-    line: "{{ ansible_net_hostname }},
+    line: "{{ ansible_net_hostname[:3]|upper }}
+           {{ ansible_net_hostname }},
            {{ ansible_net_model }},
            {{ ansible_net_serialnum }},
+           {{ ansible_net_serialnum[3:5] }}
            {{ansible_net_iostype | default(' ') }},
            {{ ansible_net_version }}"
     create: yes
