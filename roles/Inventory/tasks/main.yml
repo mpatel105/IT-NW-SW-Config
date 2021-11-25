@@ -37,16 +37,16 @@
   ansible.builtin.lineinfile:
     path: "{{ dest_folder}}/inventory.csv"
     line: "{{ ansible_net_hostname[:3]|upper }},
-           {{ ansible_net_hostname }}+{{ my_id if my_id > 0 }},
+           {{ ansible_net_hostname }}+{{ ansible_loop.index0 }},
            {{ item }},
-           {{ ansible_net_stacked_serialnums[my_id] }},
+           {{ ansible_net_stacked_serialnums[ansible_loop.index0] }},
            {{ ansible_net_serialnum[3:5] | int + 1996 }},
            {{ansible_net_iostype | default(' ') }},
            {{ ansible_net_version }}"
     create: yes
     loop: "{{ ansible_net_stacked_models }}"
     loop_control:
-      index_var: my_id
+      extended: yes
   tags:
     - inventory
 
