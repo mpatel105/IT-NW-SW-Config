@@ -32,10 +32,16 @@
     path: "{{ dest_folder}}/inventory.csv"
   tags: inventory
 
+- name: add header
+  lineinfile:
+    path: "{{ dest_folder}}/inventory.csv"
+    line: Hostname,Model,Serial_Number,OS_Version
+    create: yes
+
 - name: writing to file
   ansible.builtin.lineinfile:
     path: "{{ dest_folder}}/inventory.csv"
-    line: "{{ ansible_net_hostname }};{{ ansible_net_model }};{{ ansible_net_serialnum }};{{ ansible_net_version }}"
+    line: "{{ ansible_net_hostname }},{{ ansible_net_model }},{{ ansible_net_serialnum }},{{ ansible_net_version }}"
     create: yes
   when:
     - ansible_network_os == "ios"
