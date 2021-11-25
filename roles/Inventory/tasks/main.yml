@@ -1,7 +1,7 @@
 ---
 
-- debug: Ansible version
-    msg: "{{ ansible_version.full }}"
+- debug: 
+    msg: "{{ ansible_version }}"
 
 - name: IOS get fact
   ios_facts:
