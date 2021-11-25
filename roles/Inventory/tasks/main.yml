@@ -36,7 +36,11 @@
 - name: writing to file
   ansible.builtin.lineinfile:
     path: "{{ dest_folder}}/inventory.csv"
-    line: "{{ ansible_net_hostname }},{{ ansible_net_model }},{{ ansible_net_serialnum }},{{ ansible_net_iostype }},{{ ansible_net_version }}"
+    line: "{{ ansible_net_hostname }},
+           {{ ansible_net_model }},
+           {{ ansible_net_serialnum }},
+           {{ansible_net_iostype | default(' ') }},
+           {{ ansible_net_version }}"
     create: yes
   tags:
     - inventory
