@@ -15,7 +15,7 @@
 
 - name: clone repository
   git: >
-    repo=https://{{awx_user_github}}:{{awx_pwd_github}}@github.com/TalendIT/IT-Network-SW-Config.git
+    repo=https://{{awx_user_github}}:{{awx_pwd_github}}@github.com/TalendIT/IT-Network-Scripts.git
     dest="{{ dest_folder }}"
     force=yes
   tags: inventory
@@ -42,7 +42,6 @@
   tags:
     - inventory
 
-
 - name: push to git
   shell: |
     git add .
@@ -51,5 +50,12 @@
     exit 0
   args:
     chdir: "{{ dest_folder }}"
+  tags:
+    - inventory
+
+- name: remove temp folder
+  file:
+    state: absent
+    path: "{{ dest_folder}}"
   tags:
     - inventory
