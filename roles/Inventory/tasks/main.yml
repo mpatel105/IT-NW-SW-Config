@@ -47,7 +47,7 @@
     create: yes
     loop: "{{ ansible_net_stacked_models }}"
     loop_control:
-      extended: yes
+      loop_var: ansible_net_stacked_models
   tags:
     - inventory
 
