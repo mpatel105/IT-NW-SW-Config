@@ -49,6 +49,7 @@
     - inventory
 
 - name: push to git
+  run_once: true
   shell: |
     git add .
     git commit -m "inventory: $(date +"%Y-%m-%d %H:%M:%S")"
@@ -60,6 +61,7 @@
     - inventory
 
 - name: remove temp folder
+  run_once: true
   file:
     state: absent
     path: "{{ dest_folder}}"
