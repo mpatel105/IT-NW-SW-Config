@@ -39,7 +39,7 @@
     line: "{{ ansible_net_hostname[:3]|upper }},
            {{ ansible_net_hostname }},
            {{ ansible_net_stacked_models }},
-           {{ ansible_net_serialnum }},
+           {{ ansible_net_stacked_serialnums }},
            {{ ansible_net_serialnum[3:5] | int + 1996 }},
            {{ansible_net_iostype | default(' ') }},
            {{ ansible_net_version }}"
