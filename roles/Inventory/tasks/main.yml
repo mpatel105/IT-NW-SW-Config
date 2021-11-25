@@ -20,12 +20,6 @@
     force=yes
   tags: inventory
 
-- name: cleanup inventory file
-  file:
-    state: absent
-    path: "{{ dest_folder }}/inventory.csv"
-  tags: inventory
-
 - name: create new inventory file
   file:
     state: touch
