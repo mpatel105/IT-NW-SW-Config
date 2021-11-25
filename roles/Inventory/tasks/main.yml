@@ -30,7 +30,7 @@
   run_once: true
   lineinfile:
     path: "{{ dest_folder}}/inventory.csv"
-    line: Hostname,Model,Serial_Number,OS_Version
+    line: Hostname,Model,Serial_Number,IOS_Type,OS_Version
     create: yes
 
 - name: writing to file
