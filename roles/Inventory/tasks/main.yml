@@ -12,6 +12,9 @@
     - inventory
   when: ansible_network_os == 'nxos'
 
+- debug:
+    msg: "{{ ansible_net_stacked_models | type_debug }}"
+
 - name: clone repository
   run_once: true
   git: >
