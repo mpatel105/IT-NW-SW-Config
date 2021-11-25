@@ -38,7 +38,7 @@
   ansible.builtin.lineinfile:
     path: "{{ dest_folder}}/inventory.csv"
     line: "{{ ansible_net_hostname[:3]|upper }},
-           {{ ansible_net_hostname }}_{{ansible_index_var}},
+           {{ ansible_net_hostname }},
            {{ item }},
            {{ ansible_net_stacked_serialnums }},
            {{ ansible_net_serialnum[3:5] | int + 1996 }},
