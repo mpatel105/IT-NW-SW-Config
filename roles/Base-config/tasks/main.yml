@@ -452,7 +452,7 @@
       - aaa new-model
   when: ansible_network_os == 'ios'
   tags:
-#    - config
+    - config
     - radius
 
 - name: Configure SV2-Radius
@@ -464,7 +464,7 @@
     parents: radius server {{ talend_radius_SV2_name }}
   when: ansible_network_os == 'ios'
   tags:
-#    - config
+    - config
     - radius
 
 - name: Configure PA7-Radius
@@ -474,9 +474,10 @@
       - timeout 3
       - key 7 {{ talend_radius_server_key }}
     parents: radius server {{ talend_radius_PA7_name }}
+    before: no radius server SUR-Radius
   when: ansible_network_os == 'ios'
   tags:
-#    - config
+    - config
     - radius
 
 - name: Configure Global-Radius-Servers
@@ -490,7 +491,7 @@
     match: strict
   when: ansible_network_os == 'ios'
   tags:
-#    - config
+    - config
     - radius
 
 - name: Configure Radius Global Config
@@ -504,7 +505,7 @@
       - ip radius source-interface Vlan999
   when: ansible_network_os == 'ios'
   tags:
-#    - config
+    - config
     - radius
 
 - name: Save config
