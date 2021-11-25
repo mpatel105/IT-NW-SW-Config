@@ -3,7 +3,6 @@
 
 - name: IOS get fact
   ios_facts:
-  register: output
   tags:
     - inventory
 
@@ -11,5 +10,46 @@
     msg: "{{ ansible_net_hostname }};{{ ansible_net_model }};{{ ansible_net_serialnum }};{{ ansible_net_version }}"
   when:
     - ansible_network_os == "ios"
+  tags:
+    - debuginventory
+
+- name: clone repository
+  git: >
+    repo=https://{{awx_user_github}}:{{awx_pwd_github}}@github.com/TalendIT/IT-Network-SW-Config.git
+    dest="{{ dest_folder }}"
+    force=yes
+  tags: inventory
+
+- name: cleanup inventory file
+  file:
+    state: absent
+    path: "{{ dest_folder }}/inventory.csv"
+  tags: inventory
+
+- name: create new inventory file
+  file:
+    state: touch
+    path: "{{ dest_folder}}/inventory.csv"
+  tags: inventory
+
+- name: writing to file
+  ansible.builtin.lineinfile:
+    path: "{{ dest_folder}}/inventory.csv"
+    line: "{{ ansible_net_hostname }};{{ ansible_net_model }};{{ ansible_net_serialnum }};{{ ansible_net_version }}"
+    create: yes
+  when:
+    - ansible_network_os == "ios"
+  tags:
+    - inventory
+
+
+- name: push to git
+  shell: |
+    git add .
+    git commit -m "last cleanup date: $(date +"%Y-%m-%d %H:%M:%S")"
+    git push --force --set-upstream origin main
+    exit 0
+  args:
+    chdir: "{{ dest_folder }}"
   tags:
     - inventory
