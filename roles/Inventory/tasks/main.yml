@@ -7,11 +7,11 @@
     - inventory
   when: ansible_network_os == 'ios'
 
-  - name: NXOS get fact
-    nxos_facts:
-    tags:
-      - inventory
-    when: ansible_network_os == 'nxos'
+- name: NXOS get fact
+  nxos_facts:
+  tags:
+    - inventory
+  when: ansible_network_os == 'nxos'
 
 - debug:
     msg: "{{ ansible_net_hostname }};{{ ansible_net_model }};{{ ansible_net_serialnum }};{{ ansible_net_version }}"
