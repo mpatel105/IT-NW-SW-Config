@@ -45,8 +45,8 @@
 - name: push to git
   shell: |
     git add .
-    git commit -m "last cleanup date: $(date +"%Y-%m-%d %H:%M:%S")"
-    git push --force --set-upstream origin main
+    git commit -m "inventory: $(date +"%Y-%m-%d %H:%M:%S")"
+    git push origin master
     exit 0
   args:
     chdir: "{{ dest_folder }}"
