@@ -488,7 +488,7 @@
       - deadtime 5
     parents: aaa group server radius Global-Radius-Servers
     before: no aaa group server radius Global-Radius-Servers
-    match: strict
+    match: exact
   when: ansible_network_os == 'ios'
   tags:
     - config
