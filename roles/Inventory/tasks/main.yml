@@ -1,4 +1,8 @@
 ---
+
+- debug: Ansible version
+    msg: "{{ ansible_version.full }}"
+
 - name: IOS get fact
   ios_facts:
   tags:
@@ -37,7 +41,7 @@
   ansible.builtin.lineinfile:
     path: "{{ dest_folder}}/inventory.csv"
     line: "{{ ansible_net_hostname[:3]|upper }},
-           {{ ansible_net_hostname }}+{{ ansible_loop.index0 }},
+           {{ ansible_net_hostname }}_{{ ansible_loop.index0 }},
            {{ item }},
            {{ ansible_net_stacked_serialnums[ansible_loop.index0] }},
            {{ ansible_net_serialnum[3:5] | int + 1996 }},
