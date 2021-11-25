@@ -36,7 +36,7 @@
 - name: writing to file
   ansible.builtin.lineinfile:
     path: "{{ dest_folder}}/inventory.csv"
-    line: "{{ ansible_net_hostname[:3]|upper }}
+    line: "{{ ansible_net_hostname[:3]|upper }},
            {{ ansible_net_hostname }},
            {{ ansible_net_stacked_models }},
            {{ ansible_net_serialnum }},
