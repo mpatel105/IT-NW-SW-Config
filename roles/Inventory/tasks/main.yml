@@ -40,18 +40,17 @@
 - name: writing to file
   ansible.builtin.lineinfile:
     path: "{{ dest_folder}}/inventory.csv"
-    line: "{{ item }}"
-      # "{{ ansible_net_hostname[:3]|upper }},
-      #     {{ ansible_net_hostname }},
-      #     {{ item }},
-      #     {{ ansible_net_stacked_serialnums }},
-      #     {{ ansible_net_serialnum[3:5] | int + 1996 }},
-      #     {{ansible_net_iostype | default(' ') }},
-      #     {{ ansible_net_version }}"
+    line: "{{ ansible_net_hostname[:3]|upper }},
+           {{ ansible_net_hostname }},
+           {{ item }},
+           {{ ansible_net_stacked_serialnums[ansible_loop.index0] }},
+           {{ ansible_net_serialnum[3:5] | int + 1996 }},
+           {{ansible_net_iostype | default(' ') }},
+           {{ ansible_net_version }}"
     create: yes
-    loop: "{{ ansible_net_stacked_models }}"
-    loop_control:
-      loop_var: ansible_net_stacked_models
+  loop: "{{ ansible_net_stacked_models }}"
+  loop_control:
+    extended: yes
   tags:
     - inventory
 
