@@ -37,8 +37,8 @@
       - exit
   when: ansible_network_os == 'ios'
   tags:
-    - nacglobal
-    - configNAC
+    - NACglobal
+    - NACconfig
 
 - name: IOS get fact
   ios_facts:
@@ -46,9 +46,9 @@
       - 'l2_interfaces'
   register: output
   tags:
-    - nacint
-    - get_fact
-    - configNAC
+    - NACint
+    - NACget_fact
+    - NACconfig
 
 - debug:
     msg: "{{ output }}"
@@ -56,8 +56,8 @@
   when:
     - ansible_network_os == "ios"
   tags:
-    - configNAC
-    - nacint
+    - NACget_fact
+    - NACint
 
 - name: Configure interface for NAC
   ios_config:
@@ -81,5 +81,5 @@
   #  - (item.mode is defined and item.mode == 'access' and (item.access.vlan == 8 or item.access.vlan == 16 or item.access.vlan == 24 or item.access.vlan == 48)
     - (item.access.vlan is defined and (item.access.vlan == 8 or item.access.vlan == 16 or item.access.vlan == 24 or item.access.vlan == 48))
   tags:
-    - nacint
-    - configNAC
+    - NACint
+    - NACconfig

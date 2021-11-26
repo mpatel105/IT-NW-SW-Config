@@ -10,13 +10,14 @@
   tags:
     - config
     - configswitchports
-    - configswitchports2
-    - configswitchports3
-    - get_fact
+    - configswitchports8
+    - configswitchports2448
+    - configswitchports24
+    - configswitchports48
+    - configswitchportswifi
     - get_fact_debug
     - intdescr
     - endusers
-    - wifi
 
 - name: set fact for portfast
   set_fact:
@@ -362,7 +363,7 @@
     - ("Cisco" in item.value[0].platform)
   tags:
     - config
-    - wifi
+    - configswitchportswifi
 
 
 - name: Disable AUX login
@@ -380,7 +381,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - config
-    - aux
+    - disableaux
 
 - name: remove all users except admin
   no_log: true
@@ -416,8 +417,8 @@
       #have to add this value in the vault and remove admin1 its just for testing
   tags:
     - config
-    - addadminuser
-    - adduser
+    - configadminuser
+    - configusers
 
 - name: set multiple users to privilege level 15
   no_log: true
@@ -428,8 +429,8 @@
     state: present
   tags:
     - config
-    - addadminuser
-    - adduserprivilege
+    - configadminuser
+    - configusers
 
 - name: enable secret scrypt
   no_log: true
@@ -443,7 +444,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - config
-    - addadminuser
+    - configadminuser
     - configenable
 
 - name: Configure aaa new-model
