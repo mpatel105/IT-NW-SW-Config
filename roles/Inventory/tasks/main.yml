@@ -34,14 +34,6 @@
     line: Site,Hostname,Model,Serial_Number,Year,OS_Type,OS_Version
     create: yes
 
-#"{{ ansible_net_hostname[:3]|upper }},
-#       {{ ansible_net_hostname }}{% if ansible_loop.index > 1 %}_{{ansible_loop.index}}{% else %}{% endif %},
-#       {{ item }},
-#       {{ ansible_net_stacked_serialnums[ansible_loop.index0] | default(ansible_net_serialnum )}},
-#       {{ ansible_net_stacked_serialnums[ansible_loop.index0][3:5] | default(ansible_net_serialnum)[3:5] | int + 1996 }},
-#       {{ansible_net_iostype | default(' ') }},
-#       {{ ansible_net_version }}"
-
 - name: writing to file IOS
   ansible.builtin.lineinfile:
     path: "{{ dest_folder}}/inventory.csv"
@@ -50,32 +42,15 @@
            {{ item }},
            {{ ansible_net_stacked_serialnums[ansible_loop.index0] | default(ansible_net_serialnum) }},
            {{ ansible_net_stacked_serialnums[ansible_loop.index0][3:5] | default(ansible_net_serialnum[3:5]) | int + 1996 }},
-           {{ansible_net_iostype | default(' ') }},
+           {{ ansible_net_iostype | default('NXOS') }},
            {{ ansible_net_version }}"
     create: yes
   loop: "{{ ansible_net_stacked_models | default ([ansible_net_model]) }}"
   loop_control:
     extended: yes
-#  when: ansible_network_os == 'ios'
   throttle: 1
   tags:
     - inventory
-
-- name: writing to file NXOS
-  ansible.builtin.lineinfile:
-    path: "{{ dest_folder}}/inventory.csv"
-    line: "{{ ansible_net_hostname[:3]|upper }},
-           {{ ansible_net_hostname }},
-           {{ ansible_net_model }},
-           {{ ansible_net_serialnum }},
-           {{ ansible_net_serialnum[3:5] | int + 1996 }},
-           ,
-           {{ ansible_net_version }}"
-    create: yes
-  when: ansible_network_os == 'nxos'
-  throttle: 1
-  tags:
-    - inventory2
 
 - name: push to git
   run_once: true
