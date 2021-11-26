@@ -46,10 +46,10 @@
   ansible.builtin.lineinfile:
     path: "{{ dest_folder}}/inventory.csv"
     line: "{{ ansible_net_hostname[:3]|upper }},
-           {{ ansible_net_hostname }}{% if ansible_loop.index > 1 %}_{{ansible_loop.index}}{% else %}{% endif %},
+           {{ ansible_net_hostname }}{% if ansible_net_stacked_models is defined %}_{{ansible_loop.index}}{% else %}{% endif %},
            {{ item }},
            {{ ansible_net_stacked_serialnums[ansible_loop.index0] | default(ansible_net_serialnum )}},
-           {{ ansible_net_serialnum[3:5] | int + 1996 }},
+           {{ ansible_net_stacked_serialnums[ansible_loop.index0][3:5] | default(ansible_net_serialnum)[3:5] | int + 1996 }},
            {{ansible_net_iostype | default(' ') }},
            {{ ansible_net_version }}"
     create: yes
