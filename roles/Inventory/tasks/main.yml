@@ -45,7 +45,7 @@
            {{ansible_net_iostype | default(' ') }},
            {{ ansible_net_version }}"
     create: yes
-  loop: "{{ ansible_net_stacked_models | default (ansible_net_model)}}"
+  loop: "{{ ansible_net_stacked_models | default ([ansible_net_model])}}"
   loop_control:
     extended: yes
   tags:
