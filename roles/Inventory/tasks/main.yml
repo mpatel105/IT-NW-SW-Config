@@ -56,7 +56,7 @@
   loop: "{{ ansible_net_stacked_models | default ([ansible_net_model]) }}"
   loop_control:
     extended: yes
-  when: ansible_network_os == 'ios'
+#  when: ansible_network_os == 'ios'
   throttle: 1
   tags:
     - inventory
@@ -75,7 +75,7 @@
   when: ansible_network_os == 'nxos'
   throttle: 1
   tags:
-    - inventory
+    - inventory2
 
 - name: push to git
   run_once: true
