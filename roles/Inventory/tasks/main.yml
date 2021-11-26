@@ -57,6 +57,7 @@
   loop_control:
     extended: yes
   when: ansible_network_os == 'ios'
+  throttle: 1
   tags:
     - inventory
 
@@ -72,6 +73,7 @@
            {{ ansible_net_version }}"
     create: yes
   when: ansible_network_os == 'nxos'
+  throttle: 1
   tags:
     - inventory
 
