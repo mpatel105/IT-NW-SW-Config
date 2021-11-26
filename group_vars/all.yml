@@ -37,3 +37,4 @@ vlan_tag_48: VLAN48
 
 model_stp_edge:
   - WS-C2960X-48FPD-L
+  - WS-C3560X-48
