@@ -67,6 +67,6 @@ git clone https://github.com/TalendIT/IT-Network-SW-Config.git
 ansible-playbook playbook.yml -i hosts.ini --extra-vars "devices=RWC_TEST_SWITCH" --tags=banner
 
 
-[awx-templates1]: https://raw.github.com/TalendIT/IT-Network-SW-Config/images/Templates1.png "AWX Template1"
-[awx-templates2]: https://raw.github.com/TalendIT/IT-Network-SW-Config/images/Templates2.png "AWX Template2"
-[awx-templates3]: https://raw.github.com/TalendIT/IT-Network-SW-Config/images/Templates3.png "AWX Template3"
+[awx-templates1]: https://raw.github.com/TalendIT/IT-Network-SW-Config/images/Templates1.png?raw=true "AWX Template1"
+[awx-templates2]: https://raw.github.com/TalendIT/IT-Network-SW-Config/images/Templates2.png?raw=true "AWX Template2"
+[awx-templates3]: https://raw.github.com/TalendIT/IT-Network-SW-Config/images/Templates3.png?raw=true "AWX Template3"
