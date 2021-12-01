@@ -68,5 +68,5 @@ ansible-playbook playbook.yml -i hosts.ini --extra-vars "devices=RWC_TEST_SWITCH
 
 
 [awx-templates1]: images/Templates1.png "AWX Template1"
-[awx-templates2]: https://raw.github.com/TalendIT/IT-Network-SW-Config/images/Templates2.png?raw=true "AWX Template2"
-[awx-templates3]: https://raw.github.com/TalendIT/IT-Network-SW-Config/images/Templates3.png?raw=true "AWX Template3"
+[awx-templates2]: images/Templates2.png "AWX Template2"
+[awx-templates3]: images/Templates3.png "AWX Template3"
