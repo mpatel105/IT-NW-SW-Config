@@ -1,11 +1,13 @@
 # IT-Network-switch-base-config
 
 ## Network ansible playbook
+### Existing roles:
 * Exiting roles:
     * Base-config: deploy base configuration on switches
     * NAC-config: deploy NAC configuration on switches
     * Inventory: Create a inventory.csv file on GIT Repo IT-Network-Scripts
 
+### Available tag for individual task:
 * Available tag for individual task:
     * Base-config:
         * config: deploy base configuration
@@ -40,3 +42,31 @@
         * NACint: deploy NAC interface configuration only
     * Inventory:
         * inventory: Create the inventory.csv file on GIT repo IT-Network-Scripts
+
+## How to run from AWX
+
+#### Go to Templates
+![awx-templates][awx-templates1]
+
+#### Go to the template you want to run, for example IT-Network-SW-Config-Inventory
+![awx-templates][awx-templates2]
+
+#### Modify the job
+![awx-templates][awx-templates3]
+
+## How to run from CLI
+
+This playbook is meant to be run from AWX only. Some AWX variables are defined.
+To run the playbook from local repo :
+
+* git clone
+git clone https://github.com/TalendIT/IT-Network-SW-Config.git
+
+* example to run for devices RWC_TEST_SWITCH and task "banner" :
+
+ansible-playbook playbook.yml -i hosts.ini --extra-vars "devices=RWC_TEST_SWITCH" --tags=banner
+
+
+[awx-templates1]: https://raw.githubusercontent.com/TalendIT/IT-Network-SW-Config//images/Templates1.png "AWX Template3"
+[awx-templates2]: https://raw.githubusercontent.com/TalendIT/IT-Network-SW-Config//images/Templates2.png "AWX Template2"
+[awx-templates3]: https://raw.githubusercontent.com/TalendIT/IT-Network-SW-Config//images/Templates3.png "AWX Template3"
