@@ -45,14 +45,20 @@
 
 ## How to run from AWX
 
-#### Go to Templates
+* Go to Templates
 ![awx-templates][awx-templates1]
 
-#### Go to the template you want to run, for example IT-Network-SW-Config-Inventory
+* Go to the template you want to run, for example IT-Network-SW-Config-Inventory
 ![awx-templates][awx-templates2]
 
-#### Modify the job
+* Modify the job at your liking:
 ![awx-templates][awx-templates3]
+
+* change the task tags you want to run:
+![awx-templates][awx-templates4]
+
+* change the devices in yaml format:
+![awx-templates][awx-templates5]
 
 ## How to run from CLI
 
@@ -70,3 +76,5 @@ ansible-playbook playbook.yml -i hosts.ini --extra-vars "devices=RWC_TEST_SWITCH
 [awx-templates1]: images/Templates1.png "AWX Template1"
 [awx-templates2]: images/Templates2.png "AWX Template2"
 [awx-templates3]: images/Templates3.png "AWX Template3"
+[awx-templates4]: images/Templates4.png "AWX Template4"
+[awx-templates5]: images/Templates5.png "AWX Template5"
