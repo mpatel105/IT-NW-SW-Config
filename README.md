@@ -45,19 +45,24 @@
 
 ## How to run from AWX
 
-* Go to Templates
+* Go to Templates:
+
 ![awx-templates][awx-templates1]
 
-* Go to the template you want to run, for example IT-Network-SW-Config-Inventory
+* Click on the template you want to run, for example IT-Network-SW-Config-Inventory:
+
 ![awx-templates][awx-templates2]
 
 * Modify the job at your liking:
+
 ![awx-templates][awx-templates3]
 
 * change the task tags you want to run:
+
 ![awx-templates][awx-templates4]
 
 * change the devices in yaml format:
+
 ![awx-templates][awx-templates5]
 
 ## How to run from CLI
