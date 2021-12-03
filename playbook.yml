@@ -4,3 +4,4 @@
     - { role: Base-config, tags: Baseconfig }
     - { role: NAC-config, tags: NACconfig }
     - { role: Inventory, tags: inventory }
+    - { role: copy-images, tags: copy }

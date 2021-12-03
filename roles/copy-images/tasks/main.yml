@@ -1,0 +1,27 @@
+---
+
+- name: Check current version
+  ios_facts:
+  - debug:
+      msg:
+        - "Current version is {{ ansible_net_version }}"
+        - "Upgrade image is {{ upgrade_ios_version }}"
+  - debug:
+      msg:
+        - "Image is not compliant and will be upgraded"
+    when: ansible_net_version != upgrade_ios_version
+  tags:
+    - copy-test
+    - copy
+
+- name: Copy IOS image using SCP
+   cli_command:
+     command: "copy scp://{{scp_server_username}}@{{scp_region_server}}//root/networkscript/ios-image/{{ new_ios_image }} flash:"
+     check_all: True
+     prompt:
+      - 'Destination filename'
+      - 'Password:'
+     answer:
+      - '{{new_ios_image}}'
+      - '{{scp_server_password}}'
+   vars:

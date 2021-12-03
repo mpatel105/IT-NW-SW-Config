@@ -1,6 +1,5 @@
 # IT-Network-switch-base-config
 
-## Network ansible playbook
 ### Existing roles:
 * Exiting roles:
     * Base-config: deploy base configuration on switches
@@ -70,10 +69,11 @@
 This playbook is meant to be run from AWX only. Some AWX variables are defined.
 To run the playbook from local repo :
 
-* git clone
+* git clone:
+
 git clone https://github.com/TalendIT/IT-Network-SW-Config.git
 
-* example to run for devices RWC_TEST_SWITCH and task "banner" :
+* example to run for devices RWC_TEST_SWITCH and task "banner":
 
 ansible-playbook playbook.yml -i hosts.ini --extra-vars "devices=RWC_TEST_SWITCH" --tags=banner
 
