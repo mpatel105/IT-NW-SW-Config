@@ -1,6 +1,6 @@
 ---
 # vars file for copy-images
-upgrade_ios_version: 12.2(55)SE12
+upgrade_ios_version: 16.12.05b
 new_ios_image: cat3k_caa-universalk9.16.12.05b.SPA.bin
 new_ios_md5_value: 9048edf018eb03cff526ad3c3e4bd9de
 

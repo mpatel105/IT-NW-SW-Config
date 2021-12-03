@@ -7,18 +7,29 @@
     - copy
 
 - debug:
-  msg: "Current version is {{ ansible_net_version }}"
+    msg: "Current version is {{ ansible_net_version }}"
   tags:
     - copy-test
     - copy
 
 - debug:
-  msg:
+    msg:
     - "Image {{ ansible_net_version }} is not compliant and will be upgraded"
   when: ansible_net_version != upgrade_ios_version
   tags:
     - copy-test
     - copy
+
+- name: cleanup switch flash
+  cli_command:
+    command: "request platform software package clean"
+    check_all: True
+    prompt:
+      - 'Do you want to proceed'
+    answer:
+      - 'y'
+  tags:
+    - copy-clean
 
 - name: Copy IOS image using SCP
   cli_command:
@@ -30,3 +41,5 @@
     answer:
       - '{{new_ios_image}}'
       - '{{scp_server_password}}'
+  tags:
+    - copy-copy
