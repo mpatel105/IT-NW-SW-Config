@@ -15,13 +15,12 @@
     - copy
 
 - name: Copy IOS image using SCP
-   cli_command:
-     command: "copy scp://{{scp_server_username}}@{{scp_region_server}}//root/networkscript/ios-image/{{ new_ios_image }} flash:"
-     check_all: True
-     prompt:
+  cli_command:
+    command: "copy scp://{{scp_server_username}}@{{scp_region_server}}//root/networkscript/ios-image/{{ new_ios_image }} flash:"
+    check_all: True
+    prompt:
       - 'Destination filename'
       - 'Password:'
-     answer:
+    answer:
       - '{{new_ios_image}}'
       - '{{scp_server_password}}'
-   vars:
