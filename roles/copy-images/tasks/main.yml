@@ -157,11 +157,6 @@
     - copy-test
     - copy
 
-- debug:
-    msg: "{{ md5_result }}"
-  tags:
-    - copy-test
-
 - block:
     - name: test if MD5 is correct
       vars:
