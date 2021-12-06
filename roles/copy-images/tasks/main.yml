@@ -8,10 +8,10 @@
 
 - name: define image to install
   set_fact:
-    new_ios_image: "{% if '3650' or '3850' in ansible_net_model %}{{ cat3k_image }}
-                    {% else if '2960' in ansible_net_model %}{{ cat2960_image }}
-                    {% else if '9200' in ansible_net_model %}{{ cat9200_image }}
-                    {% else if '3560' in ansible_net_model %}{{ cat3560_image }}
+    new_ios_image: "{% if 3850' in ansible_net_model %}{{ cat3k_image }}
+                    {% elif '2960' in ansible_net_model %}{{ cat2960_image }}
+                    {% elif '9200' in ansible_net_model %}{{ cat9200_image }}
+                    {% elif '3560' in ansible_net_model %}{{ cat3560_image }}
                     {% else %}unknown model
                     {% endif %}"
     ios_md5_value: "{% if '3650' or '3850' in ansible_net_model %}{{ cat3k_md5_value }}
