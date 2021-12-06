@@ -45,6 +45,7 @@
       Current version: {{ ansible_net_version }}
       Model: {{ ansible_net_model }}
       New Image: {{ new_ios_image }}
+      New Version: {{ new_ios_version }}
   debug:
     msg: "{{ msg.split('\n') }}"
   tags:
