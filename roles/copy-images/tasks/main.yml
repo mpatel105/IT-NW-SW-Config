@@ -32,7 +32,7 @@
                     {% elif '9200' in ansible_net_model %}{{ cat9200_version }}
                     {% elif '3560' in ansible_net_model %}{{ cat3560_version }}
                     {% else %}
-                    {% endif %}"
+                    {% endif %}"|trim
   when: ansible_network_os == 'ios'
   tags:
     - copy-test
