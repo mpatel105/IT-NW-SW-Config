@@ -5,6 +5,7 @@
   tags:
     - copy-test
     - copy-debug
+    - copy-md5
     - copy
 
 - debug:
@@ -36,6 +37,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - copy-test
+    - copy-md5
     - copy
 
 - debug:
