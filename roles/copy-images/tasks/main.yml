@@ -6,19 +6,6 @@
     - copy-test
     - copy
 
-- name: show device details
-  vars:
-    msg: |
-      Device: {{ inventory_hostname }}
-      Current version: {{ ansible_net_version }}
-      Model: {{ ansible_net_model }}
-  debug:
-    msg: "{{ msg.split('\n') }}"
-  tags:
-    - copy-test
-    - copy
-
-
 - name: define image to install
   set_fact:
     new_ios_image: "{% if '3650' or '3850' in ansible_net_model %}{{ cat3k_image }}
@@ -43,6 +30,21 @@
   tags:
     - copy-test
     - copy
+
+- name: show device details
+  vars:
+    msg: |
+      Device: {{ inventory_hostname }}
+      Current version: {{ ansible_net_version }}
+      Model: {{ ansible_net_model }}
+      New Image: {{ new_ios_image }}
+  debug:
+    msg: "{{ msg.split('\n') }}"
+  tags:
+    - copy-test
+    - copy
+
+
 
 - block:
     - name: test if current installed image is compliant
