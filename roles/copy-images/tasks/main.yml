@@ -4,8 +4,6 @@
   ios_facts:
   tags:
     - copy-test
-    - copy-debug
-    - copy-md5
     - copy
 
 - debug:
@@ -37,7 +35,6 @@
   when: ansible_network_os == 'ios'
   tags:
     - copy-test
-    - copy-md5
     - copy
 
 - debug:
@@ -60,7 +57,6 @@
     - meta: end_host
   when: ansible_net_version in new_ios_image
   tags:
-    - copy-debug
     - copy-test
     - copy
 
@@ -94,7 +90,7 @@
   when: ansible_network_os == 'ios' and ('3650' in ansible_net_model or '3850' in ansible_net_model)
   tags:
     - copy-clean
-#    - copy-test
+    - copy-test
     - copy
 
 - name: cleanup switch flash for C9200
@@ -124,7 +120,6 @@
     - meta: end_host
   when: ansible_net_filesystems_info[ansible_net_filesystems[0]]['spacefree_kb'] < ( space_needed | float )
   tags:
-    - copy-debug
     - copy-test
     - copy
 
@@ -153,7 +148,6 @@
   ignore_errors: yes
   when: ansible_network_os == 'ios'
   tags:
-    - copy-md5
     - copy-test
     - copy
 
@@ -163,12 +157,11 @@
         msg: |
           Task end for Device : {{ inventory_hostname }}
           IOS to install : {{ new_ios_image }}
-          MD5 error !!
+          MD5 error after copy !
       debug:
         msg: "{{ msg.split('\n') }}"
     - meta: end_host
   when: ansible_network_os == 'ios' and md5_result.msg is defined and 'Error' in md5_result.msg
   tags:
-    - copy-md5
     - copy-test
     - copy
