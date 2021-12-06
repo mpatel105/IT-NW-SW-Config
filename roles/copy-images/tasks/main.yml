@@ -148,15 +148,25 @@
   register: md5_result
   vars:
     ansible_command_timeout: 600
+  ignore_errors: yes
   when: ansible_network_os == 'ios'
   tags:
+    - copy-md5
     - copy-test
     - copy
 
-- name: end host if MD5 is wrong
-  meta: end_host
+- block:
+    - name: test if MD5 is correct
+      vars:
+        msg: |
+          Task end for Device : {{ inventory_hostname }}
+          IOS to install : {{ new_ios_image }}
+          MD5 error !!
+      debug:
+        msg: "{{ msg.split('\n') }}"
+    - meta: end_host
   when: ansible_network_os == 'ios' and 'Verified' not in md5_result.stdout[0]
-  ignore_errors: yes
   tags:
+    - copy-md5
     - copy-test
     - copy
