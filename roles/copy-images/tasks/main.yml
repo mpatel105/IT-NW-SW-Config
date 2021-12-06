@@ -4,6 +4,7 @@
   ios_facts:
   tags:
     - copy-test
+    - copy-debug
     - copy
 
 - debug:
@@ -12,28 +13,122 @@
     - copy-test
     - copy
 
-- debug:
-    msg:
-    - "Image {{ ansible_net_version }} is not compliant and will be upgraded"
-  when: ansible_net_version != upgrade_ios_version
+- name: define image to install
+  set_fact:
+    new_ios_image: "{% if '3650' or '3850' in ansible_net_model %}{{ cat3k_image }}
+                    {% elif '2960' in ansible_net_model %}{{ cat2960_image }}
+                    {% elif '9200' in ansible_net_model %}{{ cat9200_image }}
+                    {% elif '3560' in ansible_net_model %}{{ cat3560_image }}
+                    {% else %}
+                    {% endif %}"
+    ios_md5_value: "{% if '3650' or '3850' in ansible_net_model %}{{ cat3k_md5_value }}
+                    {% elif '2960' in ansible_net_model %}{{ cat2960_md5_value }}
+                    {% elif '9200' in ansible_net_model %}{{ cat9200_md5_value }}
+                    {% elif '3560' in ansible_net_model %}{{ cat3560_md5_value }}
+                    {% else %}
+                    {% endif %}"
+    space_needed:  "{% if '3650' or '3850' in ansible_net_model %}{{ cat3k_space }}
+                    {% elif '2960' in ansible_net_model %}{{ cat2960_space }}
+                    {% elif '9200' in ansible_net_model %}{{ cat9200_space }}
+                    {% elif '3560' in ansible_net_model %}{{ cat3560_space }}
+                    {% else %}
+                    {% endif %}"
+  when: ansible_network_os == 'ios'
   tags:
     - copy-test
     - copy
 
-- name: cleanup switch flash
+- debug:
+    msg:
+    - "Image {{ ansible_net_version }} is not compliant and will be upgraded"
+  when: ansible_net_version not in new_ios_image
+  tags:
+    - copy-test
+    - copy
+
+- block:
+    - name: test if current installed image is compliant
+      vars:
+        msg: |
+          Task end for Device : {{ inventory_hostname }}
+          IOS currently installed : {{ ansible_net_version }}
+          IOS to install : {{ new_ios_image }}
+      debug:
+        msg: "{{ msg.split('\n') }}"
+    - meta: end_host
+  when: ansible_net_version in new_ios_image
+  tags:
+    - copy-debug
+    - copy-test
+    - copy
+
+- debug:
+    msg: "IOS Image to install on {{ inventory_hostname }}: {{ new_ios_image }} from {{scp_region_server}}"
+  tags:
+    - copy-test
+    - copy
+
+- name: increase TCP and SSH window
+  ios_config:
+    lines:
+      - ip tcp window-size 65536
+      - ip ssh window-size 65536
+    save_when: modified
+  when: ansible_network_os == 'ios'
+  tags:
+    - copy-window
+    - copy-test
+    - copy
+
+- name: cleanup switch flash for C3650/C3850
   cli_command:
     command: "request platform software package clean"
-    check_all: True
     prompt:
       - 'Do you want to proceed'
     answer:
       - 'y'
+  vars:
+    ansible_command_timeout: 120
+  when: ansible_network_os == 'ios' and ('3650' in ansible_net_model or '3850' in ansible_net_model)
   tags:
     - copy-clean
+    - copy-test
+    - copy
+
+- name: cleanup switch flash for C9200
+  cli_command:
+    command: "install remove inactive"
+    prompt:
+      - 'Do you want to remove the above files'
+    answer:
+      - 'y'
+  vars:
+    ansible_command_timeout: 120
+  when: ansible_network_os == 'ios' and '9200' in ansible_net_model
+  tags:
+    - copy-clean
+    - copy-test
+    - copy
+
+- block:
+    - name: Test if enough space on device
+      vars:
+        msg: |
+          Task end for Device : {{ inventory_hostname }}
+          Not enough space : {{ ansible_net_filesystems_info[ansible_net_filesystems[0]]['spacefree_kb'] }}
+          Space needed: {{ space_needed }}
+      debug:
+        msg: "{{ msg.split('\n') }}"
+    - meta: end_host
+  when: ansible_net_filesystems_info[ansible_net_filesystems[0]]['spacefree_kb'] < ( space_needed | float )
+  tags:
+    - copy-debug
+    - copy-test
+    - copy
 
 - name: Copy IOS image using SCP
   cli_command:
-    command: "copy scp://{{scp_server_username}}@{{scp_region_server}}//root/networkscript/ios-image/{{ new_ios_image }} flash:"
+    command: "copy scp://{{scp_server_username}}@{{scp_region_server}}:/images/{{ new_ios_image }} flash:"
     check_all: True
     prompt:
       - 'Destination filename'
@@ -41,5 +136,27 @@
     answer:
       - '{{new_ios_image}}'
       - '{{scp_server_password}}'
+  vars:
+    ansible_command_timeout: 7200
+  when: ansible_network_os == 'ios'
   tags:
-    - copy-copy
+    - copy
+
+- name: IOS Image MD5 hash check
+  ios_command:
+    commands: 'verify /md5 flash:{{new_ios_image}} {{ios_md5_value}}'
+  register: md5_result
+  vars:
+    ansible_command_timeout: 600
+  when: ansible_network_os == 'ios'
+  tags:
+    - copy-test
+    - copy
+
+- name: end host if MD5 is wrong
+  meta: end_host
+  when: ansible_network_os == 'ios' and 'Verified' not in md5_result.stdout[0]
+  ignore_errors: yes
+  tags:
+    - copy-test
+    - copy
