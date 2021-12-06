@@ -1,7 +1,8 @@
 ---
 
-- name: Check current version
+- name: Getting IOS facts
   ios_facts:
+  when: ansible_network_os == 'ios'
   tags:
     - copy-test
     - copy
@@ -12,7 +13,6 @@
                     {% elif '2960' in ansible_net_model %}{{ cat2960_image }}
                     {% elif '9200' in ansible_net_model %}{{ cat9200_image }}
                     {% elif '3560' in ansible_net_model %}{{ cat3560_image }}
-                    {% else %}unknown model
                     {% endif %}"
     ios_md5_value: "{% if '3650' or '3850' in ansible_net_model %}{{ cat3k_md5_value }}
                     {% elif '2960' in ansible_net_model %}{{ cat2960_md5_value }}
