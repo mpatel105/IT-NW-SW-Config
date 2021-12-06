@@ -56,7 +56,7 @@
       debug:
         msg: "{{ msg.split('\n') }}"
     - meta: end_host
-  when: ansible_network_os == 'ios'
+  when: new_ios_image == 'unknown'
   tags:
     - copy-test
     - copy
