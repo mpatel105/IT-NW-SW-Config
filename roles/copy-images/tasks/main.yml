@@ -9,22 +9,28 @@
 
 - name: define image to install
   set_fact:
-    new_ios_image: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3k_image }}
+    new_ios_image: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_image }}
                     {% elif '2960' in ansible_net_model %}{{ cat2960_image }}
                     {% elif '9200' in ansible_net_model %}{{ cat9200_image }}
                     {% elif '3560' in ansible_net_model %}{{ cat3560_image }}
                     {% else %}unknown
                     {% endif %}"
-    ios_md5_value: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3k_md5_value }}
+    ios_md5_value: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_md5_value }}
                     {% elif '2960' in ansible_net_model %}{{ cat2960_md5_value }}
                     {% elif '9200' in ansible_net_model %}{{ cat9200_md5_value }}
                     {% elif '3560' in ansible_net_model %}{{ cat3560_md5_value }}
                     {% else %}
                     {% endif %}"
-    space_needed:  "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3k_space }}
+    space_needed:  "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_space }}
                     {% elif '2960' in ansible_net_model %}{{ cat2960_space }}
                     {% elif '9200' in ansible_net_model %}{{ cat9200_space }}
                     {% elif '3560' in ansible_net_model %}{{ cat3560_space }}
+                    {% else %}
+                    {% endif %}"
+    new_os_version: {% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_version }}
+                    {% elif '2960' in ansible_net_model %}{{ cat2960_version }}
+                    {% elif '9200' in ansible_net_model %}{{ cat9200_version }}
+                    {% elif '3560' in ansible_net_model %}{{ cat3560_version }}
                     {% else %}
                     {% endif %}"
   when: ansible_network_os == 'ios'
@@ -72,7 +78,7 @@
       debug:
         msg: "{{ msg.split('\n') }}"
     - meta: end_host
-  when: ansible_net_version in new_ios_image
+  when: ansible_net_version == new_os_version
   tags:
     - copy-test
     - copy
@@ -80,7 +86,7 @@
 - debug:
     msg:
       - "Image {{ ansible_net_version }} is not compliant and will be upgraded"
-  when: ansible_net_version not in new_ios_image
+  when: ansible_net_version != new_os_version
   tags:
     - copy-test
     - copy
@@ -174,7 +180,6 @@
   ignore_errors: yes
   when: ansible_network_os == 'ios'
   tags:
-    - copy-test
     - copy
 
 - block:
@@ -189,5 +194,4 @@
     - meta: end_host
   when: ansible_network_os == 'ios' and md5_result.msg is defined and 'Error' in md5_result.msg
   tags:
-    - copy-test
     - copy
