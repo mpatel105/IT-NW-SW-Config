@@ -59,9 +59,9 @@
     - copy-test
     - copy
 
- debug:
+- debug:
     msg:
-    - "Image {{ ansible_net_version }} is not compliant and will be upgraded"
+      - "Image {{ ansible_net_version }} is not compliant and will be upgraded"
   when: ansible_net_version not in new_ios_image
   tags:
     - copy-test
