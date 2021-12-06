@@ -6,11 +6,18 @@
     - copy-test
     - copy
 
-- debug:
-    msg: "Current version is {{ ansible_net_version }}"
+- name: show device details
+  vars:
+    msg: |
+      Device: {{ inventory_hostname }}
+      Current version: {{ ansible_net_version }}
+      Model: {{ ansible_net_model }}
+  debug:
+    msg: "{{ msg.split('\n') }}"
   tags:
     - copy-test
     - copy
+
 
 - name: define image to install
   set_fact:
@@ -37,14 +44,6 @@
     - copy-test
     - copy
 
-- debug:
-    msg:
-    - "Image {{ ansible_net_version }} is not compliant and will be upgraded"
-  when: ansible_net_version not in new_ios_image
-  tags:
-    - copy-test
-    - copy
-
 - block:
     - name: test if current installed image is compliant
       vars:
@@ -59,6 +58,15 @@
   tags:
     - copy-test
     - copy
+
+ debug:
+    msg:
+    - "Image {{ ansible_net_version }} is not compliant and will be upgraded"
+  when: ansible_net_version not in new_ios_image
+  tags:
+    - copy-test
+    - copy
+
 
 - debug:
     msg: "IOS Image to install on {{ inventory_hostname }}: {{ new_ios_image }} from {{scp_region_server}}"
