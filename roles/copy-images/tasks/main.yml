@@ -94,7 +94,7 @@
   when: ansible_network_os == 'ios' and ('3650' in ansible_net_model or '3850' in ansible_net_model)
   tags:
     - copy-clean
-    - copy-test
+#    - copy-test
     - copy
 
 - name: cleanup switch flash for C9200
