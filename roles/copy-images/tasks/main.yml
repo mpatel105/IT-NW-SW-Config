@@ -167,7 +167,7 @@
       debug:
         msg: "{{ msg.split('\n') }}"
     - meta: end_host
-  when: ansible_network_os == 'ios' and md5_result.stdout is defined and 'Verified' not in md5_result.stdout[0]
+  when: ansible_network_os == 'ios' and md5_result.msg is defined and 'Error' in md5_result.msg
   tags:
     - copy-md5
     - copy-test
