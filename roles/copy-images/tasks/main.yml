@@ -9,19 +9,19 @@
 
 - name: define image to install
   set_fact:
-    new_ios_image: "{% if '3850' in ansible_net_model %}{{ cat3k_image }}
+    new_ios_image: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3k_image }}
                     {% elif '2960' in ansible_net_model %}{{ cat2960_image }}
                     {% elif '9200' in ansible_net_model %}{{ cat9200_image }}
                     {% elif '3560' in ansible_net_model %}{{ cat3560_image }}
                     {% else %}unknown
                     {% endif %}"
-    ios_md5_value: "{% if '3650' or '3850' in ansible_net_model %}{{ cat3k_md5_value }}
+    ios_md5_value: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3k_md5_value }}
                     {% elif '2960' in ansible_net_model %}{{ cat2960_md5_value }}
                     {% elif '9200' in ansible_net_model %}{{ cat9200_md5_value }}
                     {% elif '3560' in ansible_net_model %}{{ cat3560_md5_value }}
                     {% else %}
                     {% endif %}"
-    space_needed:  "{% if '3650' or '3850' in ansible_net_model %}{{ cat3k_space }}
+    space_needed:  "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3k_space }}
                     {% elif '2960' in ansible_net_model %}{{ cat2960_space }}
                     {% elif '9200' in ansible_net_model %}{{ cat9200_space }}
                     {% elif '3560' in ansible_net_model %}{{ cat3560_space }}
