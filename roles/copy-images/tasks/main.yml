@@ -27,7 +27,7 @@
                     {% elif '3560' in ansible_net_model %}{{ cat3560_space }}
                     {% else %}
                     {% endif %}"
-    new_os_version: {% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_version }}
+    new_ios_version: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_version }}
                     {% elif '2960' in ansible_net_model %}{{ cat2960_version }}
                     {% elif '9200' in ansible_net_model %}{{ cat9200_version }}
                     {% elif '3560' in ansible_net_model %}{{ cat3560_version }}
@@ -78,7 +78,7 @@
       debug:
         msg: "{{ msg.split('\n') }}"
     - meta: end_host
-  when: ansible_net_version == new_os_version
+  when: ansible_net_version == new_ios_version
   tags:
     - copy-test
     - copy
@@ -86,7 +86,7 @@
 - debug:
     msg:
       - "Image {{ ansible_net_version }} is not compliant and will be upgraded"
-  when: ansible_net_version != new_os_version
+  when: ansible_net_version != new_ios_version
   tags:
     - copy-test
     - copy
