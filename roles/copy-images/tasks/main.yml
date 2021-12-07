@@ -189,7 +189,7 @@
 - name: clear SSH hosts on NXOS Devices
   nxos_command:
     commands: "clear ssh hosts"
-  when: ansible_network_os == 'ios'
+  when: ansible_network_os == 'nxos'
   tags:
     - copy
 
@@ -204,14 +204,14 @@
       - 'Are you sure you want to continue connecting'
       - 'password'
     answer:
-      - 'images/{{new_ios_image}}'
+      - 'images/{{new_nxos_image}}'
       - '{{scp_region_server}}'
       - '{{scp_server_username}}'
       - 'yes'
       - '{{scp_server_password}}'
   vars:
     ansible_command_timeout: 7200
-  when: ansible_network_os == 'ios'
+  when: ansible_network_os == 'nxos'
   tags:
     - copy
 
