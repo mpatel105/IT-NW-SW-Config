@@ -189,11 +189,11 @@
 - name: Copy IOS image using SCP from device
   cisco.nxos.nxos_file_copy:
     file_pull: true
-    local_file: {{ new_nxos_image }}
-    remote_file: images/{{ new_nxos_image }}
-    remote_scp_server: {{scp_region_server}}
-    remote_scp_server_user: {{scp_server_username}}
-    remote_scp_server_password: {{scp_server_password}}
+    local_file: "{{ new_nxos_image }}"
+    remote_file: "images/{{ new_nxos_image }}"
+    remote_scp_server: "{{scp_region_server}}"
+    remote_scp_server_user: "{{scp_server_username}}"
+    remote_scp_server_password: "{{scp_server_password}}"
     timeout: 3600
   when: ansible_network_os == 'nxos'
   tags:
@@ -201,7 +201,7 @@
 
 - name: NXOS Image MD5 hash check
   nxos_command:
-    commands: 'show file bootflash:{{ new_nxos_image }} md5sum'
+    commands: "show file bootflash:{{ new_nxos_image }} md5sum"
   register: nxos_md5_result
   vars:
     ansible_command_timeout: 180
