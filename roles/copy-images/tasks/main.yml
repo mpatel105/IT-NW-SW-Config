@@ -199,15 +199,15 @@
   tags:
     - copy
 
- - name: NXOS Image MD5 hash check
-   nxos_command:
-     commands: 'show file bootflash:{{ new_nxos_image }} md5sum'
-   register: nxos_md5_result
-   vars:
-     ansible_command_timeout: 180
-   when: ansible_network_os == 'nxos'
-   tags:
-     - copy
+- name: NXOS Image MD5 hash check
+  nxos_command:
+    commands: 'show file bootflash:{{ new_nxos_image }} md5sum'
+  register: nxos_md5_result
+  vars:
+    ansible_command_timeout: 180
+  when: ansible_network_os == 'nxos'
+  tags:
+    - copy
 
 - block:
     - name: test if MD5 is correct
