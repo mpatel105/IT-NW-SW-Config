@@ -1,5 +1,8 @@
 ---
 
+##############################################################################
+##### IOS
+
 - name: Getting IOS facts
   ios_facts:
   when: ansible_network_os == 'ios'
@@ -28,6 +31,7 @@
       New Version: {{ new_ios_version }}
   debug:
     msg: "{{ msg.split('\n') }}"
+  when: ansible_network_os == 'ios'
   tags:
     - copy-test
     - copy
@@ -43,7 +47,7 @@
       debug:
         msg: "{{ msg.split('\n') }}"
     - meta: end_host
-  when: new_ios_image == 'unknown'
+  when: ansible_network_os == 'ios' and new_ios_image == 'unknown'
   tags:
     - copy-test
     - copy
@@ -55,11 +59,11 @@
         msg: |-
           Task end for Device : {{ inventory_hostname }}
           IOS currently installed : {{ ansible_net_version }}
-          IOS to install : {{ new_ios_image }}
+          IOS to install : {{ new_ios_version }}
       debug:
         msg: "{{ msg.split('\n') }}"
     - meta: end_host
-  when: ansible_net_version == new_ios_version
+  when: ansible_network_os == 'ios' and ansible_net_version == new_ios_version
   tags:
     - copy-test
     - copy
@@ -67,7 +71,7 @@
 - debug:
     msg:
       - "Image {{ ansible_net_version }} is not compliant and will be upgraded"
-  when: ansible_net_version != new_ios_version
+  when: ansible_network_os == 'ios' and ansible_net_version != new_ios_version
   tags:
     - copy-test
     - copy
@@ -75,6 +79,7 @@
 
 - debug:
     msg: "IOS Image to install on {{ inventory_hostname }}: {{ new_ios_image }} from {{scp_region_server}}"
+  when: ansible_network_os == 'ios'
   tags:
     - copy-test
     - copy
@@ -131,7 +136,7 @@
       debug:
         msg: "{{ msg.split('\n') }}"
     - meta: end_host
-  when: ansible_net_filesystems_info[ansible_net_filesystems[0]]['spacefree_kb'] < ( space_needed | float )
+  when: ansible_network_os == 'ios' and ansible_net_filesystems_info[ansible_net_filesystems[0]]['spacefree_kb'] < ( space_needed | float )
   tags:
     - copy-test
     - copy
@@ -155,9 +160,9 @@
 - name: IOS Image MD5 hash check
   ios_command:
     commands: 'verify /md5 flash:{{new_ios_image}} {{ios_md5_value}}'
-  register: md5_result
+  register: ios_md5_result
   vars:
-    ansible_command_timeout: 600
+    ansible_command_timeout: 300
   ignore_errors: yes
   when: ansible_network_os == 'ios'
   tags:
@@ -173,6 +178,48 @@
       debug:
         msg: "{{ msg.split('\n') }}"
     - meta: end_host
-  when: ansible_network_os == 'ios' and md5_result.msg is defined and 'Error' in md5_result.msg
+  when: ansible_network_os == 'ios' and ios_md5_result.msg is defined and 'Error' in ios_md5_result.msg
+  tags:
+    - copy
+
+
+##############################################################################
+##### NXOS
+
+- name: Copy IOS image using SCP from device
+  cisco.nxos.nxos_file_copy:
+    file_pull: true
+    local_file: {{ new_nxos_image }}
+    remote_file: images/
+    remote_scp_server: {{scp_region_server}}
+    remote_scp_server_user: {{scp_server_username}}
+    remote_scp_server_password: {{scp_server_password}}
+    timeout: 3600
+  when: ansible_network_os == 'nxos'
+  tags:
+    - copy
+
+ - name: NXOS Image MD5 hash check
+   nxos_command:
+     commands: 'show file bootflash:{{ new_nxos_image }} md5sum'
+   register: nxos_md5_result
+   vars:
+     ansible_command_timeout: 180
+   when: ansible_network_os == 'nxos'
+   tags:
+     - copy
+
+- block:
+    - name: test if MD5 is correct
+      vars:
+        msg: |
+          Task end for Device : {{ inventory_hostname }}
+          OS to install : {{ new_ios_image }}
+          MD5 error after copy !
+      debug:
+        msg: "{{ msg.split('\n') }}"
+    - meta: end_host
+  ignore_errors: yes
+  when: ansible_network_os == 'nxos' and new_nxos_md5_value != nxos_md5_result.stdout[0]
   tags:
     - copy
