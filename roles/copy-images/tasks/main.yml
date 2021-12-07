@@ -186,8 +186,8 @@
 ##############################################################################
 ##### NXOS
 
-- name: Copy IOS image using SCP from device
-  cisco.nxos.nxos_file_copy:
+- name: Copy NXOS image using SCP from device
+  nxos_file_copy:
     file_pull: true
     local_file: "{{ new_nxos_image }}"
     remote_file: "images/{{ new_nxos_image }}"
@@ -210,7 +210,7 @@
     - copy
 
 - block:
-    - name: test if MD5 is correct
+    - name: NXOS test if MD5 is correct
       vars:
         msg: |
           Task end for Device : {{ inventory_hostname }}
