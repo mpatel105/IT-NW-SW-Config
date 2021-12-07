@@ -182,6 +182,13 @@
   tags:
     - copy
 
+- debug:
+    msg: "MD5 check Verified successfully"
+  when: ansible_network_os == 'ios'
+  tags:
+    - copy-test
+    - copy
+
 
 ##############################################################################
 ##### NXOS
@@ -210,7 +217,7 @@
       - 'yes'
       - '{{scp_server_password}}'
   vars:
-    ansible_command_timeout: 7200
+    ansible_command_timeout: 21600
   when: ansible_network_os == 'nxos'
   tags:
     - copy
