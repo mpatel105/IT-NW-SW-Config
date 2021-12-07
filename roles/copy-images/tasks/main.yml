@@ -186,18 +186,35 @@
 ##############################################################################
 ##### NXOS
 
-- name: Copy NXOS image using SCP from device
-  nxos_file_copy:
-    file_pull: true
-    local_file: "{{ new_nxos_image }}"
-    remote_file: "images/{{ new_nxos_image }}"
-    remote_scp_server: "{{scp_region_server}}"
-    remote_scp_server_user: "{{scp_server_username}}"
-    remote_scp_server_password: "{{scp_server_password}}"
-    timeout: 3600
-  when: ansible_network_os == 'nxos'
+- name: clear SSH hosts on NXOS Devices
+  nxos_command:
+    commands: "clear ssh hosts"
+  when: ansible_network_os == 'ios'
   tags:
     - copy
+
+- name: Copy NXOS image using SCP
+  cli_command:
+    command: "copy scp: bootflash: vrf management"
+    check_all: True
+    prompt:
+      - 'Enter source filename:'
+      - 'Enter hostname for the scp server:'
+      - 'Enter username:'
+      - 'Are you sure you want to continue connecting'
+      - 'password'
+    answer:
+      - 'images/{{new_ios_image}}'
+      - '{{scp_region_server}}'
+      - '{{scp_server_username}}'
+      - 'yes'
+      - '{{scp_server_password}}'
+  vars:
+    ansible_command_timeout: 7200
+  when: ansible_network_os == 'ios'
+  tags:
+    - copy
+
 
 - name: NXOS Image MD5 hash check
   nxos_command:
