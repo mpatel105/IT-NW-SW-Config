@@ -217,7 +217,7 @@
 
 - name: NXOS Getting facts
   nxos_facts:
-    gather_subset: hardware
+#    gather_subset: hardware
   when: ansible_network_os == 'nxos'
   tags:
     - copy-test
