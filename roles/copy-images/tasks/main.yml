@@ -190,7 +190,7 @@
     - copy
 
 - block:
-    - name: test if MD5 is correct
+    - name: NXOS stop playbook if MD5 is incorrect
       vars:
         msg: |
           Task end for Device : {{ inventory_hostname }}
@@ -304,7 +304,7 @@
     - copy
 
 - block:
-    - name: NXOS test if MD5 is correct
+    - name: NXOS stop playbook if MD5 is incorrect
       vars:
         msg: |
           Task end for Device : {{ inventory_hostname }}
