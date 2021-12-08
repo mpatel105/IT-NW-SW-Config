@@ -217,7 +217,7 @@
 
 - name: NXOS Getting facts
   nxos_facts:
-#    gather_subset: hardware
+    gather_subset: hardware
   when: ansible_network_os == 'nxos'
   tags:
     - copy-test
@@ -255,6 +255,16 @@
     - copy
     - copy-test
 
+- debug:
+    msg:
+      - "{{ resultdir.stdout_lines[-3] }}"
+  when: ansible_network_os == 'nxos'
+  tags:
+    - copy-test
+    - copy
+
+
+
 - block:
   - debug:
       msg: "file {{ new_nxos_image }} already exists on device. Stopping playbook for the device {{ inventory_hostname }}"
@@ -263,31 +273,6 @@
   tags:
     - copy
     - copy-test
-
-- block:
-  - debug:
-      msg: "spacefree : {{ ansible_facts   }}"
-  when: ansible_network_os == 'nxos'
-  tags:
-    - copy
-    - copy-test
-
-- block:
-    - name: NXOS Test if enough space on device
-      vars:
-        msg: |
-          Task end for Device : {{ inventory_hostname }}
-          Not enough space : {{ ansible_net_filesystems_info[ansible_net_filesystems[0]]['spacefree_kb'] }}
-          Space needed: {{ space_needed }}
-          Stopping playbook for the device {{ inventory_hostname }}
-      debug:
-        msg: "{{ msg.split('\n') }}"
-    - meta: end_host
-  when: ansible_network_os == 'nxos' and ansible_net_filesystems_info[ansible_net_filesystems[0]]['spacefree_kb'] < ( nxos_space | float )
-  tags:
-    - copy-test
-    - copy
-
 
 - name: NXOS clear SSH hosts on devices
   nxos_command:
