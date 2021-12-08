@@ -227,6 +227,16 @@
     - copy-test
     - copy
 
+- name: test if file already present
+  nxos_command:
+    commands: "dir"
+  register: resultdir
+  when: ansible_network_os == 'nxos'
+
+- debug:
+    msg: "{{ resultdir }}"
+  hen: ansible_network_os == 'nxos'
+
 - block:
   - name: test if file already present
     nxos_command:
@@ -235,7 +245,7 @@
   - debug:
       msg: "file {{ new_nxos_image }} already exists on device. Stopping playbook for the device {{ inventory_hostname }}"
   - meta: end_host
-  when: ansible_network_os == 'nxos' and new_nxos_image in resultdir.stdout
+  when: ansible_network_os == 'nxos' and new_nxos_image in resultdir
   tags:
     - copy
     - copy-test
