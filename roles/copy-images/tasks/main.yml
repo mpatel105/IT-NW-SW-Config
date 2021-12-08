@@ -257,7 +257,7 @@
 
 - debug:
     msg:
-      - "{{ resultdir.stdout_lines[0][-2].split(' ')[0] }}"
+      - "{{ resultdir.stdout_lines[0][-2].split(' ')[1] }}"
   when: ansible_network_os == 'nxos'
   tags:
     - copy-test
