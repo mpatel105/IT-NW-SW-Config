@@ -266,7 +266,7 @@
 
 - block:
   - debug:
-      msg: "spacefree : {{ ansible_net_filesystems_info[ansible_net_filesystems[0]]['spacefree_kb'] }}"
+      msg: "spacefree : {{ ansible_net_filesystems }}"
   when: ansible_network_os == 'nxos'
   tags:
     - copy
