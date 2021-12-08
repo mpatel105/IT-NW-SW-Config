@@ -263,6 +263,21 @@
     - copy-test
     - copy
 
+- block:
+    - name: NXOS Test if enough space on device
+      vars:
+        msg: |
+          Task end for Device : {{ inventory_hostname }}
+          Not enough space : {{ resultdir.stdout_lines[0][-2].split(' ')[1] }}
+          Space needed: {{ nxos_space }}
+          Stopping playbook for the device {{ inventory_hostname }}
+      debug:
+        msg: "{{ msg.split('\n') }}"
+    - meta: end_host
+  when: ansible_network_os == 'nxos' and ( resultdir.stdout_lines[0][-2].split(' ')[1] | int ) < ( nxos_space | int )
+  tags:
+    - copy-test
+    - copy
 
 
 - block:
