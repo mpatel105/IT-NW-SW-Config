@@ -45,6 +45,7 @@
           Model: {{ ansible_net_model }}
           Hardware not supported !
           Supported models : C3650, C3850, C2960X, C3560, C9200
+          Stopping playbook for the device {{ inventory_hostname }}
       debug:
         msg: "{{ msg.split('\n') }}"
     - meta: end_host
@@ -59,8 +60,8 @@
       vars:
         msg: |-
           Task end for Device : {{ inventory_hostname }}
-          IOS currently installed : {{ ansible_net_version }}
           {{ new_ios_version }} is already running on this device
+          Stopping playbook for the device {{ inventory_hostname }}
       debug:
         msg: "{{ msg.split('\n') }}"
     - meta: end_host
@@ -134,6 +135,7 @@
           Task end for Device : {{ inventory_hostname }}
           Not enough space : {{ ansible_net_filesystems_info[ansible_net_filesystems[0]]['spacefree_kb'] }}
           Space needed: {{ space_needed }}
+          Stopping playbook for the device {{ inventory_hostname }}
       debug:
         msg: "{{ msg.split('\n') }}"
     - meta: end_host
@@ -207,7 +209,8 @@
       vars:
         msg: |-
           Task end for Device : {{ inventory_hostname }}
-          ansible_net_version is already running on this device
+          {{ ansible_net_version }} is already running
+          Stopping playbook for the device {{ inventory_hostname }}
       debug:
         msg: "{{ msg.split('\n') }}"
     - meta: end_host
