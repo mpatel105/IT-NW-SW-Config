@@ -236,7 +236,7 @@
     - copy-test
 
 - debug:
-    msg: "{{ new_nxos_image | type_debug }}"
+    msg: "{{ new_nxos_image | string | type_debug }}"
   when: ansible_network_os == 'nxos'
   tags:
     - copy-test
