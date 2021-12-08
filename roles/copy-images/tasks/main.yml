@@ -257,7 +257,7 @@
 
 - debug:
     msg:
-      - "{{ resultdir.stdout_lines[-3] }}"
+      - "{{ resultdir.stdout_lines }}"
   when: ansible_network_os == 'nxos'
   tags:
     - copy-test
