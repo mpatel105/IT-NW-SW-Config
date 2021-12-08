@@ -227,13 +227,13 @@
     - copy-test
     - copy
 
-- name: NXOS run dir command
-  nxos_command:
-    commands: "dir"
-  register: resultdir
-  when: ansible_network_os == 'nxos'
-  tags:
-    - copy-test
+#- name: NXOS run dir command
+#  nxos_command:
+#    commands: "dir"
+#  register: resultdir
+#  when: ansible_network_os == 'nxos'
+#  tags:
+#    - copy-test
 
 - block:
   - name: test if file already present
