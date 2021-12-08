@@ -264,6 +264,31 @@
     - copy
     - copy-test
 
+- block:
+  - debug:
+      msg: "spacefree : {{ ansible_net_filesystems_info[ansible_net_filesystems[0]]['spacefree_kb'] }}"
+  when: ansible_network_os == 'nxos'
+  tags:
+    - copy
+    - copy-test
+
+- block:
+    - name: NXOS Test if enough space on device
+      vars:
+        msg: |
+          Task end for Device : {{ inventory_hostname }}
+          Not enough space : {{ ansible_net_filesystems_info[ansible_net_filesystems[0]]['spacefree_kb'] }}
+          Space needed: {{ space_needed }}
+          Stopping playbook for the device {{ inventory_hostname }}
+      debug:
+        msg: "{{ msg.split('\n') }}"
+    - meta: end_host
+  when: ansible_network_os == 'nxos' and ansible_net_filesystems_info[ansible_net_filesystems[0]]['spacefree_kb'] < ( nxos_space | float )
+  tags:
+    - copy-test
+    - copy
+
+
 - name: NXOS clear SSH hosts on devices
   nxos_command:
     commands: "clear ssh hosts"
