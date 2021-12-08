@@ -72,7 +72,7 @@
 
 - debug:
     msg:
-      - "Image {{ ansible_net_version }} is not compliant and will be copied"
+      - Image {{ ansible_net_version }} is not compliant.
   when: ansible_network_os == 'ios' and ansible_net_version != new_ios_version
   tags:
     - copy-test
@@ -221,8 +221,8 @@
 
 - debug:
     msg:
-      - "Image {{ ansible_net_version }} is not compliant and will be copied"
-  when: ansible_network_os == 'nxos' and ansible_net_version != new_ios_version
+      - "Image {{ ansible_net_version }} is not compliant"
+  when: ansible_network_os == 'nxos' and ansible_net_version != new_nxos_version
   tags:
     - copy-test
     - copy
