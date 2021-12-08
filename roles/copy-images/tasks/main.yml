@@ -306,7 +306,7 @@
 - block:
     - name: NXOS stop playbook if MD5 is incorrect
       vars:
-        msg: |
+        msg: |-
           Task end for Device : {{ inventory_hostname }}
           OS to install : {{ new_nxos_image }}
           MD5 error after copy !
