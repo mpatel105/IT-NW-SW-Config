@@ -313,7 +313,7 @@
       debug:
         msg: "{{ msg.split('\n') }}"
     - meta: end_host
-  ignore_errors: yes
-  when: ansible_network_os == 'nxos' and new_nxos_md5_value != nxos_md5_result.stdout[0]
+#  ignore_errors: yes
+  failed_when: ansible_network_os == 'nxos' and new_nxos_md5_value != nxos_md5_result.stdout[0]
   tags:
     - copy
