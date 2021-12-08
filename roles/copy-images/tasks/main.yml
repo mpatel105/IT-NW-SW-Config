@@ -266,7 +266,7 @@
 
 - block:
   - debug:
-      msg: "spacefree : {{ ansible_net_gather_subset   }}"
+      msg: "spacefree : {{ ansible_facts   }}"
   when: ansible_network_os == 'nxos'
   tags:
     - copy
