@@ -149,7 +149,7 @@
 - block:
     - name: IOS Test if enough space on device
       vars:
-        msg: |
+        msg: |-
           Task end for Device : {{ inventory_hostname }}
           Not enough space : {{ ansible_net_filesystems_info[ansible_net_filesystems[0]]['spacefree_kb'] }}
           Space needed: {{ space_needed }}
@@ -266,13 +266,14 @@
 - block:
     - name: NXOS Test if enough space on device
       vars:
-        msg: |
+        msg: |-
           Task end for Device : {{ inventory_hostname }}
           Not enough space : {{ resultdir.stdout_lines[0][-2].split(' ')[1] }}
           Space needed: {{ nxos_space }}
           Stopping playbook for the device {{ inventory_hostname }}
       debug:
         msg: "{{ msg.split('\n') }}"
+      failed_when: ( resultdir.stdout_lines[0][-2].split(' ')[1] | int ) < ( nxos_space | int )
     - meta: end_host
   when: ansible_network_os == 'nxos' and ( resultdir.stdout_lines[0][-2].split(' ')[1] | int ) < ( nxos_space | int )
   tags:
@@ -338,7 +339,7 @@
           MD5 error after copy !
       debug:
         msg: "{{ msg.split('\n') }}"
-      #failed_when: new_nxos_md5_value != nxos_md5_result.stdout[0]
+      failed_when: new_nxos_md5_value != nxos_md5_result.stdout[0]
     - meta: end_host
   when: ansible_network_os == 'nxos' and nxos_md5_result is defined and new_nxos_md5_value != nxos_md5_result.stdout[0]
   tags:
