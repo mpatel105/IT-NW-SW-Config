@@ -196,7 +196,7 @@
 ##############################################################################
 ##### NXOS
 
-- name: Getting NXOS facts
+- name: NXOS Getting facts
   nxos_facts:
     gather_subset: hardware
   when: ansible_network_os == 'nxos'
@@ -227,41 +227,48 @@
     - copy-test
     - copy
 
-#- name: test if file already present
-#  nxos_command:
-#    commands: "dir"
-#  register: resultdir
-#  when: ansible_network_os == 'nxos'
-#  tags:
-#    - copy-test
-#
-#- debug:
-#    msg: "{{ resultdir }}"
-#  when: ansible_network_os == 'nxos'
-#  tags:
-#    - copy-test
-
-- block:
-  - name: test if file already present
-    nxos_command:
-      commands: "dir"
-    register: resultdir
-  - debug:
-      msg: "file {{ new_nxos_image }} already exists on device. Stopping playbook for the device {{ inventory_hostname }}"
-  - meta: end_host
-  when: ansible_network_os == 'nxos' and new_nxos_image in resultdir.stdout[0]
+- name: NXOS run dir command
+  nxos_command:
+    commands: "dir"
+  register: resultdir
+  when: ansible_network_os == 'nxos'
   tags:
-    - copy
     - copy-test
 
-- name: clear SSH hosts on NXOS Devices
+- debug:
+    msg: "{{ new_nxos_image | type_debug }}"
+  when: ansible_network_os == 'nxos'
+  tags:
+    - copy-test
+
+- debug:
+    msg: "{{ resultdir.stdout[0] | type_debug }}"
+  when: ansible_network_os == 'nxos'
+  tags:
+    - copy-test
+
+
+#- block:
+#  - name: test if file already present
+#    nxos_command:
+#      commands: "dir"
+#    register: resultdir
+#  - debug:
+#      msg: "file {{ new_nxos_image }} already exists on device. Stopping playbook for the device {{ inventory_hostname }}"
+#  - meta: end_host
+#  when: ansible_network_os == 'nxos' and new_nxos_image in resultdir.stdout[0]
+#  tags:
+#    - copy
+#    - copy-test
+
+- name: NXOS clear SSH hosts on devices
   nxos_command:
     commands: "clear ssh hosts"
   when: ansible_network_os == 'nxos'
   tags:
     - copy
 
-- name: Copy NXOS image using SCP
+- name: NXOS Copy image using SCP
   cli_command:
     command: "copy scp: bootflash: vrf management"
     check_all: True
