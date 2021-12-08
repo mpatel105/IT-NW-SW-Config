@@ -79,7 +79,7 @@
     - copy
 
 - name: IOS run dir command
-  nxos_command:
+  ios_command:
     commands: "dir"
   register: resultdir
   when: ansible_network_os == 'ios'
@@ -147,7 +147,7 @@
     - copy
 
 - block:
-    - name: Test if enough space on device
+    - name: IOS Test if enough space on device
       vars:
         msg: |
           Task end for Device : {{ inventory_hostname }}
@@ -190,7 +190,7 @@
     - copy
 
 - block:
-    - name: NXOS stop playbook if MD5 is incorrect
+    - name: IOS stop playbook if MD5 is incorrect
       vars:
         msg: |
           Task end for Device : {{ inventory_hostname }}
@@ -198,13 +198,14 @@
           MD5 error after copy !
       debug:
         msg: "{{ msg.split('\n') }}"
+      failed_when: ios_md5_result.msg is defined and 'Error' in ios_md5_result.msg
     - meta: end_host
   when: ansible_network_os == 'ios' and ios_md5_result.msg is defined and 'Error' in ios_md5_result.msg
   tags:
     - copy
 
 - debug:
-    msg: "MD5 check Verified successfully"
+    msg: "IOS MD5 check Verified successfully"
   when: ansible_network_os == 'ios'
   tags:
     - copy-test
