@@ -215,7 +215,7 @@
     - copy-test
     - copy
 
--block:
+- block:
   - name: test if file already present
     nxos_command:
       commands: "dir"
