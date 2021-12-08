@@ -235,7 +235,7 @@
 
 - debug:
     msg: "{{ resultdir }}"
-  hen: ansible_network_os == 'nxos'
+  when: ansible_network_os == 'nxos'
 
 - block:
   - name: test if file already present
