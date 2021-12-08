@@ -312,7 +312,15 @@
           MD5 error after copy !
       debug:
         msg: "{{ msg.split('\n') }}"
+      failed_when: new_nxos_md5_value != nxos_md5_result.stdout[0]
     - meta: end_host
   when: ansible_network_os == 'nxos' and new_nxos_md5_value != nxos_md5_result.stdout[0]
   tags:
+    - copy
+
+- debug:
+    msg: "MD5 check Verified successfully"
+  when: ansible_network_os == 'nxos'
+  tags:
+    - copy-test
     - copy
