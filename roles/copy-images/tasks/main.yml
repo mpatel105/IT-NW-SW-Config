@@ -156,6 +156,7 @@
           Stopping playbook for the device {{ inventory_hostname }}
       debug:
         msg: "{{ msg.split('\n') }}"
+      failed_when: ansible_net_filesystems_info[ansible_net_filesystems[0]]['spacefree_kb'] < ( space_needed | float )
     - meta: end_host
   when: ansible_network_os == 'ios' and ansible_net_filesystems_info[ansible_net_filesystems[0]]['spacefree_kb'] < ( space_needed | float )
   tags:
@@ -254,14 +255,6 @@
   tags:
     - copy
     - copy-test
-
-- debug:
-    msg:
-      - "{{ resultdir.stdout_lines[0][-2].split(' ')[1] | int }}"
-  when: ansible_network_os == 'nxos'
-  tags:
-    - copy-test
-    - copy
 
 - block:
     - name: NXOS Test if enough space on device
