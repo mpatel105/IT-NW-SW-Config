@@ -224,7 +224,7 @@
       msg: "file {{ new_nxos_image }} already exists on device. Stopping playbook for the device {{ inventory_hostname }}"
   - meta: end_host
   when: ansible_network_os == 'nxos' and new_nxos_image in result-dir.stdout
-    tags:
+  tags:
     - copy
     - copy-test
 
