@@ -78,6 +78,24 @@
     - copy-test
     - copy
 
+- name: IOS run dir command
+  nxos_command:
+    commands: "dir"
+  register: resultdir
+  when: ansible_network_os == 'ios'
+  tags:
+    - copy
+    - copy-test
+
+- block:
+  - debug:
+      msg: "file {{ new_ios_image }} already exists on device. Stopping playbook for the device {{ inventory_hostname }}"
+  - meta: end_host
+  when: ansible_network_os == 'ios' and new_ios_image|string in resultdir.stdout[0]
+  tags:
+    - copy
+    - copy-test
+
 
 - debug:
     msg: "IOS Image to install on {{ inventory_hostname }}: {{ new_ios_image }} from {{scp_region_server}}"
@@ -290,7 +308,7 @@
       vars:
         msg: |
           Task end for Device : {{ inventory_hostname }}
-          OS to install : {{ new_ios_image }}
+          OS to install : {{ new_nxos_image }}
           MD5 error after copy !
       debug:
         msg: "{{ msg.split('\n') }}"
