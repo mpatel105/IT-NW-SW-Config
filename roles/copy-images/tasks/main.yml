@@ -5,6 +5,7 @@
 
 - name: Getting IOS facts
   ios_facts:
+    gather_subset: hardware
   when: ansible_network_os == 'ios'
   tags:
     - copy-test
@@ -192,6 +193,14 @@
 
 ##############################################################################
 ##### NXOS
+
+- name: Getting NXOS facts
+  nxos_facts:
+    gather_subset: hardware
+  when: ansible_network_os == 'nxos'
+  tags:
+    - copy-test
+    - copy
 
 - block:
     - name: NXOS test if current installed image is compliant
