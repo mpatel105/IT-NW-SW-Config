@@ -118,7 +118,7 @@
 
 - name: cleanup switch flash for C3650/C3850
   cli_command:
-    command: "request platform software package clean"
+    command: "request platform software package clean switch all"
     prompt:
       - 'Do you want to proceed'
     answer:
