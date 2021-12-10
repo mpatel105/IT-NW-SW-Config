@@ -3,5 +3,5 @@
   roles:
     - { role: Base-config, tags: Baseconfig }
     - { role: NAC-config, tags: NACconfig }
-    - { role: Inventory, tags: inventory }
+    - { role: Inventory, tags: inventoryLAN }
     - { role: copy-images, tags: copyOS }

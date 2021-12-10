@@ -2,12 +2,14 @@
 
 - name: IOS get fact
   ios_facts:
+    gather_subset: hardware
   tags:
     - inventory
   when: ansible_network_os == 'ios'
 
 - name: NXOS get fact
   nxos_facts:
+    gather_subset: hardware
   tags:
     - inventory
   when: ansible_network_os == 'nxos'
@@ -18,6 +20,13 @@
     repo=https://{{awx_user_github}}:{{awx_pwd_github}}@github.com/TalendIT/IT-Network-Scripts.git
     dest="{{ dest_folder }}"
     force=yes
+  tags: inventory
+
+- name: deleting inventory file
+  run_once: true
+  file:
+    state: absent
+    path: "{{ dest_folder}}/inventory.csv"
   tags: inventory
 
 - name: create new inventory file
@@ -33,8 +42,9 @@
     path: "{{ dest_folder}}/inventory.csv"
     line: Site,Hostname,Model,Serial_Number,Year,OS_Type,OS_Version
     create: yes
+  tags: inventory
 
-- name: writing to file IOS
+- name: writing to file
   ansible.builtin.lineinfile:
     path: "{{ dest_folder}}/inventory.csv"
     line: "{{ ansible_net_hostname[:3]|upper }},
@@ -71,3 +81,9 @@
     path: "{{ dest_folder}}"
   tags:
     - inventory
+
+- debug:
+    msg: "Inventory done"
+  tags:
+    - inventory
+  

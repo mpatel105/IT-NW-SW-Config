@@ -65,7 +65,7 @@
       debug:
         msg: "{{ msg.split('\n') }}"
     - meta: end_host
-  when: ansible_network_os == 'ios' and ansible_net_version == new_ios_version
+  when: ansible_network_os == 'ios' and and new_ios_version is defined and ansible_net_version == new_ios_version
   tags:
     - copy-test
     - copy
@@ -73,7 +73,7 @@
 - debug:
     msg:
       - Image {{ ansible_net_version }} is not compliant.
-  when: ansible_network_os == 'ios' and ansible_net_version != new_ios_version
+  when: ansible_network_os == 'ios' and and new_ios_version is defined and ansible_net_version != new_ios_version
   tags:
     - copy-test
     - copy
