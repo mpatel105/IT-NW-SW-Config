@@ -85,5 +85,6 @@
 - debug:
     msg: "Inventory done"
   run_once: true
+  delegate_to: localhost
   tags:
     - inventory
