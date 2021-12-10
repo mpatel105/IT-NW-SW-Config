@@ -1,7 +1,0 @@
-- hosts: "{{ devices }}"
-  gather_facts: no
-  roles:
-    - { role: Base-config, tags: Baseconfig }
-    - { role: NAC-config, tags: NACconfig }
-    - { role: Inventory, tags: inventoryLAN }
-    - { role: copy-images, tags: copyOS }

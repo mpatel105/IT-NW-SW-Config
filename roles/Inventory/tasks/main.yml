@@ -83,7 +83,7 @@
     - inventory
 
 - debug:
-  run_once: true
+    run_once: true
     msg: "Inventory done"
   tags:
     - inventory
