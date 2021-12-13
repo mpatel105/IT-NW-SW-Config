@@ -44,32 +44,32 @@
     - get_fact_debug
 
 
-- name: Configure standard Vlan for CORE Switches
-  ios_vlans:
-    config:
-      - name: "{{ item.key }}"
-        vlan_id: "{{ item.value }}"
-        state: active
-        shutdown: disabled
-    state: merged
-  loop: "{{ vlan_list_core | dict2items }}"
-  #when: ansible_network_os == 'ios' and 'CORE' in group_names
-  when: ansible_network_os == 'ios'
-  tags:
-      - config
-      - configvlan
-
-- name: Remove Infra Vlan from ACCESS Switches
-  ios_vlans:
-    config:
-      - vlan_id: "{{ item }}"
-    state: deleted
-  loop: "{{ vlan_list_access_remove if vlan_list_access_remove is iterable else [] }}"
-  when: ansible_network_os == 'ios' and 'ACCESS' in group_names
-  #when: ansible_network_os == 'ios'
-  tags:
+#- name: Configure standard Vlan for CORE Switches
+#  ios_vlans:
+#    config:
+#      - name: "{{ item.key }}"
+#        vlan_id: "{{ item.value }}"
+#        state: active
+#        shutdown: disabled
+#    state: merged
+#  loop: "{{ vlan_list_core | dict2items }}"
+#  #when: ansible_network_os == 'ios' and 'CORE' in group_names
+#  when: ansible_network_os == 'ios'
+#  tags:
 #      - config
-      - removevlan
+#      - configvlan
+
+#- name: Remove Infra Vlan from ACCESS Switches
+#  ios_vlans:
+#    config:
+#      - vlan_id: "{{ item }}"
+#    state: deleted
+#  loop: "{{ vlan_list_access_remove if vlan_list_access_remove is iterable else [] }}"
+#  when: ansible_network_os == 'ios' and 'ACCESS' in group_names
+#  #when: ansible_network_os == 'ios'
+#  tags:
+#      - config
+#      - removevlan
 
 - name: IOS configure dns
   ios_system:
