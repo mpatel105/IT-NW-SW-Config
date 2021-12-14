@@ -189,7 +189,7 @@
       - spanning-tree mode Rapid-pvst
       - spanning-tree pathcost method long
       - spanning-tree port type edge bpduguard
-      - {% if '001' in inventory_hostname %}spanning-tree vlan 1-3967 root primary{% else %}spanning-tree vlan 1-3967 root secondary{% endif %}
+      - "{% if '001' in inventory_hostname %}spanning-tree vlan 1-3967 root primary{% else %}spanning-tree vlan 1-3967 root secondary{% endif %}"
       - exit
   when: ansible_network_os == 'nxos' and 'CORE' in group_names
   tags:
