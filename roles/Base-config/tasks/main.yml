@@ -338,6 +338,7 @@
     - logs
 
 - name: NXOS configure logging
+  nxos_logging:
     aggregate:
     - { dest: console, state: absent }
     - { dest: monitor, state: absent }
