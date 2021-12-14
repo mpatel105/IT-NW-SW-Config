@@ -234,7 +234,10 @@
 - name: NXOS - new ACLs configuration for SNMP
   nxos_acl:
     name: ACLsnmp
+    seq: 10
     action: permit
+    proto: ip
+    src: any
     dest: any
     state: present
   when: ansible_network_os == 'nxos'
