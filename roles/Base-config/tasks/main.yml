@@ -405,12 +405,12 @@
     lines:
       - description Connected to {{ item.value[0].host }} int {{ item.value[0].port }}
     parents: interface {{ item.key }}
+  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when:
     - ansible_network_os == 'ios'
     - ansible_net_neighbors is defined
     - item.value[0].platform is defined
     - ("cisco" in item.value[0].platform)
-  loop: "{{ ansible_net_neighbors | dict2items }}"
   tags:
     - config
     - intdescr
