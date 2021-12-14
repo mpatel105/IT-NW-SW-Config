@@ -31,6 +31,7 @@
   set_fact:
     edge: "{% if item in ansible_net_model %}edge{% else %}{% endif %}"
   loop: "{{ model_stp_edge }}"
+  when: ansible_network_os == 'ios'
   tags:
     - get_fact_debug
     - config
