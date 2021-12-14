@@ -7,6 +7,7 @@
     gather_network_resources:
       - 'l2_interfaces'
   register: output
+  when: ansible_network_os == 'ios'
   tags:
     - config
     - configswitchports
@@ -238,7 +239,7 @@
   when: ansible_network_os == 'nxos'
   tags:
     - config
-    - snmp  
+    - snmp
 
 - name: IOS configure SNMP
   ios_command:
