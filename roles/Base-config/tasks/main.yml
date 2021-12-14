@@ -234,7 +234,7 @@
 - name: NXOS - new ACLs configuration for SNMP
   nxos_acl:
     name: ACLsnmp
-    seq: 10
+    seq: "10"
     action: permit
     proto: ip
     src: any
@@ -345,9 +345,9 @@
     aggregate:
     - { dest: console, state: absent }
     - { dest: monitor, state: absent }
-    - {dest: logfile, dest_level: 5, name: message }
+    - {dest: logfile, dest_level: 5, name: message, state: present }
     - { dest: server, remote_server: "{{ talend_logs }}", state: present}
-    - { interface: Vlan999, state: present }
+    - { interface: "Vlan 999", state: present }
     purge: true
   when: ansible_network_os == 'nxos'
 
@@ -390,7 +390,7 @@
 
 - name: NXOS - Login banner
   nxos_banner:
-    banner: exec
+    banner: motd
     text: "{{ banner }}"
     state: present
   when: ansible_network_os == 'nxos'
@@ -408,6 +408,7 @@
   loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
   when:
     - ansible_network_os == "ios"
+    - output.ansible_facts.ansible_net_neighbors is defined
     - item.value[0].platform is defined
     - ("cisco" in item.value[0].platform)
   tags:
