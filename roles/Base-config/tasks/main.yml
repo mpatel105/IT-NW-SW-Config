@@ -524,7 +524,7 @@
   nxos_user:
     purge: yes
     name: admin
-    configured_password: {{ adminlocal_password }}
+    configured_password: "{{ adminlocal_password }}"
     role: network-admin
     update_password: always
   when: ansible_network_os == 'nxos'
