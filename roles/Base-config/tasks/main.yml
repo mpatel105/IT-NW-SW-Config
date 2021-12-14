@@ -230,17 +230,15 @@
     - services
 
 - name: NXOS new ACLs configuration for SNMP
-  nxos_acls:
-    config:
-    - afi: ipv4
-      acls:
-      - name: ACLsnmp
-        aces:
-        - grant: permit
-          destination:
-            any: yes
-    state: merged
+  nxos_acl:
+    name: ACLsnmp
+    action: permit
+    dest: any
+    state: present
   when: ansible_network_os == 'nxos'
+  tags:
+    - config
+    - snmp  
 
 - name: IOS configure SNMP
   ios_command:
