@@ -378,7 +378,7 @@
 - name: IOS Login banner
   ios_banner:
     banner: login
-    text: {{ banner }}
+    text: "{{ banner }}"
     state: present
   when: ansible_network_os == 'ios'
   tags:
@@ -388,7 +388,7 @@
 - name: NXOS Login banner
   nxos_banner:
     banner: exec
-    text: {{ banner }}
+    text: "{{ banner }}"
     state: present
   when: ansible_network_os == 'nxos'
   tags:
