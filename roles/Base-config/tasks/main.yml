@@ -257,7 +257,7 @@
 
 - name: NXOS configure SNMP Community
   nxos_snmp_community:
-    community: {{ talend_snmp_community }}
+    community: "{{ talend_snmp_community }}"
     access: ro
     acl: ACLsnmp
     state: present
