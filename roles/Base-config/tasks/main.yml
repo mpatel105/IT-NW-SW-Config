@@ -405,7 +405,7 @@
     lines:
       - description Connected to {{ item.value[0].host }} int {{ item.value[0].port }}
     parents: interface {{ item.key }}
-  loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
+  loop: "{{ ansible_net_neighbors | dict2items }}"
   when:
     - ansible_network_os == "ios"
     - output.ansible_facts.ansible_net_neighbors is defined
