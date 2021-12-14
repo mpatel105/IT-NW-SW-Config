@@ -268,7 +268,7 @@
 
 - name: NXOS configure SNMP location
   nxos_snmp_location:
-    location: {{ inventory_hostname[:3]|upper }}
+    location: "{{ inventory_hostname[:3]|upper }}"
     state: present
   when: ansible_network_os == 'nxos'
   tags:
