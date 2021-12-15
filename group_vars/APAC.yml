@@ -27,7 +27,7 @@ talend_radius_1_name: "{{ talend_radius_PA7_name }}"
 talend_radius_2_name: "{{ talend_radius_SV2_name }}"
 talend_radius_auth_port: 1812
 talend_radius_acct_port: 1813
-talend_radius_server_key: 111E142132110F543C2E03332D72780741
-talend_radius_encrypted_key: "ziHJud8CvKgj!-I2"
+#talend_radius_server_key: 111E142132110F543C2E03332D72780741
+#talend_radius_encrypted_key: "ziHJud8CvKgj!-I2"
 
 scp_region_server: "{{ scp_emea_server }}"
