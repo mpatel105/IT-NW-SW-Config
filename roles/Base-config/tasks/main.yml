@@ -624,8 +624,8 @@
 - name: NXOS - Configure Radius servers
   nxos_config:
     lines:
-      - radius-server host {{ talend_radius_1 }} key 7 {{ talend_radius_server_key }} authentication accounting timeout 3
-      - radius-server host {{ talend_radius_2 }} key 7 {{ talend_radius_server_key }} authentication accounting timeout 3
+      - radius-server host {{ talend_radius_1 }} key 7 {{ talend_radius_encrypted_key }} authentication accounting timeout 3
+      - radius-server host {{ talend_radius_2 }} key 7 {{ talend_radius_encrypted_key }} authentication accounting timeout 3
       - radius-server deadtime 5
       - radius-server directed-request
   when: ansible_network_os == 'nxos'
