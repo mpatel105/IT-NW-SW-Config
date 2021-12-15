@@ -409,7 +409,6 @@
   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when:
     - ansible_network_os == 'ios'
-    - ansible_net_neighbors is defined
     - item.value[0].platform is defined
     - ("cisco" in item.value[0].platform)
   tags:
@@ -488,7 +487,7 @@
     #  - switchport trunk allowed vlan 16,24,240,999
     #  - switchport mode trunk
     parents: interface {{ item.key }}
-  loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
+  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when:
     - ansible_network_os == "ios"
     - item.value[0].platform is defined
