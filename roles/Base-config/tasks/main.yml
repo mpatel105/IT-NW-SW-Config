@@ -524,7 +524,7 @@
     - configusers
 
 - name: NXOS - remove all users except admin
-  no_log: true
+  #no_log: true
   nxos_user:
     purge: yes
     name: admin
