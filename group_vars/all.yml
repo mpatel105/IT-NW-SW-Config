@@ -4,7 +4,6 @@ talend_domain_name: talend.com
 #talend_logs: tal-ip121.talend.com # real IP below
 talend_logs: 192.168.15.55
 talend_snmp_community: talend-sw
-admin_user: admin
 ANSIBLE_HOST_KEY_CHECKING: false
 
 banner: |
