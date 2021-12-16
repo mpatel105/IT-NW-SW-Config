@@ -327,9 +327,11 @@
   when:
     - ((item.mode is defined and item.mode == 'access' and item.access.vlan == 48) or
       (item.mode is not defined and item.access.vlan is defined and item.access.vlan == 48)) and
-      ( output.ansible_facts.ansible_net_interfaces[item.name].description is defined and
+      ( ( output.ansible_facts.ansible_net_interfaces[item.name].description is defined and
       output.ansible_facts.ansible_net_interfaces[item.name].description != None and
-      not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith('VLAN48 - ') )
+      not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith('VLAN48 - ') ) or
+      ( output.ansible_facts.ansible_net_interfaces[item.name].description is defined and
+      output.ansible_facts.ansible_net_interfaces[item.name].description == None) )
   tags:
 #    - config
     - configswitchports48
