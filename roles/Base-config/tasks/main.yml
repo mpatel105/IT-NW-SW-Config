@@ -524,19 +524,6 @@
     - config
     - configusers
 
-- name: NXOS - remove all users except admin
-  no_log: true
-  nxos_user:
-    purge: yes
-    name: "{{ adminlocal_username }}"
-    configured_password: "{{ adminlocal_password }}"
-    role: network-admin
-    update_password: always
-  when: ansible_network_os == 'nxos'
-  tags:
-    - config
-    - configusers
-
 - name: IOS - remove all credentials
   ios_command:
     commands:
@@ -587,6 +574,20 @@
   tags:
     - config
     - configenable
+
+- name: NXOS - remove all users except admin
+  no_log: true
+  nxos_user:
+    purge: yes
+    name: "{{ adminlocal_username }}"
+    configured_password: "{{ adminlocal_password }}"
+    role: network-admin
+    update_password: always
+  when: ansible_network_os == 'nxos'
+  tags:
+    - config
+    - configusers
+
 
 - name: IOS - Configure aaa new-model
   ios_config:
