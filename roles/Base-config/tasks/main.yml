@@ -575,6 +575,20 @@
     - config
     - configenable
 
+- name: NXOS - remove all users except admin
+  no_log: true
+  nxos_user:
+    purge: yes
+    name: "{{ adminlocal_username }}"
+    configured_password: "{{ adminlocal_password }}"
+    role: network-admin
+    update_password: always
+  when: ansible_network_os == 'nxos'
+  tags:
+    - config
+    - configusers
+
+
 - name: IOS - Configure aaa new-model
   ios_config:
     lines:
@@ -674,19 +688,6 @@
   tags:
     - config
     - radius
-
-- name: NXOS - remove all users except admin
-  no_log: true
-  nxos_user:
-    purge: yes
-    name: "{{ adminlocal_username }}"
-    configured_password: "{{ adminlocal_password }}"
-    role: network-admin
-    update_password: always
-  when: ansible_network_os == 'nxos'
-  tags:
-    - config
-    - configusers
 
 - name: IOS - Save config
   ios_config:
