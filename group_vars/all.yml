@@ -1,5 +1,6 @@
 ansible_connection: network_cli
-talend_ntp: ntp.talend.com
+#talend_ntp: ntp.talend.com
+talend_ntp: 192.168.100.228
 talend_domain_name: talend.com
 #talend_logs: tal-ip121.talend.com # real IP below
 talend_logs: 192.168.15.55
