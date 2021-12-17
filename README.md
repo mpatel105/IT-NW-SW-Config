@@ -5,6 +5,7 @@
     * Base-config: deploy base configuration on switches
     * NAC-config: deploy NAC configuration on switches
     * Inventory: Create a inventory.csv file on GIT Repo IT-Network-Scripts
+    * Copy-image: Used to deploy NXOS & IOS images to the switches using scp
 
 ### Available tag for individual task:
 * Available tag for individual task:
