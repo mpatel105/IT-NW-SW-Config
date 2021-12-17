@@ -2,11 +2,12 @@
 # tasks file for switch-config
 #
 
-- name: IOS get fact
+- name: IOS - get facts
   ios_facts:
     gather_network_resources:
       - 'l2_interfaces'
   register: output
+  when: ansible_network_os == 'ios'
   tags:
     - config
     - configswitchports
@@ -19,10 +20,11 @@
     - intdescr
     - endusers
 
-- name: set fact for portfast
+- name: IOS - set fact for portfast
   set_fact:
     edge: "{% if item in ansible_net_model %}edge{% else %}{% endif %}"
   loop: "{{ model_stp_edge }}"
+  when: ansible_network_os == 'ios'
   tags:
     - get_fact_debug
     - config
@@ -42,7 +44,6 @@
   tags:
     - config
     - get_fact_debug
-
 
 #- name: Configure standard Vlan for CORE Switches
 #  ios_vlans:
@@ -71,9 +72,9 @@
 #      - config
 #      - removevlan
 
-- name: IOS configure dns
+- name: IOS - configure dns
   ios_system:
-  #  hostname: "{{ inventory_hostname }}"
+    hostname: "{{ inventory_hostname }}"
     domain_name: "{{ talend_domain_name }}"
     lookup_source: vlan999
     lookup_enabled: yes
@@ -83,7 +84,7 @@
     - config
     - dns
 
-- name: IOS configure NTP servers
+- name: IOS - configure NTP servers
 # cisco.ios.ios_ntp_global:
 #   config:
 #     servers:
@@ -99,7 +100,7 @@
     - config
     - ntp
 
-- name: IOS UTC Timezone
+- name: IOS - UTC Timezone
   ios_command:
     commands:
       - configure terminal
@@ -111,7 +112,7 @@
     - config
     - clock
 
-- name: STP Global configuration for IOS Access switches
+- name: IOS - STP Global configuration for Access switches
   ios_command:
     commands:
       - configure terminal
@@ -126,7 +127,7 @@
     - config
     - STPaccess
 
-- name: STP Global configuration for IOS Core switches
+- name: IOS - STP Global configuration for Core switches
   ios_command:
     commands:
       - configure terminal
@@ -141,7 +142,7 @@
     - config
     - STPcore
 
-- name: IOS configure some service / disable unused service
+- name: IOS - configure some service / disable unused service
   ios_config:
     lines:
       - no ip http server
@@ -155,12 +156,12 @@
     - config
     - services
 
-- name: IOS configure SNMP
+- name: IOS - configure SNMP
   ios_command:
     commands:
       - configure terminal
       - access-list 98 permit any
-      - snmp-server community talend-sw RO 98
+      - snmp-server community {{ talend_snmp_community }} RO 98
       - snmp-server location {{ inventory_hostname[:3]|upper }}
       - exit
   when: ansible_network_os == 'ios'
@@ -172,7 +173,7 @@
 ####################################################
 #### Logging testing - under progress
 ####################################################
-- name: IOS configure logging task1
+- name: IOS - configure logging task1
   ios_command:
     commands: show logging xml
   register: raw_logxml
@@ -180,24 +181,23 @@
   tags:
     - logsxml
 
-- name: Show an attribute value
-  debug:
+#- name: Show an attribute value
+#  debug:
     #var: xmlresp.matches[0].validxhtml.validatedon
     #msg: "{{ raw_logxml.stdout[0] | type_debug }}"
-  tags:
-    - logsxml
+#  tags:
+#    - logsxml
 
-- debug:
+#- debug:
     #msg: "LOGXML: {{ raw_logxml | type_debug }}"
     #msg: "{{ raw_logxml.stdout_lines | type_debug }}"
     #msg: "{{ raw_logxml.stdout_lines[0][13] }}"
     #msg: "{{ raw_logxml.stdout[0] }}"
     #msg: "{{ raw_logxml.stdout_lines | select('regex', '^<msg-discriminator (.*)$') }}"
-  tags:
-    - logsxml
+#  tags:
+#    - logsxml
 
-
-- name: IOS configure logging
+- name: IOS - configure logging
 #  cisco.ios.ios_logging_global:
 #    config:
 #      buffered:
@@ -230,7 +230,7 @@
     - config
     - logs
 
-- name: SSH configuration
+- name: IOS - SSH configuration
   ios_command:
     commands:
       - configure terminal
@@ -239,7 +239,6 @@
       - ip ssh dh min size 2048
       - ip ssh version 2
       - exit
-#    timeout: 120
   vars:
     ansible_command_timeout: 120
   when: ansible_network_os == 'ios'
@@ -247,44 +246,31 @@
     - config
     - ssh
 
-- name: IOS Login banner
+- name: IOS - Login banner
   ios_banner:
     banner: login
-    text: |
-      *******************************  SECURITY NOTICE  **************************
-      *  Use of this system, its equipment, and resources is monitored at all    *
-      *  times. All programs and information held on this system are private and *
-      *  confidential to Talend, and are only lawfully available to              *
-      *  authorised users for authorised purposes only.                          *
-      *                                                                          *
-      *  It is a criminal offence to obtain unauthorised access to any program   *
-      *  or information within this system and/or to make any unauthorised       *
-      *  modifications whatsoever to the contents of this computer system.       *
-      *                                                                          *
-      *  If you are not an authorised user you are violating the regulations of  *
-      *  this system and can, and will be prosecuted to the full extent of the   *
-      *  law. Please disconnect immediately.                                     *
-      ****************************************************************************
+    text: "{{ banner }}"
     state: present
+  when: ansible_network_os == 'ios'
   tags:
     - config
     - banner
 
-- name: Set IOS Interface Description from CDP
+- name: IOS - Set IOS Interface Description from CDP
   ios_config:
     lines:
       - description Connected to {{ item.value[0].host }} int {{ item.value[0].port }}
     parents: interface {{ item.key }}
-  loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
+  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when:
-    - ansible_network_os == "ios"
+    - ansible_network_os == 'ios'
     - item.value[0].platform is defined
     - ("cisco" in item.value[0].platform)
   tags:
     - config
     - intdescr
 
-- name: Configure interface in vlan 8 - End Users
+- name: IOS - Configure interface in vlan 8 - End Users
   ios_config:
     lines:
       - description Wired Users VLAN
@@ -301,7 +287,7 @@
     - config
     - configswitchports8
 
-- name: Configure interface in vlan 24/48 - Ops devices & A/V
+- name: IOS - Configure interface in vlan 24/48 - Ops devices & A/V
   ios_config:
     lines:
       - switchport mode access
@@ -317,7 +303,7 @@
     - config
     - configswitchports2448
 
-- name: Configure description tags in vlan 24 - Ops devices
+- name: IOS - Configure description tags in vlan 24 - Ops devices
   ios_config:
     lines:
       - description VLAN24 - {{ output.ansible_facts.ansible_net_interfaces[item.name].description }}
@@ -326,13 +312,15 @@
   when:
     - ((item.mode is defined and item.mode == 'access' and item.access.vlan == 24) or
       (item.mode is not defined and item.access.vlan is defined and item.access.vlan == 24)) and
+      ( ( output.ansible_facts.ansible_net_interfaces[item.name].description is defined and
+      not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith('VLAN24 -') ) or
       ( output.ansible_facts.ansible_net_interfaces[item.name].description is defined and
-      not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith('VLAN24 - ') )
+      output.ansible_facts.ansible_net_interfaces[item.name].description == None) )
   tags:
 #    - config
     - configswitchports24
 
-- name: Configure description tags in vlan 48 - Audio/Video
+- name: IOS - Configure description tags in vlan 48 - Audio/Video
   ios_config:
     lines:
       - description VLAN48 - {{ output.ansible_facts.ansible_net_interfaces[item.name].description }}
@@ -341,14 +329,16 @@
   when:
     - ((item.mode is defined and item.mode == 'access' and item.access.vlan == 48) or
       (item.mode is not defined and item.access.vlan is defined and item.access.vlan == 48)) and
+      ( ( output.ansible_facts.ansible_net_interfaces[item.name].description is defined and
+      output.ansible_facts.ansible_net_interfaces[item.name].description != None and
+      not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith('VLAN48 -') ) or
       ( output.ansible_facts.ansible_net_interfaces[item.name].description is defined and
-      not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith('VLAN48 - ') )
+      output.ansible_facts.ansible_net_interfaces[item.name].description == None) )
   tags:
 #    - config
     - configswitchports48
 
-
-- name: Configure interface for Cisco Meraki
+- name: IOS - Configure interface for Cisco Meraki
   ios_config:
     lines:
       - description Wifi AP {{ item.value[0].host }}
@@ -356,7 +346,7 @@
     #  - switchport trunk allowed vlan 16,24,240,999
     #  - switchport mode trunk
     parents: interface {{ item.key }}
-  loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
+  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when:
     - ansible_network_os == "ios"
     - item.value[0].platform is defined
@@ -365,8 +355,7 @@
     - config
     - configswitchportswifi
 
-
-- name: Disable AUX login
+- name: IOS - Disable AUX login
   ios_command:
     commands:
       - configure terminal
@@ -383,16 +372,16 @@
     - config
     - disableaux
 
-- name: remove all users except admin
+- name: IOS - remove all users except admin
   no_log: true
   ios_user:
     purge: yes
+  when: ansible_network_os == 'ios'
   tags:
     - config
-    - removelocalusers
     - configusers
 
-- name: remove all credentials
+- name: IOS - remove all credentials
   ios_command:
     commands:
       - configure terminal
@@ -400,39 +389,36 @@
       - no ip ftp username
       - no enable password
       - exit
-  # ignore_errors: yes
   when: ansible_network_os == 'ios'
   tags:
     - config
-    - removecredentials
     - configusers
 
-- name: Add a user with  hashed password
+- name: IOS - Add admin user with  hashed password
   no_log: true
   ios_user:
-    name: "{{ admin_user }}"
+    name: "{{ adminlocal_username }}"
     hashed_password:
       type: 9
       value: "{{ admin_hash_password }}"
-      #have to add this value in the vault and remove admin1 its just for testing
+  when: ansible_network_os == 'ios'
   tags:
     - config
-    - configadminuser
     - configusers
 
-- name: set multiple users to privilege level 15
+- name: IOS - set admin user to privilege level 15
   no_log: true
   ios_user:
     aggregate:
-      - name: "{{ admin_user }}"
+      - name: "{{ adminlocal_username }}"
     privilege: 15
     state: present
+  when: ansible_network_os == 'ios'
   tags:
     - config
-    - configadminuser
     - configusers
 
-- name: enable secret scrypt
+- name: IOS - enable secret scrypt
   no_log: true
   ios_command:
     commands:
@@ -444,10 +430,9 @@
   when: ansible_network_os == 'ios'
   tags:
     - config
-    - configadminuser
     - configenable
 
-- name: Configure aaa new-model
+- name: IOS - Configure aaa new-model
   ios_config:
     lines:
       - aaa new-model
@@ -456,24 +441,24 @@
     - config
     - radius
 
-- name: Configure SV2-Radius
+- name: IOS - Configure SV2-Radius
   ios_config:
     lines:
       - address ipv4 {{ talend_radius_SV2 }} auth-port {{ talend_radius_auth_port }} acct-port {{ talend_radius_acct_port }}
       - timeout 3
-      - key 7 {{ talend_radius_server_key }}
+      - key 7 {{ talend_radius_ios_key }}
     parents: radius server {{ talend_radius_SV2_name }}
   when: ansible_network_os == 'ios'
   tags:
     - config
     - radius
 
-- name: Configure PA7-Radius
+- name: IOS - Configure PA7-Radius
   ios_config:
     lines:
       - address ipv4 {{ talend_radius_PA7 }} auth-port {{ talend_radius_auth_port }} acct-port {{ talend_radius_acct_port }}
       - timeout 3
-      - key 7 {{ talend_radius_server_key }}
+      - key 7 {{ talend_radius_ios_key }}
     parents: radius server {{ talend_radius_PA7_name }}
     before: no radius server SUR-Radius
   when: ansible_network_os == 'ios'
@@ -481,7 +466,7 @@
     - config
     - radius
 
-- name: Configure Global-Radius-Servers
+- name: IOS - Configure group Global-Radius-Servers
   ios_config:
     lines:
       - server name {{ talend_radius_1_name }}
@@ -495,7 +480,7 @@
     - config
     - radius
 
-- name: Configure Radius Global Config
+- name: IOS - Configure Radius Global Config
   ios_config:
     lines:
       - aaa authentication login default group Global-Radius-Servers local
@@ -509,10 +494,214 @@
     - config
     - radius
 
-- name: Save config
+- name: IOS - Save config
   ios_config:
     save_when: always
   when: ansible_network_os == 'ios'
+  tags:
+    - config
+    - saveconfig
+
+##############################################################################
+### NXOS
+##############################################################################
+
+
+- name: NXOS - get facts
+  nxos_facts:
+    gather_subset: hardware
+  when: ansible_network_os == 'nxos'
+  tags:
+    - config
+    - intdescr
+
+- name: NXOS - configure dns
+  nxos_system:
+    hostname: "{{ inventory_hostname }}"
+    domain_name: "{{ talend_domain_name }}"
+    domain_lookup: yes
+    name_servers: "{{ talend_dns }}"
+  when: ansible_network_os == 'nxos'
+  tags:
+    - config
+    - dns
+
+- name: NXOS - configure NTP servers
+  nxos_ntp:
+    server: "{{ talend_ntp }}"
+    prefer: enabled
+    source_int: "vlan 999"
+    state: present
+  when: ansible_network_os == 'nxos'
+  tags:
+    - config
+    - ntp
+
+- name: NXOS - UTC Timezone
+  nxos_command:
+    commands:
+      - configure terminal
+      - "clock timezone UTC 0 0"
+      - "no clock summer-time"
+      - exit
+  when: ansible_network_os == 'nxos'
+  tags:
+    - config
+    - clock
+
+- name: NXOS - STP Global configuration for Core switches
+  ios_command:
+    commands:
+      - configure terminal
+      - spanning-tree mode Rapid-pvst
+      - spanning-tree pathcost method long
+      - spanning-tree port type edge bpduguard default
+      - "{% if '001' in inventory_hostname %}spanning-tree vlan 1-3967 root primary{% else %}spanning-tree vlan 1-3967 root secondary{% endif %}"
+      - exit
+  when: ansible_network_os == 'nxos' and 'CORE' in group_names
+  tags:
+    - config
+    - STPcore
+
+- name: NXOS - configure some service / disable unused service
+  nxos_config:
+    lines:
+      - errdisable recovery cause bpduguard
+  when: ansible_network_os == 'nxos'
+  tags:
+    - config
+    - services
+
+- name: NXOS - disable unused feature
+  nxos_feature:
+    feature: vtp
+    state: disabled
+  when: ansible_network_os == 'nxos'
+  tags:
+    - config
+    - services
+
+- name: NXOS - new ACLs configuration for SNMP
+  nxos_acl:
+    name: ACLsnmp
+    seq: "10"
+    action: permit
+    proto: ip
+    src: any
+    dest: any
+    state: present
+  when: ansible_network_os == 'nxos'
+  tags:
+    - config
+    - snmp
+
+- name: NXOS - configure SNMP Community
+  nxos_snmp_community:
+    community: "{{ talend_snmp_community }}"
+    access: ro
+    acl: ACLsnmp
+    state: present
+  when: ansible_network_os == 'nxos'
+  tags:
+    - config
+    - snmp
+
+- name: NXOS - configure SNMP location
+  nxos_snmp_location:
+    location: "{{ inventory_hostname[:3]|upper }}"
+    state: present
+  when: ansible_network_os == 'nxos'
+  tags:
+    - config
+    - snmp
+
+- name: NXOS - configure logging
+  nxos_logging:
+    aggregate:
+    - { dest: console, state: absent }
+    - { dest: monitor, state: absent }
+    - {dest: logfile, dest_level: 5, name: message, state: present }
+    - { dest: server, remote_server: "{{ talend_logs }}", state: present}
+    - { interface: "Vlan 999", state: present }
+    purge: true
+  when: ansible_network_os == 'nxos'
+
+- name: NXOS - SSH configuration
+  nxos_command:
+    commands:
+      - configure terminal
+      - ssh key rsa 2048 force
+      - exit
+  when: ansible_network_os == 'nxos'
+  tags:
+    - config
+    - ssh
+
+- name: NXOS - Login banner
+  nxos_banner:
+    banner: motd
+    text: "{{ banner }}"
+    state: present
+  when: ansible_network_os == 'nxos'
+  tags:
+    - config
+    - banner
+
+- name: NXOS - remove all users except admin
+  no_log: true
+  nxos_user:
+    purge: yes
+    name: "{{ adminlocal_username }}"
+    configured_password: "{{ adminlocal_password }}"
+    role: network-admin
+    update_password: always
+  when: ansible_network_os == 'nxos'
+  tags:
+    - config
+    - configusers
+
+- name: NXOS - Configure Radius servers
+  nxos_config:
+    lines:
+      - radius-server host {{ talend_radius_1 }} key 7 {{ talend_radius_nxos_key }} authentication accounting timeout 3
+      - radius-server host {{ talend_radius_2 }} key 7 {{ talend_radius_nxos_key }} authentication accounting timeout 3
+      - radius-server deadtime 5
+      - radius-server directed-request
+  when: ansible_network_os == 'nxos'
+  tags:
+    - config
+    - radius
+
+- name: NXOS - Configure group Global-Radius-Servers
+  nxos_config:
+    lines:
+      - server {{ talend_radius_1 }}
+      - server {{ talend_radius_2 }}
+      - deadtime 5
+    parents: aaa group server radius Global-Radius-Servers
+    before: no aaa group server radius Global-Radius-Servers
+    match: exact
+  when: ansible_network_os == 'nxos'
+  tags:
+    - config
+    - radius
+
+- name: NXOS - Configure Radius Global Config
+  nxos_config:
+    lines:
+      - aaa authentication login default group Global-Radius-Servers local
+      - aaa authentication login console local
+      - aaa accounting default group Global-Radius-Servers
+      - ip radius source-interface vlan 999
+  when: ansible_network_os == 'nxos'
+  tags:
+    - config
+    - radius
+
+- name: NXOS - Save config
+  nxos_config:
+    save_when: always
+  when: ansible_network_os == 'nxos'
   tags:
     - config
     - saveconfig
