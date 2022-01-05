@@ -62,6 +62,16 @@
   tags:
     - inventory
 
+- name: sort file
+  run_once: true
+  shell: |
+    tail -n +2 inventory.csv | sort -t, -k1n | cat <(head -1 inventory.csv) - > inventory.csv
+    exit 0
+  args:
+    chdir: "{{ dest_folder }}"
+  tags:
+    - inventory
+
 - name: push to git
   run_once: true
   shell: |
