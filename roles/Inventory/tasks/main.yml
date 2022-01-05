@@ -62,11 +62,10 @@
   tags:
     - inventory
 
-- name: sort file
+- name: sort inventory file
   run_once: true
-  shell: |
-    tail -n +2 inventory.csv | sort -t, -k1n | cat <(head -1 inventory.csv) - > inventory.csv
-    exit 0
+  shell:
+    cmd: "tail -n +2 inventory.csv | sort -t, -k1n | cat <(head -1 inventory.csv) - >> inventory.csv"
   args:
     chdir: "{{ dest_folder }}"
   tags:
