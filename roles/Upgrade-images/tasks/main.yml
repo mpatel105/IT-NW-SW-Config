@@ -1,0 +1,366 @@
+---
+
+##############################################################################
+##### IOS
+
+- name: Getting IOS facts
+  ios_facts:
+    gather_subset: hardware
+  when: ansible_network_os == 'ios'
+  tags:
+    - upgrade-test
+    - upgrade
+
+- name: define image to install
+  set_fact:
+    new_ios_image: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_image }}{% elif '2960' in ansible_net_model %}{{ cat2960_image }}{% elif '9200' in ansible_net_model %}{{ cat9200_image }}{% elif '3560' in ansible_net_model %}{{ cat3560_image }}{% else %}unknown{% endif %}"
+    ios_md5_value: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_md5_value }}{% elif '2960' in ansible_net_model %}{{ cat2960_md5_value }}{% elif '9200' in ansible_net_model %}{{ cat9200_md5_value }}{% elif '3560' in ansible_net_model %}{{ cat3560_md5_value }}{% else %}{% endif %}"
+    space_needed:  "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_space }}{% elif '2960' in ansible_net_model %}{{ cat2960_space }}{% elif '9200' in ansible_net_model %}{{ cat9200_space }}{% elif '3560' in ansible_net_model %}{{ cat3560_space }}{% else %}{% endif %}"
+    new_ios_version: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_version }}{% elif '2960' in ansible_net_model %}{{ cat2960_version }}{% elif '9200' in ansible_net_model %}{{ cat9200_version }}{% elif '3560' in ansible_net_model %}{{ cat3560_version }}{% else %}{% endif %}"
+  when: ansible_network_os == 'ios'
+  tags:
+    - upgrade-test
+    - upgrade
+
+- name: show device details
+  vars:
+    msg: |-
+      Device: {{ inventory_hostname }}
+      Current version: {{ ansible_net_version }}
+      Model: {{ ansible_net_model }}
+      New Image: {{ new_ios_image }}
+      New Version: {{ new_ios_version }}
+  debug:
+    msg: "{{ msg.split('\n') }}"
+  when: ansible_network_os == 'ios'
+  tags:
+    - upgrade-test
+    - upgrade
+
+- block:
+    - name: test if hardware model is supported
+      vars:
+        msg: |-
+          Task end for Device : {{ inventory_hostname }}
+          Model: {{ ansible_net_model }}
+          Hardware not supported !
+          Supported models : C3650, C3850, C2960X, C3560, C9200
+          Stopping playbook for the device {{ inventory_hostname }}
+      debug:
+        msg: "{{ msg.split('\n') }}"
+    - meta: end_host
+  when: ansible_network_os == 'ios' and new_ios_image is defined and new_ios_image == 'unknown'
+  tags:
+    - upgrade-test
+    - upgrade
+
+- block:
+    - name: test if current installed image is compliant
+      vars:
+        msg: |-
+          Task end for Device : {{ inventory_hostname }}
+          {{ new_ios_version }} is already running on this device
+          Stopping playbook for the device {{ inventory_hostname }}
+      debug:
+        msg: "{{ msg.split('\n') }}"
+    - meta: end_host
+  when: ansible_network_os == 'ios' and and new_ios_version is defined and ansible_net_version == new_ios_version
+  tags:
+    - upgrade-test
+    - upgrade
+
+- debug:
+    msg:
+      - Image {{ ansible_net_version }} is not compliant.
+  when: ansible_network_os == 'ios' and and new_ios_version is defined and ansible_net_version != new_ios_version
+  tags:
+    - upgrade-test
+    - upgrade
+
+- name: IOS run dir command
+  ios_command:
+    commands: "dir"
+  register: resultdir
+  when: ansible_network_os == 'ios'
+  tags:
+    - upgrade-test
+    - upgrade
+
+- block:
+  - debug:
+      msg: "file {{ new_ios_image }} doesn't exist on device. Copy the IOS first. Stopping playbook for the device {{ inventory_hostname }}"
+  - meta: end_host
+  when: ansible_network_os == 'ios' and new_ios_image|string not in resultdir.stdout[0]
+  tags:
+    - upgrade-test
+    - upgrade
+
+- name: IOS Image MD5 hash check
+  ios_command:
+    commands: 'verify /md5 flash:{{new_ios_image}} {{ios_md5_value}}'
+  register: ios_md5_result
+  vars:
+    ansible_command_timeout: 300
+  ignore_errors: yes
+  when: ansible_network_os == 'ios'
+  tags:
+    - upgrade-test
+    - upgrade
+
+- block:
+    - name: IOS stop playbook if MD5 is incorrect
+      vars:
+        msg: |
+          Task end for Device : {{ inventory_hostname }}
+          IOS to install : {{ new_ios_image }}
+          MD5 error after copy !
+      debug:
+        msg: "{{ msg.split('\n') }}"
+      failed_when: ios_md5_result.msg is defined and 'Error' in ios_md5_result.msg
+    - meta: end_host
+  when: ansible_network_os == 'ios' and ios_md5_result.msg is defined and 'Error' in ios_md5_result.msg
+  tags:
+    - upgrade-test
+    - upgrade
+
+- debug:
+    msg: "IOS MD5 check Verified successfully"
+  when: ansible_network_os == 'ios'
+  tags:
+    - upgrade-test
+    - upgrade
+
+- name: IOS-XE - install the new image
+  ios_command:
+    commands:
+    - request platform software package install switch all file flash:{{new_ios_image}} new auto-copy
+  vars:
+    ansible_command_timeout: 1200
+  when: ansible_network_os == 'ios' and (('3850' in ansible_net_model) or ('3650' in ansible_net_model))
+  tags:
+    - upgrade
+
+- name: IOS-XE & C9200 - set boot system on device
+  ios_config:
+    lines:
+    - boot system switch all flash:packages.conf
+    match: exact
+    before:
+      - no boot system
+    save_when: always
+  when: ansible_network_os == 'ios' and (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model))
+  tags:
+    - upgrade
+
+- name: IOS 2960X - install the new image
+  ios_command:
+    commands:
+    - archive download-sw /safe flash:{{new_ios_image}}
+  vars:
+    ansible_command_timeout: 5000
+  when: ansible_net_iostype == 'ios' and '2960' in ansible_net_model
+  tags:
+    - upgrade
+
+- name: IOS - Writing Memory on ios device
+  ios_config:
+    save_when: always
+  when: ansible_network_os == 'ios'
+  tags:
+    - upgrade
+
+- name: IOS 9200 - install the new image
+  cli_command:
+    command: install add file flash:{{new_ios_image}} activate commit
+    prompt:
+      - configuration
+      - boot
+      - reload
+    answer:
+      - 'y'
+      - 'y'
+      - 'n'
+  vars:
+    ansible_command_timeout: 5000
+  when: ansible_net_iostype == 'ios' and '9200' in ansible_net_model
+  tags:
+    - upgrade
+
+- name: IOS - Reload the ios Device
+  cli_command:
+    command: reload
+    prompt:
+      - confirm
+    answer:
+      - 'y'
+  when: ansible_network_os == 'ios'
+  tags:
+    - upgrade
+
+- name: IOS - reset the connection
+  meta: reset_connection
+  when: ansible_network_os == 'ios'
+  tags:
+    - upgrade-test
+    - upgrade
+
+- name: IOS - wait for ios network device to come back up
+  wait_for_connection:
+    delay: 100
+    connect_timeout: 1200
+  when: ansible_network_os == 'ios'
+  tags:
+    - upgrade-test
+    - upgrade
+
+- name: Getting IOS facts
+  ios_facts:
+    gather_subset: hardware
+  when: ansible_network_os == 'ios'
+  tags:
+    - upgrade-test
+    - upgrade
+
+- name: IOS - Assert that the IOS version is correct
+  assert:
+    that:
+     - new_ios_version == ansible_net_version
+  when: ansible_network_os == 'ios'
+  tags:
+    - upgrade-test
+    - upgrade
+
+- debug:
+    msg:
+       - "IOS Software Upgrade has been completed"
+  when: ansible_network_os == 'ios'
+  tags:
+    - upgrade-test
+    - upgrade
+
+##############################################################################
+##### NXOS
+
+- name: NXOS Getting facts
+  nxos_facts:
+    gather_subset: hardware
+  when: ansible_network_os == 'nxos'
+  tags:
+    - upgrade-test
+    - upgrade
+
+- block:
+    - name: NXOS test if current installed image is compliant
+      vars:
+        msg: |-
+          Task end for Device : {{ inventory_hostname }}
+          {{ ansible_net_version }} is already running
+          Stopping playbook for the device {{ inventory_hostname }}
+      debug:
+        msg: "{{ msg.split('\n') }}"
+    - meta: end_host
+  when: ansible_network_os == 'nxos' and ansible_net_version == new_nxos_version
+  tags:
+    - upgrade-test
+    - upgrade
+
+- name: NXOS run dir command
+  nxos_command:
+    commands: "dir"
+  register: resultdir
+  when: ansible_network_os == 'nxos'
+  tags:
+    - upgrade-test
+    - upgrade
+
+- block:
+  - debug:
+      msg: "file {{ new_nxos_image }} already exists on device. Stopping playbook for the device {{ inventory_hostname }}"
+  - meta: end_host
+  when: ansible_network_os == 'nxos' and new_nxos_image|string not in resultdir.stdout[0]
+  tags:
+    - upgrade-test
+    - upgrade
+
+- name: NXOS Image MD5 hash check
+  nxos_command:
+    commands: "show file bootflash:{{ new_nxos_image }} md5sum"
+  register: nxos_md5_result
+  vars:
+    ansible_command_timeout: 180
+  when: ansible_network_os == 'nxos'
+  tags:
+    - upgrade-test
+    - upgrade
+
+- block:
+    - name: NXOS stop playbook if MD5 is incorrect
+      vars:
+        msg: |-
+          Task end for Device : {{ inventory_hostname }}
+          OS to install : {{ new_nxos_image }}
+          MD5 error after copy !
+      debug:
+        msg: "{{ msg.split('\n') }}"
+      failed_when: new_nxos_md5_value != nxos_md5_result.stdout[0]
+    - meta: end_host
+  when: ansible_network_os == 'nxos' and nxos_md5_result is defined and new_nxos_md5_value != nxos_md5_result.stdout[0]
+  tags:
+    - upgrade-test
+    - upgrade
+
+- debug:
+    msg: "MD5 check Verified successfully"
+  when: ansible_network_os == 'nxos'
+  tags:
+    - upgrade-test
+    - upgrade
+
+- name: NXOS - Install new nxos image
+  check_mode: no
+  nxos_install_os:
+    system_image_file: "{{new_nxos_image}}"
+    issu: desired
+  vars:
+    ansible_connect_timeout: 900
+    ansible_command_timeout: 900
+  when: ansible_network_os == 'nxos'
+  tags:
+    - upgrade
+
+- name: NXOS - Wait for nxos device to come back up with new image
+  wait_for:
+   port: 22
+   state: started
+   timeout: 900
+   delay: 60
+   host: '{{ inventory_hostname }}'
+  when: ansible_network_os == 'nxos'
+  tags:
+    - upgrade-test
+    - upgrade
+
+- name: NXOS - Getting facts
+  nxos_facts:
+    gather_subset: hardware
+  when: ansible_network_os == 'nxos'
+  tags:
+    - upgrade-test
+    - upgrade
+
+- name: NXOS - Assert that the NXOS version is correct
+  assert:
+    that:
+     - new_nxos_version == ansible_net_version
+  when: ansible_network_os == 'nxos'
+  tags:
+    - upgrade-test
+    - upgrade
+
+- debug:
+    msg:
+       - "NXOS Software Upgrade has been completed"
+  when: ansible_network_os == 'nxos'
+  tags:
+    - upgrade-test
+    - upgrade
