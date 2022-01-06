@@ -70,7 +70,7 @@
 - name: sort inventory file
   run_once: true
   shell:
-    cmd: "sort -t, -k1n >> inventory2.csv"
+    cmd: "sort -t, -k1n >> inventory.csv"
   args:
     chdir: "{{ dest_folder }}"
   tags:
@@ -79,7 +79,7 @@
 - name: add header
   run_once: true
   lineinfile:
-    path: "{{ dest_folder}}/inventory2.csv"
+    path: "{{ dest_folder}}/inventory.csv"
     line: Site,Hostname,Model,Serial_Number,Year,OS_Type,OS_Version,Upgrade_Needed
     insertbefore: BOF
   tags:
