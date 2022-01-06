@@ -50,58 +50,59 @@
   tags:
     - inventory
 
-- name: writing to list
-  set_fact:
-    inventory_list: "{{ hostvars['ansible_play_hosts | first']['inventory_list'] }} + [ '{{ ansible_net_hostname[:3]|upper }},
-           {{ ansible_net_hostname }}{% if ansible_net_stacked_models is defined and (ansible_net_stacked_models | length) > 1  %}_{{ansible_loop.index}}{% else %}{% endif %},
-           {{ item }},
-           {{ ansible_net_stacked_serialnums[ansible_loop.index0] | default(ansible_net_serialnum) }},
-           {{ ansible_net_stacked_serialnums[ansible_loop.index0][3:5] | default(ansible_net_serialnum[3:5]) | int + 1996 }},
-           {{ ansible_net_iostype | default('NXOS') }},
-           {{ ansible_net_version }}' ]"
-  delegate_to: "{{ ansible_play_hosts | first }}"
-  delegate_facts: true
-  loop: "{{ ansible_net_stacked_models | default ([ansible_net_model]) }}"
-  loop_control:
-    extended: yes
-  throttle: 1
-  tags:
-    - inventory
-    - inventory_test
-
-- name: show inventory
-  run_once: true
-  debug: var="{{ hostvars['ansible_play_hosts | first']['inventory_list'] }}"
-  tags:
-    - inventory
-    - inventory_test
-
-#- name: writing to file
-#  ansible.builtin.lineinfile:
-#    path: "{{ dest_folder}}/inventory.csv"
-#    line: "{{ ansible_net_hostname[:3]|upper }},
+#- name: writing to list
+#  set_fact:
+#    inventory_list: "{{ hostvars['ansible_play_hosts | first']['inventory_list'] }} + [ '{{ ansible_net_hostname[:3]|upper }},
 #           {{ ansible_net_hostname }}{% if ansible_net_stacked_models is defined and (ansible_net_stacked_models | length) > 1  %}_{{ansible_loop.index}}{% else %}{% endif %},
 #           {{ item }},
 #           {{ ansible_net_stacked_serialnums[ansible_loop.index0] | default(ansible_net_serialnum) }},
 #           {{ ansible_net_stacked_serialnums[ansible_loop.index0][3:5] | default(ansible_net_serialnum[3:5]) | int + 1996 }},
 #           {{ ansible_net_iostype | default('NXOS') }},
-#           {{ ansible_net_version }}"
-#    create: yes
+#           {{ ansible_net_version }}' ]"
+#  delegate_to: "{{ ansible_play_hosts | first }}"
+#  delegate_facts: true
 #  loop: "{{ ansible_net_stacked_models | default ([ansible_net_model]) }}"
 #  loop_control:
 #    extended: yes
 #  throttle: 1
 #  tags:
 #    - inventory
+#    - inventory_test
 
-#- name: sort inventory file
+#- name: show inventory
 #  run_once: true
-#  shell:
-#    cmd: "tail -n +2 inventory.csv | sort -t, -k1n | cat <(head -1 inventory.csv) - >> inventory.csv"
-#  args:
-#    chdir: "{{ dest_folder }}"
+#  debug: var="{{ hostvars['ansible_play_hosts | first']['inventory_list'] }}"
 #  tags:
 #    - inventory
+#    - inventory_test
+
+- name: writing to file
+  ansible.builtin.lineinfile:
+    path: "{{ dest_folder}}/inventory.csv"
+    line: "{{ ansible_net_hostname[:3]|upper }},
+           {{ ansible_net_hostname }}{% if ansible_net_stacked_models is defined and (ansible_net_stacked_models | length) > 1  %}_{{ansible_loop.index}}{% else %}{% endif %},
+           {{ item }},
+           {{ ansible_net_stacked_serialnums[ansible_loop.index0] | default(ansible_net_serialnum) }},
+           {{ ansible_net_stacked_serialnums[ansible_loop.index0][3:5] | default(ansible_net_serialnum[3:5]) | int + 1996 }},
+           {{ ansible_net_iostype | default('NXOS') }},
+           {{ ansible_net_version }}"
+    create: yes
+  loop: "{{ ansible_net_stacked_models | default ([ansible_net_model]) }}"
+  loop_control:
+    extended: yes
+  throttle: 1
+  tags:
+    - inventory
+
+- name: sort inventory file
+  run_once: true
+  shell:
+#    cmd: "tail -n +2 inventory.csv | sort -t, -k1n | cat <(head -1 inventory.csv) - >> inventory2.csv"
+    cmd: "tail -n +2 inventory.csv | sort -t, -k1n >> inventory2.csv"
+  args:
+    chdir: "{{ dest_folder }}"
+  tags:
+    - inventory
 
 - name: push to git
   run_once: true
