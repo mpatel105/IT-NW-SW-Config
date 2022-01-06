@@ -70,7 +70,7 @@
 - name: sort inventory file
   run_once: true
   shell:
-    cmd: "sort -t, -k1n >> inventory.csv"
+    cmd: "sort -t, -k1n inventory.csv >> inventory.csv"
   args:
     chdir: "{{ dest_folder }}"
   tags:
