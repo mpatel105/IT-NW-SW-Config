@@ -2,3 +2,4 @@
 # vars file for Inventory
 inventory_file: /tmp/inventory.csv
 dest_folder: /tmp/SW-Config
+inventory_list: []
