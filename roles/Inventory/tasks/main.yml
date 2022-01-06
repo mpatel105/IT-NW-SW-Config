@@ -16,6 +16,13 @@
     - inventory_test
   when: ansible_network_os == 'nxos'
 
+- name: define OS Version
+  set_fact:
+    os_version: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_version }}{% elif '2960' in ansible_net_model %}{{ cat2960_version }}{% elif '9200' in ansible_net_model %}{{ cat9200_version }}{% elif '3560' in ansible_net_model %}{{ cat3560_version }}{% elif 'Nexus' in ansible_net_model %}{{ nxos_version }}{% else %}{% endif %}"
+  tags:
+    - inventory
+    - inventory_test
+
 - name: clone repository
   run_once: true
   git: >
@@ -41,34 +48,6 @@
   tags:
     - inventory
 
-
-
-#- name: writing to list
-#  set_fact:
-#    inventory_list: "{{ hostvars['ansible_play_hosts | first']['inventory_list'] }} + [ '{{ ansible_net_hostname[:3]|upper }},
-#           {{ ansible_net_hostname }}{% if ansible_net_stacked_models is defined and (ansible_net_stacked_models | length) > 1  %}_{{ansible_loop.index}}{% else %}{% endif %},
-#           {{ item }},
-#           {{ ansible_net_stacked_serialnums[ansible_loop.index0] | default(ansible_net_serialnum) }},
-#           {{ ansible_net_stacked_serialnums[ansible_loop.index0][3:5] | default(ansible_net_serialnum[3:5]) | int + 1996 }},
-#           {{ ansible_net_iostype | default('NXOS') }},
-#           {{ ansible_net_version }}' ]"
-#  delegate_to: "{{ ansible_play_hosts | first }}"
-#  delegate_facts: true
-#  loop: "{{ ansible_net_stacked_models | default ([ansible_net_model]) }}"
-#  loop_control:
-#    extended: yes
-#  throttle: 1
-#  tags:
-#    - inventory
-#    - inventory_test
-
-#- name: show inventory
-#  run_once: true
-#  debug: var="{{ hostvars['ansible_play_hosts | first']['inventory_list'] }}"
-#  tags:
-#    - inventory
-#    - inventory_test
-
 - name: writing to file
   ansible.builtin.lineinfile:
     path: "{{ dest_folder}}/inventory.csv"
@@ -78,7 +57,8 @@
            {{ ansible_net_stacked_serialnums[ansible_loop.index0] | default(ansible_net_serialnum) }},
            {{ ansible_net_stacked_serialnums[ansible_loop.index0][3:5] | default(ansible_net_serialnum[3:5]) | int + 1996 }},
            {{ ansible_net_iostype | default('NXOS') }},
-           {{ ansible_net_version }}"
+           {{ ansible_net_version }},
+           {% if ansible_net_version == os_version %}-{% else %}Yes{% endif %}
     create: yes
   loop: "{{ ansible_net_stacked_models | default ([ansible_net_model]) }}"
   loop_control:
@@ -90,7 +70,6 @@
 - name: sort inventory file
   run_once: true
   shell:
-#    cmd: "tail -n +2 inventory.csv | sort -t, -k1n | cat <(head -1 inventory.csv) - >> inventory2.csv"
     cmd: "sort -t, -k1n >> inventory2.csv"
   args:
     chdir: "{{ dest_folder }}"
@@ -101,7 +80,7 @@
   run_once: true
   lineinfile:
     path: "{{ dest_folder}}/inventory2.csv"
-    line: Site,Hostname,Model,Serial_Number,Year,OS_Type,OS_Version
+    line: Site,Hostname,Model,Serial_Number,Year,OS_Type,OS_Version,Upgrade_Needed
     insertbefore: BOF
   tags:
     - inventory
