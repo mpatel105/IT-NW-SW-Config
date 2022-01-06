@@ -36,7 +36,7 @@
   run_once: true
   file:
     state: absent
-    path: "{{ dest_folder}}/inventory.csv"
+    path: "{{ dest_folder }}/{{ inventory_file }}"
   tags:
     - inventory
 
@@ -44,7 +44,7 @@
   run_once: true
   file:
     state: touch
-    path: "{{ dest_folder}}/temp.csv"
+    path: "{{ dest_folder }}/temp.csv"
   tags:
     - inventory
 
@@ -70,7 +70,7 @@
 - name: sort inventory file
   run_once: true
   shell:
-    cmd: "sort -t, -k1n temp.csv >> inventory.csv"
+    cmd: "sort -t, -k1n temp.csv >> {{ inventory_file }}"
   args:
     chdir: "{{ dest_folder }}"
   tags:
@@ -79,7 +79,7 @@
 - name: add header
   run_once: true
   lineinfile:
-    path: "{{ dest_folder}}/inventory.csv"
+    path: "{{ dest_folder }}/{{ inventory_file }}"
     line: Site,Hostname,Model,Serial_Number,Year,OS_Type,OS_Version,Upgrade_Needed
     insertbefore: BOF
   tags:
@@ -88,7 +88,7 @@
 - name: push to git
   run_once: true
   shell: |
-    git add inventory.csv
+    git add {{ inventory_file }}
     git commit -m "inventory: $(date +"%Y-%m-%d %H:%M:%S")"
     git push origin master
     exit 0
