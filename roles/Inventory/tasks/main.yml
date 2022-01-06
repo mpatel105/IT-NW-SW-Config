@@ -63,12 +63,14 @@
   loop_control:
     extended: yes
   throttle: 1
+  delegate_to: localhost
   tags:
     - inventory
     - inventory_test
 
 - name: show inventory
-  debug: var=inventory_list
+  run_once: true
+  debug: var={{ hostvars['localhost']['inventory_list'] }}"
   tags:
     - inventory
     - inventory_test
