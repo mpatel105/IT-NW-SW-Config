@@ -59,7 +59,7 @@
            {{ ansible_net_stacked_serialnums[ansible_loop.index0][3:5] | default(ansible_net_serialnum[3:5]) | int + 1996 }},
            {{ ansible_net_iostype | default('NXOS') }},
            {{ ansible_net_version }}' ]"
-  delegate_to: {{ ansible_play_hosts | first }}
+  delegate_to: "{{ ansible_play_hosts | first }}"
   delegate_facts: true
   loop: "{{ ansible_net_stacked_models | default ([ansible_net_model]) }}"
   loop_control:
