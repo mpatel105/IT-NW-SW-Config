@@ -52,18 +52,19 @@
 
 - name: writing to list
   set_fact:
-    inventory_list: "{{ inventory_list }} + [ '{{ ansible_net_hostname[:3]|upper }},
+    inventory_list: "{{ hostvars['localhost']['inventory_list'] }} + [ '{{ ansible_net_hostname[:3]|upper }},
            {{ ansible_net_hostname }}{% if ansible_net_stacked_models is defined and (ansible_net_stacked_models | length) > 1  %}_{{ansible_loop.index}}{% else %}{% endif %},
            {{ item }},
            {{ ansible_net_stacked_serialnums[ansible_loop.index0] | default(ansible_net_serialnum) }},
            {{ ansible_net_stacked_serialnums[ansible_loop.index0][3:5] | default(ansible_net_serialnum[3:5]) | int + 1996 }},
            {{ ansible_net_iostype | default('NXOS') }},
            {{ ansible_net_version }}' ]"
+  delegate_to: localhost
+  delegate_facts: true
   loop: "{{ ansible_net_stacked_models | default ([ansible_net_model]) }}"
   loop_control:
     extended: yes
   throttle: 1
-  delegate_to: localhost
   tags:
     - inventory
     - inventory_test
