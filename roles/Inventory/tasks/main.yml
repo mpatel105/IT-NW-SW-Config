@@ -44,13 +44,13 @@
   run_once: true
   file:
     state: touch
-    path: "{{ dest_folder}}/inventory.csv"
+    path: "{{ dest_folder}}/temp.csv"
   tags:
     - inventory
 
 - name: writing to file
   ansible.builtin.lineinfile:
-    path: "{{ dest_folder}}/inventory.csv"
+    path: "{{ dest_folder}}/temp.csv"
     line: "{{ ansible_net_hostname[:3]|upper }},
            {{ ansible_net_hostname }}{% if ansible_net_stacked_models is defined and (ansible_net_stacked_models | length) > 1  %}_{{ansible_loop.index}}{% else %}{% endif %},
            {{ item }},
@@ -70,7 +70,7 @@
 - name: sort inventory file
   run_once: true
   shell:
-    cmd: "sort -t, -k1n inventory.csv >> inventory.csv"
+    cmd: "sort -t, -k1n temp.csv >> inventory.csv"
   args:
     chdir: "{{ dest_folder }}"
   tags:
@@ -88,7 +88,7 @@
 - name: push to git
   run_once: true
   shell: |
-    git add .
+    git add inventory.csv
     git commit -m "inventory: $(date +"%Y-%m-%d %H:%M:%S")"
     git push origin master
     exit 0
