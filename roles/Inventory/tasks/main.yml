@@ -41,14 +41,7 @@
   tags:
     - inventory
 
-- name: add header
-  run_once: true
-  lineinfile:
-    path: "{{ dest_folder}}/inventory.csv"
-    line: Site,Hostname,Model,Serial_Number,Year,OS_Type,OS_Version
-    create: yes
-  tags:
-    - inventory
+
 
 #- name: writing to list
 #  set_fact:
@@ -98,9 +91,18 @@
   run_once: true
   shell:
 #    cmd: "tail -n +2 inventory.csv | sort -t, -k1n | cat <(head -1 inventory.csv) - >> inventory2.csv"
-    cmd: "tail -n +2 inventory.csv | sort -t, -k1n >> inventory2.csv"
+    cmd: "sort -t, -k1n >> inventory2.csv"
   args:
     chdir: "{{ dest_folder }}"
+  tags:
+    - inventory
+
+- name: add header
+  run_once: true
+  lineinfile:
+    path: "{{ dest_folder}}/inventory2.csv"
+    line: Site,Hostname,Model,Serial_Number,Year,OS_Type,OS_Version
+    insertbefore: BOF
   tags:
     - inventory
 
