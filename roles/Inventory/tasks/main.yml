@@ -70,7 +70,7 @@
 
 - name: show inventory
   run_once: true
-  debug: var={{ hostvars['localhost']['inventory_list'] }}"
+  debug: var="{{ hostvars['localhost']['inventory_list'] }}"
   tags:
     - inventory
     - inventory_test
