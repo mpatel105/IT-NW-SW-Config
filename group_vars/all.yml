@@ -58,5 +58,7 @@ model_stp_edge:
   - WS-C3560CX-12PC-S
   - WS-C3560X-48T-S
 
-scp_emea_server: pa7-nwsrv-001.talend.com
-scp_noram_server: sv2-nwsrv-001.talend.com
+#scp_emea_server: pa7-nwsrv-001.talend.com
+#scp_noram_server: sv2-nwsrv-001.talend.com
+scp_emea_server: 10.50.17.11
+scp_noram_server: 10.10.17.6
