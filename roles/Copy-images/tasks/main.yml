@@ -146,6 +146,14 @@
     - copy-test
     - copy
 
+- debug:
+    msg: "{{ ansible_net_filesystems_info }}"
+  when: ansible_network_os == 'ios'
+  tags:
+    - copy-test
+    - copy
+
+
 - block:
     - name: IOS Test if enough space on device
       vars:
