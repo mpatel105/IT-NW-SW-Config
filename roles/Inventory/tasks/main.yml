@@ -1,7 +1,7 @@
 ---
 
 - name: IOS get fact
-  ios_facts:
+  cisco.ios.ios_facts:
     gather_subset: hardware
   tags:
     - inventory
