@@ -113,7 +113,6 @@
   tags:
     - upgrade-test
     - upgrade
-    - upgrade9200
 
 - block:
     - name: IOS stop playbook if MD5 is incorrect
@@ -130,7 +129,6 @@
   tags:
     - upgrade-test
     - upgrade
-    - upgrade9200
 
 - debug:
     msg: "IOS MD5 check Verified successfully"
@@ -138,7 +136,6 @@
   tags:
     - upgrade-test
     - upgrade
-    - upgrade9200
 
 - name: IOS-XE - install the new image
   ios_command:
@@ -169,7 +166,7 @@
     - archive download-sw /safe flash:{{new_ios_image}}
   vars:
     ansible_command_timeout: 5000
-  when: (ansible_net_iostype == 'ios') and ('2960' in ansible_net_model)
+  when: (ansible_network_os == 'ios') and ('2960' in ansible_net_model)
   tags:
     - upgrade
 
@@ -202,9 +199,9 @@
       - 'y'
       - 'y'
       - 'n'
-  vars:
-    ansible_command_timeout: 5000
-  when: (ansible_net_iostype == 'ios') and ('9200' in ansible_net_model)
+#  vars:
+#    ansible_command_timeout: 5000
+  when: (ansible_network_os == 'ios') and ('9200' in ansible_net_model)
   tags:
     - upgrade
     - upgrade9200
