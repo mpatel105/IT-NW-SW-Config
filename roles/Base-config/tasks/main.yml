@@ -313,9 +313,9 @@
     - ((item.mode is defined and item.mode == 'access' and item.access.vlan == 24) or
       (item.mode is not defined and item.access.vlan is defined and item.access.vlan == 24)) and
       ( ( output.ansible_facts.ansible_net_interfaces[item.name].description is defined and
-      not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith('VLAN24 -') ) or
-      ( output.ansible_facts.ansible_net_interfaces[item.name].description is defined and
-      output.ansible_facts.ansible_net_interfaces[item.name].description == None) )
+      output.ansible_facts.ansible_net_interfaces[item.name].description == None) or
+      (output.ansible_facts.ansible_net_interfaces[item.name].description is defined and
+      not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith('VLAN24 -')) )
   tags:
 #    - config
     - configswitchports24
