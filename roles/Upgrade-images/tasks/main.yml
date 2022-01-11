@@ -10,6 +10,7 @@
   tags:
     - upgrade-test
     - upgrade
+    - upgrade9200
 
 - name: define image to install
   set_fact:
@@ -21,6 +22,7 @@
   tags:
     - upgrade-test
     - upgrade
+    - upgrade9200
 
 - name: show device details
   vars:
@@ -36,6 +38,7 @@
   tags:
     - upgrade-test
     - upgrade
+    - upgrade9200
 
 - block:
     - name: test if hardware model is supported
@@ -53,6 +56,7 @@
   tags:
     - upgrade-test
     - upgrade
+    - upgrade9200
 
 - block:
     - name: test if current installed image is compliant
@@ -68,6 +72,7 @@
   tags:
     - upgrade-test
     - upgrade
+    - upgrade9200
 
 - debug:
     msg:
@@ -85,6 +90,7 @@
   tags:
     - upgrade-test
     - upgrade
+    - upgrade9200
 
 - block:
   - debug:
@@ -94,6 +100,7 @@
   tags:
     - upgrade-test
     - upgrade
+    - upgrade9200
 
 - name: IOS Image MD5 hash check
   ios_command:
@@ -106,6 +113,7 @@
   tags:
     - upgrade-test
     - upgrade
+    - upgrade9200
 
 - block:
     - name: IOS stop playbook if MD5 is incorrect
@@ -122,6 +130,7 @@
   tags:
     - upgrade-test
     - upgrade
+    - upgrade9200
 
 - debug:
     msg: "IOS MD5 check Verified successfully"
@@ -129,6 +138,7 @@
   tags:
     - upgrade-test
     - upgrade
+    - upgrade9200
 
 - name: IOS-XE - install the new image
   ios_command:
@@ -151,6 +161,7 @@
   when: ansible_network_os == 'ios' and (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model))
   tags:
     - upgrade
+    - upgrade9200
 
 - name: IOS 2960X - install the new image
   ios_command:
@@ -168,14 +179,25 @@
   when: ansible_network_os == 'ios'
   tags:
     - upgrade
+    - upgrade9200
+
+- debug:
+    msg:
+       - "Model: {{ ansible_net_model }}"
+  when: ansible_network_os == 'ios'
+  tags:
+    - upgrade-test
+    - upgrade
+    - upgrade9200
 
 - name: IOS 9200 - install the new image
   cli_command:
     command: install add file flash:{{new_ios_image}} activate commit
+    check_all: True
     prompt:
-      - configuration
-      - boot
-      - reload
+      - 'configuration'
+      - 'boot'
+      - 'reload'
     answer:
       - 'y'
       - 'y'
@@ -185,6 +207,7 @@
   when: (ansible_net_iostype == 'ios') and ('9200' in ansible_net_model)
   tags:
     - upgrade
+    - upgrade9200
 
 - name: IOS - Reload the ios Device
   cli_command:
