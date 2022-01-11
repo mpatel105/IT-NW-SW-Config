@@ -199,8 +199,8 @@
       - 'y'
       - 'y'
       - 'n'
-#  vars:
-#    ansible_command_timeout: 5000
+  vars:
+    ansible_command_timeout: 5000
   when: (ansible_network_os == 'ios') and ('9200' in ansible_net_model)
   tags:
     - upgrade
