@@ -192,13 +192,9 @@
     command: install add file flash:{{new_ios_image}} activate commit
     check_all: True
     prompt:
-      - 'configuration'
-      - 'boot'
-      - 'reload'
+      - 'This operation may require a reload of the system. Do you want to proceed?'
     answer:
       - 'y'
-      - 'y'
-      - 'n'
   vars:
     ansible_command_timeout: 5000
   when: (ansible_network_os == 'ios') and ('9200' in ansible_net_model)
@@ -213,7 +209,7 @@
       - confirm
     answer:
       - 'y'
-  when: ansible_network_os == 'ios'
+  when: ansible_network_os == 'ios' and ('9200' not in ansible_net_model)
   tags:
     - upgrade
 
