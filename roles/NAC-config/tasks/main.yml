@@ -1,7 +1,7 @@
 ---
 # tasks file for NAC-switch-config
 
-- name: Configure NAC for global config
+- name: IOS - Configure NAC - global config
   ios_command:
     commands:
       - configure terminal
@@ -10,22 +10,7 @@
       - aaa authorization network default group Portnox-RADIUS-Group
       - aaa accounting update newinfo periodic 2880
       - aaa accounting dot1x default start-stop group Portnox-RADIUS-Group
-      - aaa group server radius Portnox-RADIUS-Group
-      - server name {{ talend_portnox_1_name }}
-      - server name {{ talend_portnox_2_name }}
-      - deadtime 5
-      - aaa server radius dynamic-author
-      - client {{ talend_portnox_1 }} server-key 7 {{ talend_CoA_radius_server_key_1 }}
-      - client {{ talend_portnox_2 }} server-key 7 {{ talend_CoA_radius_server_key_2 }}
       - ip radius source-interface Vlan999
-      - radius server {{ talend_portnox_1_name }}
-      - address ipv4 {{ talend_portnox_1 }} auth-port {{ talend_portnox_auth_port_1 }} acct-port {{ talend_portnox_acct_port_1 }}
-      - timeout 3
-      - key 7 {{ talend_portnox_radius_key_1 }}
-      - radius server {{ talend_portnox_2_name }}
-      - address ipv4 {{ talend_portnox_2 }} auth-port {{ talend_portnox_auth_port_2 }} acct-port {{ talend_portnox_acct_port_2 }}
-      - timeout 3
-      - key 7 {{ talend_portnox_radius_key_2 }}
       - radius-server vsa send authentication
       - radius-server vsa send accounting
       - radius-server dead-criteria time 10 tries 3
@@ -40,7 +25,58 @@
     - NACglobal
     - NACconfig
 
-- name: IOS get fact
+- name: IOS - Configure NAC group Portnox-RADIUS-Group
+  nxos_config:
+    lines:
+      - server name {{ talend_portnox_1_name }}
+      - server name {{ talend_portnox_2_name }}
+      - deadtime 5
+    parents: aaa group server radius Portnox-RADIUS-Group
+    before: no aaa group server radius Portnox-RADIUS-Group
+    match: exact
+  when: ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - NACconfig
+
+- name: IOS - Configure NAC server radius dynamic-author
+  nxos_config:
+    lines:
+      - client {{ talend_portnox_1 }} server-key 7 {{ talend_CoA_radius_server_key_1 }}
+      - client {{ talend_portnox_2 }} server-key 7 {{ talend_CoA_radius_server_key_2 }}
+    parents: aaa server radius dynamic-author
+    before: no aaa server radius dynamic-author
+    match: exact
+  when: ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - NACconfig
+
+- name: IOS - Configure Portnox-Radius-SV2
+  ios_config:
+    lines:
+      - address ipv4 {{ talend_portnox_SV2 }} auth-port {{ talend_portnox_auth_port }} acct-port {{ talend_portnox_acct_port }}
+      - timeout 3
+      - key {{ talend_portnox_radius_key }}
+    parents: radius server {{ talend_portnox_SV2_name }}
+  when: ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - NACconfig
+
+- name: IOS - Configure Portnox-Radius-PA7
+  ios_config:
+    lines:
+      - address ipv4 {{ talend_portnox_PA7 }} auth-port {{ talend_portnox_auth_port }} acct-port {{ talend_portnox_acct_port }}
+      - timeout 3
+      - key {{ talend_portnox_radius_key }}
+    parents: radius server {{ talend_portnox_PA7_name }}
+  when: ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - NACconfig
+
+- name: IOS - get fact
   ios_facts:
     gather_network_resources:
       - 'l2_interfaces'
@@ -78,7 +114,6 @@
     parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
-  #  - (item.mode is defined and item.mode == 'access' and (item.access.vlan == 8 or item.access.vlan == 16 or item.access.vlan == 24 or item.access.vlan == 48)
     - (item.access.vlan is defined and (item.access.vlan == 8 or item.access.vlan == 16 or item.access.vlan == 24 or item.access.vlan == 48))
   tags:
     - NACint

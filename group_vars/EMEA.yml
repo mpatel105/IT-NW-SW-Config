@@ -2,16 +2,21 @@ talend_dns:
   - 10.42.100.100
   - 192.168.15.30
 
-talend_portnox_US: 13.90.229.234
-talend_portnox_EMEA: 52.232.122.157
-talend_portnox_1: 52.232.122.157
-talend_portnox_2: 13.90.229.234
-talend_portnox_1_name: Portnox-EU
-talend_portnox_2_name: Portnox-US
-talend_portnox_auth_port_1: 10356
-talend_portnox_acct_port_1: 10357
-talend_portnox_auth_port_2: 10444
-talend_portnox_acct_port_2: 10445
+# for reference, cloud server are not used
+talend_portnox_Cloud_US: 13.90.229.234
+talend_portnox_Cloud_EMEA: 52.232.122.157
+# internal portnox radius servers
+talend_portnox_PA7_name: PA7-Portnox
+talend_portnox_SV2_name: SV2-Portnox
+talend_portnox_SV2: sv2-clearradius-001.talend.com
+talend_portnox_PA7: pa7-clearradius-001.talend.com
+talend_portnox_1: {{ talend_portnox_PA7 }}
+talend_portnox_2: {{ talend_portnox_SV2 }}
+talend_portnox_1_name: {{ talend_portnox_PA7_name }}
+talend_portnox_2_name: {{ talend_portnox_SV2_name }}
+talend_portnox_auth_port: 1812
+talend_portnox_acct_port: 1813
+
 talend_CoA_radius_server_key_1: 023F305F5B2D06074A482D48561408213E021E1E3202072500170D4724316341
 talend_CoA_radius_server_key_2: 132F3338203E203E3B0B3223060F18081C330D035B725A44183A0205006B0607
 talend_portnox_radius_key_1: 0818784A59320C31140D285579283E0201331626113C3711745D5202733E3600

@@ -445,7 +445,7 @@
     lines:
       - address ipv4 {{ talend_radius_SV2 }} auth-port {{ talend_radius_auth_port }} acct-port {{ talend_radius_acct_port }}
       - timeout 3
-      - key 7 {{ talend_radius_ios_key }}
+      - key {{ talend_radius_ios_key }}
     parents: radius server {{ talend_radius_SV2_name }}
   when: ansible_network_os == 'ios'
   tags:
@@ -457,7 +457,7 @@
     lines:
       - address ipv4 {{ talend_radius_PA7 }} auth-port {{ talend_radius_auth_port }} acct-port {{ talend_radius_acct_port }}
       - timeout 3
-      - key 7 {{ talend_radius_ios_key }}
+      - key {{ talend_radius_ios_key }}
     parents: radius server {{ talend_radius_PA7_name }}
     before: no radius server SUR-Radius
   when: ansible_network_os == 'ios'
@@ -662,8 +662,8 @@
 - name: NXOS - Configure Radius servers
   nxos_config:
     lines:
-      - radius-server host {{ talend_radius_1 }} key 7 {{ talend_radius_nxos_key }} authentication accounting timeout 3
-      - radius-server host {{ talend_radius_2 }} key 7 {{ talend_radius_nxos_key }} authentication accounting timeout 3
+      - radius-server host {{ talend_radius_1 }} key {{ talend_radius_nxos_key }} authentication accounting timeout 3
+      - radius-server host {{ talend_radius_2 }} key {{ talend_radius_nxos_key }} authentication accounting timeout 3
       - radius-server deadtime 5
       - radius-server directed-request
   when: ansible_network_os == 'nxos'
