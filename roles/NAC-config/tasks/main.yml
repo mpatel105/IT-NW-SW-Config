@@ -1,6 +1,15 @@
 ---
 # tasks file for NAC-switch-config
 
+- name: IOS - get fact
+  ios_facts:
+    gather_network_resources:
+      - 'l2_interfaces'
+  tags:
+    - NACint
+    - NACconfig
+    - NACglobal
+
 - name: IOS - Configure NAC - global config
   ios_command:
     commands:
@@ -15,12 +24,32 @@
       - radius-server vsa send accounting
       - radius-server dead-criteria time 10 tries 3
       - radius-server deadtime 5
-      # commented because doesn't work on lab IOSv
-      #- device-tracking policy ip_device_tracking_policy
-      #- tracking enable
       - dot1x system-auth-control
       - exit
   when: ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - NACconfig
+
+- name: IOS 3650/3850/9200 - Configure NAC - global config
+  ios_command:
+    commands:
+      - configure terminal
+      - device-tracking policy ip_device_tracking_policy
+      - tracking enable
+      - exit
+  when: ansible_network_os == 'ios' and (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model))
+  tags:
+    - NACglobal
+    - NACconfig
+
+- name: IOS 2960X/3560CX - Configure NAC - global config
+  ios_command:
+    commands:
+      - configure terminal
+      - ip device tracking
+      - exit
+  when: ansible_network_os == 'ios' and ('2960' in ansible_net_model or '3560' in ansible_net_model)
   tags:
     - NACglobal
     - NACconfig
@@ -42,8 +71,8 @@
 - name: IOS - Configure NAC server radius dynamic-author
   nxos_config:
     lines:
-      - client {{ talend_portnox_1 }} server-key 7 {{ talend_CoA_radius_server_key_1 }}
-      - client {{ talend_portnox_2 }} server-key 7 {{ talend_CoA_radius_server_key_2 }}
+      - client {{ talend_portnox_1 }} server-key {{ talend_portnox_radius_key }}
+      - client {{ talend_portnox_2 }} server-key {{ talend_portnox_radius_key }}
     parents: aaa server radius dynamic-author
     before: no aaa server radius dynamic-author
     match: exact
@@ -75,25 +104,6 @@
   tags:
     - NACglobal
     - NACconfig
-
-- name: IOS - get fact
-  ios_facts:
-    gather_network_resources:
-      - 'l2_interfaces'
-  register: output
-  tags:
-    - NACint
-    - NACget_fact
-    - NACconfig
-
-- debug:
-    msg: "{{ output }}"
-  #loop: "{{ ansible_network_resources['l2_interfaces']  }}"
-  when:
-    - ansible_network_os == "ios"
-  tags:
-    - NACget_fact
-    - NACint
 
 - name: Configure interface for NAC
   ios_config:
