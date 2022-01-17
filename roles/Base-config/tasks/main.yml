@@ -529,7 +529,7 @@
   nxos_ntp:
     server: "{{ talend_ntp }}"
     prefer: enabled
-    source_int: "vlan 999"
+    source_int: "mgmt0"
     state: present
   when: ansible_network_os == 'nxos'
   tags:
@@ -635,7 +635,7 @@
     - { dest: monitor, state: absent }
     - {dest: logfile, dest_level: 5, name: message, state: present }
     - { dest: server, remote_server: "{{ talend_logs }}", state: present}
-    - { interface: "Vlan 999", state: present }
+    - { interface: "mgmt0", state: present }
     purge: true
   when: ansible_network_os == 'nxos'
 
@@ -705,7 +705,7 @@
       - aaa authentication login default group Global-Radius-Servers local
       - aaa authentication login console local
       - aaa accounting default group Global-Radius-Servers
-      - ip radius source-interface vlan 999
+      - ip radius source-interface mgmt0
   when: ansible_network_os == 'nxos'
   tags:
     - config
