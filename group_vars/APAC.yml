@@ -7,10 +7,12 @@ talend_portnox_PA7_name: PA7-Portnox
 talend_portnox_SV2_name: SV2-Portnox
 talend_portnox_SV2: sv2-clearradius-001.talend.com
 talend_portnox_PA7: pa7-clearradius-001.talend.com
-talend_portnox_1: "{{ talend_portnox_PA7 }}"
-talend_portnox_2: "{{ talend_portnox_SV2 }}"
-talend_portnox_1_name: "{{ talend_portnox_PA7_name }}"
-talend_portnox_2_name: "{{ talend_portnox_SV2_name }}"
+talend_portnox_1: {{ talend_portnox_PA7 }}
+talend_portnox_2: {{ talend_portnox_SV2 }}
+talend_portnox_1_name: {{ talend_portnox_PA7_name }}
+talend_portnox_2_name: {{ talend_portnox_SV2_name }}
+talend_portnox_1_radius_key: "{{ talend_portnox_PA7_radius_key }}"
+talend_portnox_2_radius_key: "{{ talend_portnox_SV2_radius_key }}"
 talend_portnox_auth_port: 1812
 talend_portnox_acct_port: 1813
 

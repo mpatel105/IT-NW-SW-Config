@@ -71,8 +71,8 @@
 - name: IOS - Configure NAC server radius dynamic-author
   nxos_config:
     lines:
-      - client {{ talend_portnox_1 }} server-key {{ talend_portnox_radius_key }}
-      - client {{ talend_portnox_2 }} server-key {{ talend_portnox_radius_key }}
+      - client {{ talend_portnox_1 }} server-key {{ talend_portnox_1_radius_key }}
+      - client {{ talend_portnox_2 }} server-key {{ talend_portnox_2_radius_key }}
     parents: aaa server radius dynamic-author
     before: no aaa server radius dynamic-author
     match: exact
@@ -86,7 +86,7 @@
     lines:
       - address ipv4 {{ talend_portnox_SV2 }} auth-port {{ talend_portnox_auth_port }} acct-port {{ talend_portnox_acct_port }}
       - timeout 3
-      - key {{ talend_portnox_radius_key }}
+      - key {{ talend_portnox_SV2_radius_key }}
     parents: radius server {{ talend_portnox_SV2_name }}
   when: ansible_network_os == 'ios'
   tags:
@@ -98,7 +98,7 @@
     lines:
       - address ipv4 {{ talend_portnox_PA7 }} auth-port {{ talend_portnox_auth_port }} acct-port {{ talend_portnox_acct_port }}
       - timeout 3
-      - key {{ talend_portnox_radius_key }}
+      - key {{ talend_portnox_PA7_radius_key }}
     parents: radius server {{ talend_portnox_PA7_name }}
   when: ansible_network_os == 'ios'
   tags:
