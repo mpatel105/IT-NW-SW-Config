@@ -549,7 +549,7 @@
     - clock
 
 - name: NXOS - STP Global configuration for Core switches
-  ios_command:
+  nxos_command:
     commands:
       - configure terminal
       - spanning-tree mode Rapid-pvst
@@ -561,6 +561,20 @@
   tags:
     - config
     - STPcore
+
+- name: NXOS - STP Global configuration for Access switches
+  nxos_command:
+    commands:
+      - configure terminal
+      - spanning-tree mode Rapid-pvst
+      - spanning-tree pathcost method long
+      - spanning-tree port type edge bpduguard default
+      - spanning-tree vlan 1-3967 priority 32768
+      - exit
+  when: ansible_network_os == 'nxos' and 'ACCESS' in group_names
+  tags:
+    - config
+    - STPaccess
 
 - name: NXOS - configure some service / disable unused service
   nxos_config:
