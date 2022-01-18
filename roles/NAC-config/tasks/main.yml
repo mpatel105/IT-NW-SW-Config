@@ -93,7 +93,7 @@
     - NACconfig
 
 - name: IOS - Configure NAC server radius dynamic-author
-  nxos_config:
+  ios_config:
     lines:
       - client {{ talend_portnox_1 }} server-key {{ talend_portnox_1_radius_key }}
       - client {{ talend_portnox_2 }} server-key {{ talend_portnox_2_radius_key }}
