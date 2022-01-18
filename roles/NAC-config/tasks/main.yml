@@ -79,7 +79,7 @@
     - NACconfig
 
 - name: IOS - Configure NAC group Portnox-RADIUS-Group
-  nxos_config:
+  ios_config:
     lines:
       - server name {{ talend_portnox_1_name }}
       - server name {{ talend_portnox_2_name }}
