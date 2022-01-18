@@ -54,6 +54,30 @@
     - NACglobal
     - NACconfig
 
+- name: IOS - Configure Portnox-Radius-SV2
+  ios_config:
+    lines:
+      - address ipv4 {{ talend_portnox_SV2 }} auth-port {{ talend_portnox_auth_port }} acct-port {{ talend_portnox_acct_port }}
+      - timeout 3
+      - key {{ talend_portnox_SV2_radius_key }}
+    parents: radius server {{ talend_portnox_SV2_name }}
+  when: ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - NACconfig
+
+- name: IOS - Configure Portnox-Radius-PA7
+  ios_config:
+    lines:
+      - address ipv4 {{ talend_portnox_PA7 }} auth-port {{ talend_portnox_auth_port }} acct-port {{ talend_portnox_acct_port }}
+      - timeout 3
+      - key {{ talend_portnox_PA7_radius_key }}
+    parents: radius server {{ talend_portnox_PA7_name }}
+  when: ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - NACconfig
+
 - name: IOS - Configure NAC group Portnox-RADIUS-Group
   nxos_config:
     lines:
@@ -81,29 +105,7 @@
     - NACglobal
     - NACconfig
 
-- name: IOS - Configure Portnox-Radius-SV2
-  ios_config:
-    lines:
-      - address ipv4 {{ talend_portnox_SV2 }} auth-port {{ talend_portnox_auth_port }} acct-port {{ talend_portnox_acct_port }}
-      - timeout 3
-      - key {{ talend_portnox_SV2_radius_key }}
-    parents: radius server {{ talend_portnox_SV2_name }}
-  when: ansible_network_os == 'ios'
-  tags:
-    - NACglobal
-    - NACconfig
 
-- name: IOS - Configure Portnox-Radius-PA7
-  ios_config:
-    lines:
-      - address ipv4 {{ talend_portnox_PA7 }} auth-port {{ talend_portnox_auth_port }} acct-port {{ talend_portnox_acct_port }}
-      - timeout 3
-      - key {{ talend_portnox_PA7_radius_key }}
-    parents: radius server {{ talend_portnox_PA7_name }}
-  when: ansible_network_os == 'ios'
-  tags:
-    - NACglobal
-    - NACconfig
 
 - name: Configure interface for NAC
   ios_config:
