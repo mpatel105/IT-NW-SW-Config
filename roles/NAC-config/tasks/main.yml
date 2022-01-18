@@ -10,46 +10,13 @@
     - NACconfig
     - NACglobal
 
-- name: IOS - Configure NAC - global config
+- name: IOS - Configure NAC - new-model
   ios_command:
     commands:
       - configure terminal
       - aaa new-model
-      - aaa authentication dot1x default group Portnox-RADIUS-group
-      - aaa authorization network default group Portnox-RADIUS-Group
-      - aaa accounting update newinfo periodic 2880
-      - aaa accounting dot1x default start-stop group Portnox-RADIUS-Group
-      - ip radius source-interface Vlan999
-      - radius-server vsa send authentication
-      - radius-server vsa send accounting
-      - radius-server dead-criteria time 10 tries 3
-      - radius-server deadtime 5
-      - dot1x system-auth-control
       - exit
   when: ansible_network_os == 'ios'
-  tags:
-    - NACglobal
-    - NACconfig
-
-- name: IOS 3650/3850/9200 - Configure NAC - global config
-  ios_command:
-    commands:
-      - configure terminal
-      - device-tracking policy ip_device_tracking_policy
-      - tracking enable
-      - exit
-  when: ansible_network_os == 'ios' and (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model))
-  tags:
-    - NACglobal
-    - NACconfig
-
-- name: IOS 2960X/3560CX - Configure NAC - global config
-  ios_command:
-    commands:
-      - configure terminal
-      - ip device tracking
-      - exit
-  when: ansible_network_os == 'ios' and ('2960' in ansible_net_model or '3560' in ansible_net_model)
   tags:
     - NACglobal
     - NACconfig
@@ -105,6 +72,48 @@
     - NACglobal
     - NACconfig
 
+- name: IOS - Configure NAC - global config
+  ios_command:
+    commands:
+      - configure terminal
+      - aaa authentication dot1x default group Portnox-RADIUS-group
+      - aaa authorization network default group Portnox-RADIUS-Group
+      - aaa accounting update newinfo periodic 2880
+      - aaa accounting dot1x default start-stop group Portnox-RADIUS-Group
+      - ip radius source-interface Vlan999
+      - radius-server vsa send authentication
+      - radius-server vsa send accounting
+      - radius-server dead-criteria time 10 tries 3
+      - radius-server deadtime 5
+      - dot1x system-auth-control
+      - exit
+  when: ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - NACconfig
+
+- name: IOS 3650/3850/9200 - Configure NAC - global config device tracking
+  ios_command:
+    commands:
+      - configure terminal
+      - device-tracking policy ip_device_tracking_policy
+      - tracking enable
+      - exit
+  when: ansible_network_os == 'ios' and (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model))
+  tags:
+    - NACglobal
+    - NACconfig
+
+- name: IOS 2960X/3560CX - Configure NAC - global config device tracking
+  ios_command:
+    commands:
+      - configure terminal
+      - ip device tracking
+      - exit
+  when: ansible_network_os == 'ios' and ('2960' in ansible_net_model or '3560' in ansible_net_model)
+  tags:
+    - NACglobal
+    - NACconfig
 
 
 - name: Configure interface for NAC
