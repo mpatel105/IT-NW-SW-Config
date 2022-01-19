@@ -211,7 +211,7 @@
       hosts:
         - hostname: "{{ talend_logs }}"
           xml: True
-      logging_on: True
+      logging_on: enable
       source_interface:
         - interface: Vlan999
     state: overridden
