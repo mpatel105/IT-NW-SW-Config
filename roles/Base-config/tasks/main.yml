@@ -89,6 +89,7 @@
     config:
       servers:
         - server: "{{ talend_ntp }}"
+          use_ipv4: True
       source: vlan999
     state: overridden
   #ios_ntp:
@@ -211,8 +212,13 @@
         - hostname: "{{ talend_logs }}"
           xml: True
       logging_on: True
-      source_interface: Vlan999
+      source_interface:
+        - interface: Vlan999
     state: overridden
+  when: ansible_network_os == 'ios'
+  tags:
+    - config
+    - logs
 #  ios_command:
 #    commands:
 #      - configure terminal
@@ -233,10 +239,7 @@
 #      - logging buffered 16384
 #      - logging host {{ talend_logs }}
 #      - logging source-interface Vlan999
-  when: ansible_network_os == 'ios'
-  tags:
-    - config
-    - logs
+
 
 - name: IOS - SSH configuration
   ios_command:
