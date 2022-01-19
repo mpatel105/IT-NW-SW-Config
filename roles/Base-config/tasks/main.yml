@@ -85,7 +85,7 @@
     - dns
 
 - name: IOS - configure NTP servers
- cisco.ios.ios_ntp_global:
+  ios_ntp_global:
    config:
      servers:
        - server: ntp.talend.com
@@ -199,7 +199,7 @@
 #    - logsxml
 
 - name: IOS - configure logging
-  cisco.ios.ios_logging_global:
+  ios_logging_global:
     config:
       buffered:
         size: 16384
