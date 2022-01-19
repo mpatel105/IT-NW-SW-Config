@@ -208,7 +208,7 @@
       console:
         severity: critical
       hosts:
-        - hostname: {{ talend_logs }}
+        - hostname: "{{ talend_logs }}"
           xml: True
       logging_on: True
       source_interface: Vlan999
