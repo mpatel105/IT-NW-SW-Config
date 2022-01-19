@@ -36,7 +36,7 @@
     # msg: "{{ group_names }}"
     # msg: "{{ output.ansible_facts.ansible_net_interfaces }}"
   #loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
-    msg: "{{ edge }}"
+    msg: "{{ ansible_version }}"
   when:
     - ansible_network_os == "ios"
     #- item.value[0].platform is defined
@@ -79,17 +79,17 @@
     lookup_source: vlan999
     lookup_enabled: yes
     name_servers: "{{ talend_dns }}"
-  when: ansible_network_os == 'ios'
+  when: ansible_network_os == 'ios' and '2.9.9' in ansible_version 
   tags:
     - config
     - dns
 
-- name: IOS - configure NTP servers
+- name: IOS - configure NTP servers Ansible 2.9
 # cisco.ios.ios_ntp_global:
 #   config:
 #     servers:
 #       - server: ntp.talend.com
-#     source: vlan100
+#     source: vlan999
 #     state: replaced
   ios_ntp:
     server: "{{ talend_ntp }}"
@@ -149,7 +149,7 @@
       - no ip http secure-server
       - service timestamps log datetime msec show-timezone
       - service timestamps debug datetime msec show-timezone
-      - service password-encryption 
+      - service password-encryption
       - vtp mode off
       - errdisable recovery cause bpduguard
   when: ansible_network_os == 'ios'
