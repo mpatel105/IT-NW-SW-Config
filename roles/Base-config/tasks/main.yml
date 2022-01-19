@@ -85,7 +85,7 @@
     - dns
 
 - name: IOS - configure NTP servers
-  ios_ntp_global:
+  cisco.ios.ios_ntp_global:
    config:
      servers:
        - server: ntp.talend.com
