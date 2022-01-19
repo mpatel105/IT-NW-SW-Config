@@ -86,11 +86,11 @@
 
 - name: IOS - configure NTP servers
   cisco.ios.ios_ntp_global:
-   config:
-     servers:
-       - server: ntp.talend.com
-     source: vlan999
-     state: replaced
+    config:
+      servers:
+        - server: "{{ talend_ntp }}"
+      source: vlan999
+    state: overridden
   #ios_ntp:
   #  server: "{{ talend_ntp }}"
   #  source_int: vlan999
