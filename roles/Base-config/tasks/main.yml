@@ -149,6 +149,7 @@
       - no ip http secure-server
       - service timestamps log datetime msec show-timezone
       - service timestamps debug datetime msec show-timezone
+      - service password-encryption 
       - vtp mode off
       - errdisable recovery cause bpduguard
   when: ansible_network_os == 'ios'
