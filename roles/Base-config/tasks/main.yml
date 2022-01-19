@@ -88,7 +88,7 @@
   cisco.ios.ios_ntp_global:
     config:
       servers:
-        - server: "{{ talend_ntp }}"
+        - server: "ntp.talend.com"
           use_ipv4: True
       source: vlan999
     state: overridden
@@ -360,7 +360,7 @@
   when:
     - ansible_network_os == "ios"
     - item.value[0].platform is defined
-    - ("Cisco" in item.value[0].platform)
+    - ("Meraki" in item.value[0].platform)
   tags:
     - config
     - configswitchportswifi
