@@ -36,7 +36,7 @@
     # msg: "{{ group_names }}"
     # msg: "{{ output.ansible_facts.ansible_net_interfaces }}"
   #loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
-    msg: "{{ ansible_version }}"
+    msg: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
     - ansible_network_os == "ios"
     #- item.value[0].platform is defined
