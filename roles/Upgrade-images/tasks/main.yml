@@ -86,6 +86,8 @@
   ios_command:
     commands: "dir"
   register: resultdir
+  vars:
+    ansible_command_timeout: 300  
   when: ansible_network_os == 'ios'
   tags:
     - upgrade-test
