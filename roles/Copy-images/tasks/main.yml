@@ -153,23 +153,6 @@
     - copy-test
     - copy
 
-- name: IOS 3560CX - delete temp IOS bin image
-  cli_command:
-    command: "delete flash:c3560cx-universalk9-mz.152-7.E3.bin"
-#    check_all: True
-    prompt:
-      - 'Delete filename'
-      - 'confirm'
-    answer:
-      - 'c3560cx-universalk9-mz.152-7.E3.bin'
-      - 'y'
-  vars:
-    ansible_command_timeout: 5000
-  ignore_errors: yes
-  when: ansible_network_os == 'ios' and '3560' in ansible_net_model
-  tags:
-    - upgrade
-
 - name: Getting IOS facts
   ios_facts:
     gather_subset: hardware
