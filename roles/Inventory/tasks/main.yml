@@ -25,10 +25,11 @@
 
 - name: clone repository
   run_once: true
-  git: >
-    repo=https://{{awx_user_github}}:{{awx_pwd_github}}@github.com/TalendIT/IT-Network-Scripts.git
-    dest="{{ dest_folder }}"
-    force=yes
+  git:
+    repo: "https://{{awx_user_github}}:{{awx_pwd_github}}@github.com/TalendIT/IT-Network-Scripts.git"
+    dest: "{{ dest_folder }}"
+    force: yes
+    version: master
   tags:
     - inventory
 
