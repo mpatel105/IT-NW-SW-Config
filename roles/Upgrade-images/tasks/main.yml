@@ -164,8 +164,8 @@
   ios_command:
     commands:
     - archive download-sw /safe flash:{{new_ios_image}}
-  vars:
-    ansible_command_timeout: 5000
+    vars:
+      ansible_command_timeout: 5000
   when: (ansible_network_os == 'ios') and ('2960' in ansible_net_model or '3560' in ansible_net_model)
   tags:
     - upgrade
