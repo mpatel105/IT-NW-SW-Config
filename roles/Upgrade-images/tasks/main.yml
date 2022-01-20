@@ -160,7 +160,7 @@
     - upgrade
     - upgrade9200
 
-- name: IOS 2960X / 3560CX - install the new image
+- name: IOS 2960X & 3560CX - install the new image
   ios_command:
     commands:
     - archive download-sw /safe flash:{{new_ios_image}}

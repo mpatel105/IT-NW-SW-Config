@@ -88,7 +88,7 @@
   cisco.ios.ios_ntp_global:
     config:
       servers:
-        - server: "ntp.talend.com"
+        - server: "{{ talend_ntp_server }}"
           use_ipv4: True
       source: vlan999
     state: overridden
