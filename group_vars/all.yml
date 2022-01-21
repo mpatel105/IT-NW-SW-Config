@@ -6,6 +6,7 @@ talend_domain_name: talend.com
 #talend_logs: tal-ip121.talend.com # real IP below
 talend_logs: 192.168.15.55
 ANSIBLE_HOST_KEY_CHECKING: false
+backup_folder: /tmp/backup
 
 banner: |
   *******************************  SECURITY NOTICE  **************************

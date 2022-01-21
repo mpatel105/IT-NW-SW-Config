@@ -1,2 +1,85 @@
 ---
 # tasks file for Config-backup
+
+- name: IOS - Save running to startup
+  ios_config:
+    save_when: always
+  when: ansible_network_os == 'ios'
+  tags:
+    - save
+
+- name: IOS - backup switch
+  ios_config:
+    backup: yes
+    backup_options:
+      dir_path: "{{ backup_folder }}"
+      filename: "{{ inventory_hostname }}.txt"
+  register: backup_ios_location
+  when: ansible_network_os == 'ios'
+  tags: save
+
+
+##############################################################################
+### NXOS
+##############################################################################
+
+- name: NXOS - Save running to startup
+  nxos_config:
+    save_when: always
+  when: ansible_network_os == 'nxos'
+  tags:
+    - save
+
+- name: NXOS - Backup switch
+  nxos_config:
+    backup: yes
+    backup_options:
+      dir_path: "{{ backup_folder }}"
+      filename: "{{ inventory_hostname }}.txt"
+  register: backup_nxos_location
+  when: ansible_network_os == 'nxos'
+  tags: save
+
+
+##############################################################################
+### PALO ALTO
+##############################################################################
+
+- name: PAN - get API key xml reponse
+  uri:
+    validate_certs: no
+    url: "https://{{inventory_hostname}}/api/?type=keygen&user={{ ansible_user }}&password={{ ansible_password }}"
+    return_content: yes
+    method: GET
+  no_log: True
+  register: xml_resp
+  when: ansible_network_os == 'panos'
+  tags: panos
+
+- name: PAN - Extract api key from xml response
+  xml:
+    xmlstring: "{{ xml_resp.content }}"
+    content: text
+    xpath: "/response/result/key"
+  register: api_key
+  when: ansible_network_os == 'panos'
+  tags: panos
+
+- name: PAN - Get backup
+  uri:
+    validate_certs: no
+    #url: https://{{inventory_hostname}}/api/?type=export&category=configuration&key={{ api_key }}
+    #url: https://{{inventory_hostname}}/api/?type=config&action=show&key={{ api_key }}
+      url: https://{{inventory_hostname}}/api/?type=op&cmd=<show><config><running><%2Frunning><%2Fconfig><%2Fshow>&key={{ api_key.matches[0].key }}
+    return_content: yes
+    method: GET
+  register: result_palo
+  when: ansible_network_os == 'panos'
+  tags: panos
+
+- name: PAN - create_panos_config_file
+  copy:
+    content: "{{ result_palo['content'] }}"
+    dest: "{{ backup_folder }}/{{inventory_hostname}}.txt"
+  when: ansible_network_os == 'panos' and result_palo != "" and api_key !=""
+  tags: panos
