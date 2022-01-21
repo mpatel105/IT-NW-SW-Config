@@ -89,6 +89,8 @@
 - name: push to git
   run_once: true
   shell: |
+    git config --global user.email "networks@talend.com"
+    git config --global user.name "sa-netgit"
     git add {{ inventory_file }}
     git commit -m "inventory: $(date +"%Y-%m-%d %H:%M:%S")"
     git push origin master
