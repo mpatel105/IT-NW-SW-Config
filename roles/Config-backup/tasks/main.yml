@@ -57,7 +57,7 @@
   tags: panos
 
 - name: PAN - Extract api key from xml response
-  xml:
+  community.general.xml:
     xmlstring: "{{ xml_resp.content }}"
     content: text
     xpath: "/response/result/key"
@@ -68,7 +68,7 @@
 - name: PAN - Get backup
   uri:
     validate_certs: no
-    url: "https://{{inventory_hostname}}/api/?type=op&cmd=<show><config><running><%2Frunning><%2Fconfig><%2Fshow>&key={{ api_key.matches[0].key }}"
+    url: ""https://{{inventory_hostname}}/api/?type=op&cmd=<show><config><running><%2Frunning><%2Fconfig><%2Fshow>&key={{ api_key.matches[0].key }}""
     return_content: yes
     method: GET
   register: result_palo
