@@ -79,7 +79,7 @@
     lookup_source: vlan999
     lookup_enabled: yes
     name_servers: "{{ talend_dns }}"
-  when: ansible_network_os == 'ios' and '2.9.9' in ansible_version
+  when: ansible_network_os == 'ios' 
   tags:
     - config
     - dns
