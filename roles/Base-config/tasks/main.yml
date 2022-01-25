@@ -29,6 +29,12 @@
     - get_fact_debug
     - config
 
+- name: Read in parse_genie role
+  include_role:
+    name: clay584.parse_genie
+  tags:
+    - configmeraki
+
 - debug:
     #msg: "host is {{ item.value[0].host }} and platform is {{ item.value[0].platform }}"
     # msg: "host is {{ item.value[0] }} "
@@ -36,7 +42,7 @@
     # msg: "{{ group_names }}"
     # msg: "{{ output.ansible_facts.ansible_net_interfaces }}"
   #loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
-    msg: "{{ ansible_network_resources['l2_interfaces']  }}"
+#    msg: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
     - ansible_network_os == "ios"
     #- item.value[0].platform is defined
@@ -349,8 +355,22 @@
 #    - config
     - configswitchports48
 
+- name: IOS - get LLDP neighbor
+    ios_command:
+      commands:
+        - show lldp neighbor detail
+    register: lldpneighbor
+  tags:
+    - configmeraki
+
+- name: Set fact with Genie filter plugin
+    set_fact:
+      lldpneighbors: "{{ lldpneighbor['stdout'][0] | parse_genie(command='show lldp neighbors detail', os='ios') }}"
+  tags:
+    - configmeraki
+
 - debug:
-    msg: "{{ ansible_net_neighbors }}"
+    msg: "{{ lldpneighbors }}"
   when:
     - ansible_network_os == "ios"
     #- item.value[0].platform is defined
