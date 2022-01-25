@@ -28,7 +28,7 @@
     - testnapalm
 
 - debug:
-    msg: "{{ facts }}"
+    msg: "{{ facts['ansible_facts'] }}"
 #    msg: "{{ napalm_facts['napalm_lldp_neighbors_detail'] }}"
   tags: testnapalm
 
