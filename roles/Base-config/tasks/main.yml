@@ -359,21 +359,13 @@
     - configmeraki
 
 - name: IOS - Configure interface for Cisco Meraki
-#  ios_config:
-#    lines:
-#      - description Wifi AP {{ item.value[0].host }}
-#      - switchport trunk native vlan 999
-#      - switchport trunk allowed vlan 16,24,240,999
-#      - switchport mode trunk
-#    parents: interface {{ item.key }}
-  cisco.ios.ios_l2_interfaces:
-    config:
-      - name: "{{ item.key }}"
-        mode: trunk
-        trunk:
-          allowed_vlans: 16,24,240,999
-          native_vlan: 999
-    state: overridden
+  ios_config:
+    lines:
+      - description Wifi AP {{ item.value[0].host }}
+      - switchport trunk native vlan 999
+      - switchport trunk allowed vlan 16,24,240,999
+      - switchport mode trunk
+    parents: interface {{ item.key }}
   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when:
     - ansible_network_os == "ios" and
