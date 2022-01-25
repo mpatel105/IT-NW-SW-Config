@@ -365,7 +365,7 @@
 #      - switchport trunk native vlan 999
 #      - switchport trunk allowed vlan 16,24,240,999
 #      - switchport mode trunk
-    parents: interface {{ item.key }}
+#    parents: interface {{ item.key }}
   cisco.ios.ios_l2_interfaces:
     config:
       - name: {{ item.key }}
