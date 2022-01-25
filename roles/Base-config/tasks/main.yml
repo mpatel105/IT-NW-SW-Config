@@ -382,9 +382,9 @@
   ios_config:
     lines:
       - description Wifi AP {{ item.value[0].host }}
-      - switchport trunk native vlan 999
-      - switchport trunk allowed vlan 16,24,240,999
-      - switchport mode trunk
+#      - switchport trunk native vlan 999
+#      - switchport trunk allowed vlan 16,24,240,999
+#      - switchport mode trunk
     parents: interface {{ item.key }}
   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when:
