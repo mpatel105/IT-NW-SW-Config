@@ -368,7 +368,7 @@
 #    parents: interface {{ item.key }}
   cisco.ios.ios_l2_interfaces:
     config:
-      - name: {{ item.key }}
+      - name: "{{ item.key }}"
         mode: trunk
         trunk:
           allowed_vlans: 16,24,240,999
