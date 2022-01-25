@@ -356,10 +356,10 @@
     - configswitchports48
 
 - name: IOS - get LLDP neighbor
-    ios_command:
-      commands:
-        - show lldp neighbor detail
-    register: lldpneighbor
+  ios_command:
+    commands:
+      - show lldp neighbor detail
+  register: lldpneighbor
   tags:
     - configmeraki
 
