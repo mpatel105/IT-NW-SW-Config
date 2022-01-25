@@ -26,6 +26,7 @@
   register: napalmfacts
   tags:
     - testnapalm
+    - configmeraki
 
 - name: IOS - set fact for portfast
   set_fact:
@@ -40,7 +41,7 @@
   include_role:
     name: clay584.parse_genie
   tags:
-    - configmeraki
+    - configmeraki2
 
 - debug:
     #msg: "host is {{ item.value[0].host }} and platform is {{ item.value[0].platform }}"
@@ -368,13 +369,13 @@
       - show lldp neighbor detail
   register: lldpneighbor
   tags:
-    - configmeraki
+    - configmeraki2
 
 - name: Set fact with Genie filter plugin
   set_fact:
     lldpneighbors: "{{ lldpneighbor['stdout'][0] | parse_genie(command='show lldp neighbors detail', os='ios') }}"
   tags:
-    - configmeraki
+    - configmeraki2
 
 - name: IOS - Configure interface for Cisco Meraki
   ios_config:
