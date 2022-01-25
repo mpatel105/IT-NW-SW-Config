@@ -20,6 +20,16 @@
     - intdescr
     - endusers
 
+- name: napalm get_facts
+  napalm.napalm.get_facts:
+    filter: facts,interfaces
+  tags:
+    - testnapalm
+
+- debug:
+    var: napalm_facts
+  tags: testnapalm
+
 - name: IOS - set fact for portfast
   set_fact:
     edge: "{% if item in ansible_net_model %}edge{% else %}{% endif %}"
@@ -381,7 +391,8 @@
 - name: IOS - Configure interface for Cisco Meraki
   ios_config:
     lines:
-      - description Wifi AP {{ item.value[0].host }}
+#      - description Wifi AP {{ item.value[0].host }}
+      - description Wifi AP {{ lldpneighbors["msg"]["interfaces"][{{item.key}}]["port_id"]["0"]["neighbors"] }}
 #      - switchport trunk native vlan 999
 #      - switchport trunk allowed vlan 16,24,240,999
 #      - switchport mode trunk
@@ -389,8 +400,8 @@
   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when:
     - ansible_network_os == "ios" and
-      ((item.value[0].platform is defined and "Meraki" in item.value[0].platform) or
-      ('-ap-' in item.value[0].host))
+      (item.value[0].platform is defined and "Meraki" in item.value[0].platform)
+#      ('-ap-' in item.value[0].host))
   tags:
     - config
     - configmeraki
