@@ -22,7 +22,7 @@
 
 - name: napalm get_facts
   napalm.napalm.get_facts:
-    filter: get_lldp_neighbors_detail
+    filter: facts,lldp_neighbors_detail
   tags:
     - testnapalm
 
