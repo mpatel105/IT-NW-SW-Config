@@ -28,7 +28,7 @@
     - testnapalm
 
 - debug:
-    msg: "{{ napalm_facts['ansible_facts']['napalm_lldp_neighbors_detail'] }}"
+    msg: "{{ facts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key]['remote_system_name'] }}"
 #    msg: "{{ napalm_facts['napalm_lldp_neighbors_detail'] }}"
   tags: testnapalm
 
@@ -382,7 +382,7 @@
     - configmeraki
 
 - debug:
-    msg: "{{ lldpneighbors }}"
+    msg: "{{ facts['ansible_facts']['napalm_lldp_neighbors_detail'] }}"
   when:
     - ansible_network_os == "ios"
     #- item.value[0].platform is defined
@@ -394,7 +394,7 @@
   ios_config:
     lines:
 #      - description Wifi AP {{ item.value[0].host }}
-      - description Wifi AP {{ lldpneighbors["msg"]["interfaces"][{{item.key}}]["port_id"]["0"]["neighbors"] }}
+      - description Wifi AP {{ facts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key]['remote_system_name'] }}
 #      - switchport trunk native vlan 999
 #      - switchport trunk allowed vlan 16,24,240,999
 #      - switchport mode trunk
