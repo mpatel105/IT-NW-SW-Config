@@ -368,9 +368,9 @@
     parents: interface {{ item.key }}
   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when:
-    - ansible_network_os == "ios"
-    - item.value[0].platform is defined
-    - ("Meraki" in item.value[0].platform)
+    - ansible_network_os == "ios" and
+      ((item.value[0].platform is defined and "Meraki" in item.value[0].platform) or
+      ('-ap-' in item.value[0].host))
   tags:
     - config
     - configmeraki
