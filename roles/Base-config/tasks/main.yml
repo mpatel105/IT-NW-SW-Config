@@ -23,11 +23,13 @@
 - name: napalm get_facts
   napalm.napalm.get_facts:
     filter: facts,lldp_neighbors_detail
+  register: facts
   tags:
     - testnapalm
 
 - debug:
-    msg: "{{ napalm_facts['napalm_lldp_neighbors_detail'] }}"
+    msg: "{{ facts }}"
+#    msg: "{{ napalm_facts['napalm_lldp_neighbors_detail'] }}"
   tags: testnapalm
 
 - name: IOS - set fact for portfast
