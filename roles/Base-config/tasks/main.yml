@@ -23,14 +23,9 @@
 - name: napalm get_facts
   napalm.napalm.get_facts:
     filter: facts,lldp_neighbors_detail
-  register: facts
+  register: napalmfacts
   tags:
     - testnapalm
-
-- debug:
-    msg: "{{ facts['ansible_facts']['napalm_lldp_neighbors_detail']['GigabitEthernet3/0/46'][0]['remote_system_description'] }}"
-#    msg: "{{ napalm_facts['napalm_lldp_neighbors_detail'] }}"
-  tags: testnapalm
 
 - name: IOS - set fact for portfast
   set_fact:
@@ -381,20 +376,11 @@
   tags:
     - configmeraki
 
-- debug:
-    msg: "{{ facts['ansible_facts']['napalm_lldp_neighbors_detail'] }}"
-  when:
-    - ansible_network_os == "ios"
-    #- item.value[0].platform is defined
-    #- ("Cisco" in item.value[0].platform)
-  tags:
-    - configmeraki
-
 - name: IOS - Configure interface for Cisco Meraki
   ios_config:
     lines:
 #      - description Wifi AP {{ item.value[0].host }}
-      - description Wifi AP {{ facts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key]['remote_system_name'] }}
+      - description Wifi AP {{ napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key][0]['remote_system_name'] }}
 #      - switchport trunk native vlan 999
 #      - switchport trunk allowed vlan 16,24,240,999
 #      - switchport mode trunk
@@ -403,7 +389,6 @@
   when:
     - ansible_network_os == "ios" and
       (item.value[0].platform is defined and "Meraki" in item.value[0].platform)
-#      ('-ap-' in item.value[0].host))
   tags:
     - config
     - configmeraki
