@@ -28,7 +28,7 @@
     - testnapalm
 
 - debug:
-    msg: "{{ facts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key]['remote_system_name'] }}"
+    msg: "{{ facts['ansible_facts']['napalm_lldp_neighbors_detail']['GigabitEthernet3/0/46']['remote_system_name'] }}"
 #    msg: "{{ napalm_facts['napalm_lldp_neighbors_detail'] }}"
   tags: testnapalm
 
