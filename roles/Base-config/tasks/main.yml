@@ -15,7 +15,7 @@
     - configswitchports2448
     - configswitchports24
     - configswitchports48
-    - configswitchportswifi
+    - configmeraki
     - get_fact_debug
     - intdescr
     - endusers
@@ -44,6 +44,7 @@
   tags:
     - config
     - get_fact_debug
+    - configmeraki
 
 #- name: Configure standard Vlan for CORE Switches
 #  ios_vlans:
@@ -79,7 +80,7 @@
     lookup_source: vlan999
     lookup_enabled: yes
     name_servers: "{{ talend_dns }}"
-  when: ansible_network_os == 'ios' 
+  when: ansible_network_os == 'ios'
   tags:
     - config
     - dns
@@ -348,6 +349,15 @@
 #    - config
     - configswitchports48
 
+- debug:
+    msg: "{{ ansible_net_neighbors }}"
+  when:
+    - ansible_network_os == "ios"
+    #- item.value[0].platform is defined
+    #- ("Cisco" in item.value[0].platform)
+  tags:
+    - configmeraki
+
 - name: IOS - Configure interface for Cisco Meraki
   ios_config:
     lines:
@@ -363,7 +373,7 @@
     - ("Meraki" in item.value[0].platform)
   tags:
     - config
-    - configswitchportswifi
+    - configmeraki
 
 - name: IOS - Disable AUX login
   ios_command:
