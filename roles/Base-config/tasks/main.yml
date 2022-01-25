@@ -364,8 +364,8 @@
     - configmeraki
 
 - name: Set fact with Genie filter plugin
-    set_fact:
-      lldpneighbors: "{{ lldpneighbor['stdout'][0] | parse_genie(command='show lldp neighbors detail', os='ios') }}"
+  set_fact:
+    lldpneighbors: "{{ lldpneighbor['stdout'][0] | parse_genie(command='show lldp neighbors detail', os='ios') }}"
   tags:
     - configmeraki
 
