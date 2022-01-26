@@ -519,16 +519,32 @@
     - config
     - dns
 
+#- name: NXOS - configure NTP servers
+#  nxos_ntp:
+#    server: "{{ talend_ntp }}"
+#    prefer: enabled
+#    source_int: "vlan999"
+#    state: present
+#  when: ansible_network_os == 'nxos'
+#  tags:
+#    - config
+#    - ntp
+
 - name: NXOS - configure NTP servers
-  nxos_ntp:
-    server: "{{ talend_ntp }}"
-    prefer: enabled
-    source_int: "vlan999"
-    state: present
+  cisco.nxos.nxos_ntp_global:
+    config:
+      logging: True
+      servers:
+        - server: "{{ talend_ntp }}"
+          use_vrf: default
+      source_interface: Vlan999
+    state: replaced
   when: ansible_network_os == 'nxos'
   tags:
     - config
     - ntp
+
+
 
 - name: NXOS - UTC Timezone
   nxos_command:
@@ -588,15 +604,34 @@
     - config
     - services
 
+#- name: NXOS - new ACLs configuration for SNMP
+#  nxos_acl:
+#    name: ACLsnmp
+#    seq: "10"
+#    action: permit
+#    proto: ip
+#    src: any
+#    dest: any
+#    state: present
+#  when: ansible_network_os == 'nxos'
+#  tags:
+#    - config
+#    - snmp
+
 - name: NXOS - new ACLs configuration for SNMP
-  nxos_acl:
-    name: ACLsnmp
-    seq: "10"
-    action: permit
-    proto: ip
-    src: any
-    dest: any
-    state: present
+  cisco.nxos.nxos_acls:
+    config:
+    - afi: ipv4
+      acls:
+      - name: NewACLsnmp
+        aces:
+        - grant: permit
+          source:
+            any: true
+          destination:
+            any: true
+        - remark: For logging
+    state: replaced
   when: ansible_network_os == 'nxos'
   tags:
     - config
