@@ -648,32 +648,11 @@
         - community: "{{ talend_snmp_community }}"
           group: network-operator
           use_ipv4acl: ACLsnmp
-    state: merged
+    state: replaced
   when: ansible_network_os == 'nxos'
   tags:
     - config
     - snmp
-
-
-#- name: NXOS - configure SNMP Community
-#  nxos_snmp_community:
-#    community: "{{ talend_snmp_community }}"
-#    access: ro
-#    acl: ACLsnmp
-#    state: present
-#  when: ansible_network_os == 'nxos'
-#  tags:
-#    - config
-#    - snmp
-#
-#- name: NXOS - configure SNMP location
-#  nxos_snmp_location:
-#    location: "{{ inventory_hostname[:3]|upper }}"
-#    state: present
-#  when: ansible_network_os == 'nxos'
-#  tags:
-#    - config
-#    - snmp
 
 - name: NXOS - configure logging
   nxos_logging:
