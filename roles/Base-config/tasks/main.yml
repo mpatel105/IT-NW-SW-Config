@@ -24,6 +24,7 @@
   napalm.napalm.get_facts:
     filter: facts,lldp_neighbors_detail
   register: napalmfacts
+  when: ansible_network_os == 'ios'
   tags:
     - testnapalm
     - configmeraki
