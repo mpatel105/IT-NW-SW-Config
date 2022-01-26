@@ -538,6 +538,7 @@
       servers:
         - server: "{{ talend_ntp }}"
           use_vrf: default
+          prefer: yes
       source_interface: Vlan999
     state: replaced
   when: ansible_network_os == 'nxos'
@@ -632,7 +633,7 @@
           destination:
             any: true
         - remark: For logging
-    state: replaced
+    state: merged
   when: ansible_network_os == 'nxos'
   tags:
     - config
