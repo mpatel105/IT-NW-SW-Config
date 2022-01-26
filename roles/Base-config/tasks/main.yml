@@ -662,16 +662,37 @@
     - config
     - snmp
 
+#- name: NXOS - configure logging
+#  nxos_logging:
+#    aggregate:
+#    - { dest: console, state: absent }
+#    - { dest: monitor, state: absent }
+#    - {dest: logfile, dest_level: 5, name: message, state: present }
+#    - { dest: server, remote_server: "{{ talend_logs }}", state: present}
+#    - { interface: "mgmt0", state: present }
+#    purge: true
+#  when: ansible_network_os == 'nxos'
+
 - name: NXOS - configure logging
-  nxos_logging:
-    aggregate:
-    - { dest: console, state: absent }
-    - { dest: monitor, state: absent }
-    - {dest: logfile, dest_level: 5, name: message, state: present }
-    - { dest: server, remote_server: "{{ talend_logs }}", state: present}
-    - { interface: "mgmt0", state: present }
-    purge: true
+  cisco.nxos.nxos_logging_global:
+    config:
+      console:
+        severity: error
+      monitor:
+        severity: alert
+      hosts:
+        - host: "{{ talend_logs }}"
+          severity: warning
+          use_vrf: default
+      logfile:
+        name: logs
+        severity: 5
+      source_interface: Vlan999
+    state: replaced
   when: ansible_network_os == 'nxos'
+  tags:
+    - config
+    - logs
 
 - name: NXOS - SSH configuration
   nxos_command:
