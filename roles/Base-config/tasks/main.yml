@@ -686,7 +686,7 @@
           use_vrf: default
       logfile:
         name: logs
-        severity: 5
+        severity: notification
       source_interface: Vlan999
     state: replaced
   when: ansible_network_os == 'nxos'
