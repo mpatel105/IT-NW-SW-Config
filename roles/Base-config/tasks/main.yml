@@ -634,7 +634,7 @@
             any: true
           protocol: ip
         - remark: For logging
-    state: merged
+    state: replaced
   when: ansible_network_os == 'nxos'
   tags:
     - config
