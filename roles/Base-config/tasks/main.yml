@@ -37,12 +37,6 @@
     - get_fact_debug
     - config
 
-- name: Read in parse_genie role
-  include_role:
-    name: clay584.parse_genie
-  tags:
-    - configmeraki2
-
 - debug:
     #msg: "host is {{ item.value[0].host }} and platform is {{ item.value[0].platform }}"
     # msg: "host is {{ item.value[0] }} "
@@ -107,10 +101,6 @@
           use_ipv4: True
       source: vlan999
     state: overridden
-  #ios_ntp:
-  #  server: "{{ talend_ntp }}"
-  #  source_int: vlan999
-  #  state: present
   when: ansible_network_os == 'ios'
   tags:
     - config
@@ -190,13 +180,14 @@
 ####################################################
 #### Logging testing - under progress
 ####################################################
-- name: IOS - configure logging task1
-  ios_command:
-    commands: show logging xml
-  register: raw_logxml
-  when: ansible_network_os == 'ios'
-  tags:
-    - logsxml
+
+#- name: IOS - configure logging task1
+#  ios_command:
+#    commands: show logging xml
+#  register: raw_logxml
+#  when: ansible_network_os == 'ios'
+#  tags:
+#    - logsxml
 
 #- name: Show an attribute value
 #  debug:
@@ -234,27 +225,6 @@
   tags:
     - config
     - logs
-#  ios_command:
-#    commands:
-#      - configure terminal
-#      - no logging monitor
-#      - no logging console
-#      - no logging host 192.168.30.145
-#      - no logging host 192.168.15.55
-#      - no logging host 192.168.100.211
-#      - no logging host 10.42.150.250
-#      - logging buffered 16384
-#      - logging host {{ talend_logs }}
-#      - logging source-interface Vlan999
-#      - exit
-#  ios_config:
-#    lines:
-#      - no logging monitor
-#      - no logging console
-#      - logging buffered 16384
-#      - logging host {{ talend_logs }}
-#      - logging source-interface Vlan999
-
 
 - name: IOS - SSH configuration
   ios_command:
@@ -363,28 +333,13 @@
 #    - config
     - configswitchports48
 
-- name: IOS - get LLDP neighbor
-  ios_command:
-    commands:
-      - show lldp neighbor detail
-  register: lldpneighbor
-  tags:
-    - configmeraki2
-
-- name: Set fact with Genie filter plugin
-  set_fact:
-    lldpneighbors: "{{ lldpneighbor['stdout'][0] | parse_genie(command='show lldp neighbors detail', os='ios') }}"
-  tags:
-    - configmeraki2
-
 - name: IOS - Configure interface for Cisco Meraki
   ios_config:
     lines:
-#      - description Wifi AP {{ item.value[0].host }}
       - description Wifi AP {{ napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key][0]['remote_system_name'] }}
-#      - switchport trunk native vlan 999
-#      - switchport trunk allowed vlan 16,24,240,999
-#      - switchport mode trunk
+      - switchport trunk native vlan 999
+      - switchport trunk allowed vlan 16,24,240,999
+      - switchport mode trunk
     parents: interface {{ item.key }}
   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when:
@@ -406,7 +361,7 @@
       - no password
       - exit
   ignore_errors: yes
-  when: ansible_network_os == 'ios'
+  when: ansible_network_os == 'ios' and '9200' in ansible_net_model
   tags:
     - config
     - disableaux
@@ -463,7 +418,6 @@
     commands:
       - configure terminal
       - enable secret 9 {{ admin_hash_password }}
-      #need to create seperate secret jkey and update that in the vault
       - exit
   # ignore_errors: yes
   when: ansible_network_os == 'ios'
@@ -569,7 +523,7 @@
   nxos_ntp:
     server: "{{ talend_ntp }}"
     prefer: enabled
-    source_int: "mgmt0"
+    source_int: "vlan999"
     state: present
   when: ansible_network_os == 'nxos'
   tags:
@@ -745,7 +699,7 @@
       - aaa authentication login default group Global-Radius-Servers local
       - aaa authentication login console local
       - aaa accounting default group Global-Radius-Servers
-      - ip radius source-interface mgmt0
+      - ip radius source-interface vlan999
   when: ansible_network_os == 'nxos'
   tags:
     - config
