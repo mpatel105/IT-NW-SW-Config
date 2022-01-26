@@ -645,9 +645,9 @@
     config:
       location: "{{ inventory_hostname[:3]|upper }}"
       communities:
-        community: "{{ talend_snmp_community }}"
-        group: network-operator
-        use_ipv4acl: ACLsnmp
+        - community: "{{ talend_snmp_community }}"
+          group: network-operator
+          use_ipv4acl: ACLsnmp
     state: merged
   when: ansible_network_os == 'nxos'
   tags:
