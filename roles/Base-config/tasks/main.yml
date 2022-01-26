@@ -640,7 +640,15 @@
     - config
     - snmp
 
-- name: NXOS - configure SNMP Community
+- name: NXOS - delete existing snmp configuration
+  cisco.nxos.nxos_snmp_server:
+    state: deleted
+  when: ansible_network_os == 'nxos'
+  tags:
+    - config
+    - snmp
+
+- name: NXOS - configure SNMP
   cisco.nxos.nxos_snmp_server:
     config:
       communities:
@@ -648,7 +656,7 @@
           group: network-operator
           use_ipv4acl: ACLsnmp
       location: "{{ inventory_hostname[:3]|upper }}"
-    state: overridden
+    state: merged
   when: ansible_network_os == 'nxos'
   tags:
     - config
