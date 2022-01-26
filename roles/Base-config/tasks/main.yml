@@ -643,12 +643,12 @@
 - name: NXOS - configure SNMP Community
   cisco.nxos.nxos_snmp_server:
     config:
-      location: "{{ inventory_hostname[:3]|upper }}"
       communities:
         - community: "{{ talend_snmp_community }}"
           group: network-operator
           use_ipv4acl: ACLsnmp
-    state: replaced
+      location: "{{ inventory_hostname[:3]|upper }}"
+    state: overridden
   when: ansible_network_os == 'nxos'
   tags:
     - config
