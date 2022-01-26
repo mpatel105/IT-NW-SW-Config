@@ -606,20 +606,6 @@
     - config
     - services
 
-#- name: NXOS - new ACLs configuration for SNMP
-#  nxos_acl:
-#    name: ACLsnmp
-#    seq: "10"
-#    action: permit
-#    proto: ip
-#    src: any
-#    dest: any
-#    state: present
-#  when: ansible_network_os == 'nxos'
-#  tags:
-#    - config
-#    - snmp
-
 - name: NXOS - new ACLs configuration for SNMP
   cisco.nxos.nxos_acls:
     config:
@@ -661,17 +647,6 @@
   tags:
     - config
     - snmp
-
-#- name: NXOS - configure logging
-#  nxos_logging:
-#    aggregate:
-#    - { dest: console, state: absent }
-#    - { dest: monitor, state: absent }
-#    - {dest: logfile, dest_level: 5, name: message, state: present }
-#    - { dest: server, remote_server: "{{ talend_logs }}", state: present}
-#    - { interface: "mgmt0", state: present }
-#    purge: true
-#  when: ansible_network_os == 'nxos'
 
 - name: NXOS - configure logging
   cisco.nxos.nxos_logging_global:
