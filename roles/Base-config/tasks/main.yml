@@ -634,7 +634,7 @@
             any: true
           protocol: ip
         - remark: For logging
-    state: replaced
+    state: overridden
   when: ansible_network_os == 'nxos'
   tags:
     - config
