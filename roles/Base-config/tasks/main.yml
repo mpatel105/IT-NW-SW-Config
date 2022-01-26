@@ -632,6 +632,7 @@
             any: true
           destination:
             any: true
+          protocol: ip
         - remark: For logging
     state: merged
   when: ansible_network_os == 'nxos'
