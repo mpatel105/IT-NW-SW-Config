@@ -9,16 +9,9 @@
   register: output
   when: ansible_network_os == 'ios'
   tags:
-    - config
-    - configswitchports
-    - configswitchports8
-    - configswitchports2448
-    - configswitchports24
-    - configswitchports48
-    - configmeraki
-    - get_fact_debug
-    - intdescr
-    - endusers
+    - global
+    - interfaces
+
 
 - name: napalm get_facts
   napalm.napalm.get_facts:
@@ -26,8 +19,7 @@
   register: napalmfacts
   when: ansible_network_os == 'ios'
   tags:
-    - testnapalm
-    - configmeraki
+    - interfaces
 
 - name: IOS - set fact for portfast
   set_fact:
@@ -35,8 +27,8 @@
   loop: "{{ model_stp_edge }}"
   when: ansible_network_os == 'ios'
   tags:
-    - get_fact_debug
-    - config
+    - global
+    - interfaces
 
 - debug:
     #msg: "host is {{ item.value[0].host }} and platform is {{ item.value[0].platform }}"
@@ -51,9 +43,8 @@
     #- item.value[0].platform is defined
     #- ("Cisco" in item.value[0].platform)
   tags:
-    - config
-    - get_fact_debug
-    - configmeraki
+    - global
+    - interfaces
 
 #- name: Configure standard Vlan for CORE Switches
 #  ios_vlans:
@@ -91,8 +82,7 @@
     name_servers: "{{ talend_dns }}"
   when: ansible_network_os == 'ios'
   tags:
-    - config
-    - dns
+    - global
 
 - name: IOS - configure NTP servers
   cisco.ios.ios_ntp_global:
@@ -104,8 +94,7 @@
     state: overridden
   when: ansible_network_os == 'ios'
   tags:
-    - config
-    - ntp
+    - global
 
 - name: IOS - UTC Timezone
   ios_command:
@@ -116,8 +105,7 @@
       - exit
   when: ansible_network_os == 'ios'
   tags:
-    - config
-    - clock
+    - global
 
 - name: IOS - STP Global configuration for Access switches
   ios_command:
@@ -131,8 +119,7 @@
   # ignore_errors: yes
   when: ansible_network_os == 'ios' and 'ACCESS' in group_names
   tags:
-    - config
-    - STPaccess
+    - global
 
 - name: IOS - STP Global configuration for Core switches
   ios_command:
@@ -143,11 +130,9 @@
       - spanning-tree portfast {{ edge }} bpduguard default
       - spanning-tree vlan 1-4094 root primary
       - exit
-  # ignore_errors: yes
   when: ansible_network_os == 'ios' and 'CORE' in group_names
   tags:
-    - config
-    - STPcore
+    - global
 
 - name: IOS - configure some service / disable unused service
   ios_config:
@@ -161,8 +146,7 @@
       - errdisable recovery cause bpduguard
   when: ansible_network_os == 'ios'
   tags:
-    - config
-    - services
+    - global
 
 - name: IOS - configure SNMP
   ios_command:
@@ -174,8 +158,7 @@
       - exit
   when: ansible_network_os == 'ios'
   tags:
-    - config
-    - snmp
+    - global
 
 
 ####################################################
@@ -224,8 +207,7 @@
     state: overridden
   when: ansible_network_os == 'ios'
   tags:
-    - config
-    - logs
+    - global
 
 - name: IOS - SSH configuration
   ios_command:
@@ -240,8 +222,7 @@
     ansible_command_timeout: 120
   when: ansible_network_os == 'ios'
   tags:
-    - config
-    - ssh
+    - global
 
 - name: IOS - Login banner
   ios_banner:
@@ -250,8 +231,7 @@
     state: present
   when: ansible_network_os == 'ios'
   tags:
-    - config
-    - banner
+    - global
 
 - name: IOS - Set IOS Interface Description from CDP
   ios_config:
@@ -264,8 +244,7 @@
     - item.value[0].platform is defined
     - ("cisco" in item.value[0].platform)
   tags:
-    - config
-    - intdescr
+    - interfaces
 
 - name: IOS - Configure interface in vlan 8 - End Users
   ios_config:
@@ -281,8 +260,7 @@
     - (item.mode is defined and item.mode == 'access' and item.access.vlan is defined and item.access.vlan == 8) or
       (item.mode is not defined and item.access.vlan is defined and item.access.vlan == 8)
   tags:
-    - config
-    - configswitchports8
+    - interfaces
 
 - name: IOS - Configure interface in vlan 24/48 - Ops devices & A/V
   ios_config:
@@ -297,8 +275,7 @@
     - (item.mode is defined and item.mode == 'access' and item.access.vlan is defined and (item.access.vlan == 24 or item.access.vlan == 48)) or
       (item.mode is not defined and item.access.vlan is defined and (item.access.vlan == 24 or item.access.vlan == 48))
   tags:
-    - config
-    - configswitchports2448
+    - interfaces
 
 - name: IOS - Configure description tags in vlan 24 - Ops devices
   ios_config:
@@ -314,8 +291,7 @@
       (output.ansible_facts.ansible_net_interfaces[item.name].description is defined and
       not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith('VLAN24 -')) )
   tags:
-#    - config
-    - configswitchports24
+    - interfaces
 
 - name: IOS - Configure description tags in vlan 48 - Audio/Video
   ios_config:
@@ -331,8 +307,7 @@
       (output.ansible_facts.ansible_net_interfaces[item.name].description is defined and
       not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith('VLAN48 -')) )
   tags:
-#    - config
-    - configswitchports48
+    - interfaces
 
 - name: IOS - Configure interface for Cisco Meraki
   ios_config:
@@ -347,8 +322,7 @@
     - ansible_network_os == "ios" and
       (item.value[0].platform is defined and "Meraki" in item.value[0].platform)
   tags:
-    - config
-    - configmeraki
+    - interfaces
 
 - name: IOS - Disable AUX login
   ios_command:
@@ -364,8 +338,7 @@
   ignore_errors: yes
   when: ansible_network_os == 'ios' and '9200' in ansible_net_model
   tags:
-    - config
-    - disableaux
+    - global
 
 - name: IOS - remove all users except admin
   no_log: true
@@ -373,8 +346,7 @@
     purge: yes
   when: ansible_network_os == 'ios'
   tags:
-    - config
-    - configusers
+    - global
 
 - name: IOS - remove all credentials
   ios_command:
@@ -386,8 +358,7 @@
       - exit
   when: ansible_network_os == 'ios'
   tags:
-    - config
-    - configusers
+    - global
 
 - name: IOS - Add admin user with  hashed password
   no_log: true
@@ -398,8 +369,7 @@
       value: "{{ admin_hash_password }}"
   when: ansible_network_os == 'ios'
   tags:
-    - config
-    - configusers
+    - global
 
 - name: IOS - set admin user to privilege level 15
   no_log: true
@@ -410,8 +380,7 @@
     state: present
   when: ansible_network_os == 'ios'
   tags:
-    - config
-    - configusers
+    - global
 
 - name: IOS - enable secret scrypt
   no_log: true
@@ -420,11 +389,9 @@
       - configure terminal
       - enable secret 9 {{ admin_hash_password }}
       - exit
-  # ignore_errors: yes
   when: ansible_network_os == 'ios'
   tags:
-    - config
-    - configenable
+    - global
 
 - name: IOS - Configure aaa new-model
   ios_config:
@@ -432,8 +399,7 @@
       - aaa new-model
   when: ansible_network_os == 'ios'
   tags:
-    - config
-    - radius
+    - global
 
 - name: IOS - Configure SV2-Radius
   ios_config:
@@ -444,8 +410,7 @@
     parents: radius server {{ talend_radius_SV2_name }}
   when: ansible_network_os == 'ios'
   tags:
-    - config
-    - radius
+    - global
 
 - name: IOS - Configure PA7-Radius
   ios_config:
@@ -457,8 +422,7 @@
     before: no radius server SUR-Radius
   when: ansible_network_os == 'ios'
   tags:
-    - config
-    - radius
+    - global
 
 - name: IOS - Configure group Global-Radius-Servers
   ios_config:
@@ -471,8 +435,7 @@
     match: exact
   when: ansible_network_os == 'ios'
   tags:
-    - config
-    - radius
+    - global
 
 - name: IOS - Configure Radius Global Config
   ios_config:
@@ -485,16 +448,15 @@
       - ip radius source-interface Vlan999
   when: ansible_network_os == 'ios'
   tags:
-    - config
-    - radius
+    - global
 
 - name: IOS - Save config
   ios_config:
     save_when: always
   when: ansible_network_os == 'ios'
   tags:
-    - config
-    - saveconfig
+    - global
+    - interfaces
 
 ##############################################################################
 ### NXOS
@@ -506,8 +468,8 @@
     gather_subset: hardware
   when: ansible_network_os == 'nxos'
   tags:
-    - config
-    - intdescr
+    - global
+    - interfaces
 
 - name: NXOS - configure dns
   nxos_system:
@@ -517,8 +479,7 @@
     name_servers: "{{ talend_dns }}"
   when: ansible_network_os == 'nxos'
   tags:
-    - config
-    - dns
+    - global
 
 #- name: NXOS - configure NTP servers
 #  nxos_ntp:
@@ -543,10 +504,7 @@
     state: replaced
   when: ansible_network_os == 'nxos'
   tags:
-    - config
-    - ntp
-
-
+    - global
 
 - name: NXOS - UTC Timezone
   nxos_command:
@@ -557,8 +515,7 @@
       - exit
   when: ansible_network_os == 'nxos'
   tags:
-    - config
-    - clock
+    - global
 
 - name: NXOS - STP Global configuration for Core switches
   nxos_command:
@@ -571,8 +528,7 @@
       - exit
   when: ansible_network_os == 'nxos' and 'CORE' in group_names
   tags:
-    - config
-    - STPcore
+    - global
 
 - name: NXOS - STP Global configuration for Access switches
   nxos_command:
@@ -585,8 +541,7 @@
       - exit
   when: ansible_network_os == 'nxos' and 'ACCESS' in group_names
   tags:
-    - config
-    - STPaccess
+    - global
 
 - name: NXOS - configure some service / disable unused service
   nxos_config:
@@ -594,8 +549,7 @@
       - errdisable recovery cause bpduguard
   when: ansible_network_os == 'nxos'
   tags:
-    - config
-    - services
+    - global
 
 - name: NXOS - disable unused feature
   nxos_feature:
@@ -603,8 +557,7 @@
     state: disabled
   when: ansible_network_os == 'nxos'
   tags:
-    - config
-    - services
+    - global
 
 - name: NXOS - new ACLs configuration for SNMP
   cisco.nxos.nxos_acls:
@@ -623,16 +576,14 @@
     state: replaced
   when: ansible_network_os == 'nxos'
   tags:
-    - config
-    - snmp
+    - global
 
 - name: NXOS - delete existing snmp configuration
   cisco.nxos.nxos_snmp_server:
     state: deleted
   when: ansible_network_os == 'nxos'
   tags:
-    - config
-    - snmp
+    - global
 
 - name: NXOS - configure SNMP
   cisco.nxos.nxos_snmp_server:
@@ -645,8 +596,7 @@
     state: merged
   when: ansible_network_os == 'nxos'
   tags:
-    - config
-    - snmp
+    - global
 
 - name: NXOS - configure logging
   cisco.nxos.nxos_logging_global:
@@ -666,8 +616,7 @@
     state: replaced
   when: ansible_network_os == 'nxos'
   tags:
-    - config
-    - logs
+    - global
 
 - name: NXOS - SSH configuration
   nxos_command:
@@ -677,8 +626,7 @@
       - exit
   when: ansible_network_os == 'nxos'
   tags:
-    - config
-    - ssh
+    - global
 
 - name: NXOS - Login banner
   nxos_banner:
@@ -687,8 +635,7 @@
     state: present
   when: ansible_network_os == 'nxos'
   tags:
-    - config
-    - banner
+    - global
 
 - name: NXOS - remove all users except admin
   no_log: true
@@ -700,8 +647,7 @@
     update_password: always
   when: ansible_network_os == 'nxos'
   tags:
-    - config
-    - configusers
+    - global
 
 - name: NXOS - Configure Radius servers
   nxos_config:
@@ -712,8 +658,7 @@
       - radius-server directed-request
   when: ansible_network_os == 'nxos'
   tags:
-    - config
-    - radius
+    - global
 
 - name: NXOS - Configure group Global-Radius-Servers
   nxos_config:
@@ -726,8 +671,7 @@
     match: exact
   when: ansible_network_os == 'nxos'
   tags:
-    - config
-    - radius
+    - global
 
 - name: NXOS - Configure Radius Global Config
   nxos_config:
@@ -738,13 +682,12 @@
       - ip radius source-interface vlan999
   when: ansible_network_os == 'nxos'
   tags:
-    - config
-    - radius
+    - global
 
 - name: NXOS - Save config
   nxos_config:
     save_when: always
   when: ansible_network_os == 'nxos'
   tags:
-    - config
-    - saveconfig
+    - global
+    - interfaces
