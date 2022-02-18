@@ -2,7 +2,7 @@
 
 - name: IOS get fact
   ios_facts:
-#    gather_subset: hardware
+    gather_subset: hardware
   tags:
     - inventory
     - inventory_test
