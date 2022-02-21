@@ -450,6 +450,26 @@
   tags:
     - global
 
+- name: IOS - Configure AES128 type 6 password
+  cli_command:
+    command: "{{ item }}"
+    prompt:
+      - "Old key"
+      - "New key"
+      - "Confirm key"
+    answer:
+      - "{{ password_encrypt_key_old }}"
+      - "{{ password_encrypt_key_new }}"
+      - "{{ password_encrypt_key_new }}"
+  loop:
+    - configure terminal
+    - config-key password-encrypt
+    - password encryption aes
+    - exit
+  when: ansible_network_os == 'ios'
+  tags:
+    - pwdtype6
+
 - name: IOS - Save config
   ios_config:
     save_when: always
