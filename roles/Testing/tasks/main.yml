@@ -33,7 +33,7 @@
 
 - name: Debug Genie Filter show result2
   debug:
-    msg: "{{ result2 }}"
+    msg: "{{ result2[0] }}"
   delegate_to: localhost
   tags:
     - test
