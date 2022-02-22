@@ -32,7 +32,7 @@
 
 - name: Debug Genie Filter in YAML
   debug:
-    msg: "{{ result['stdout'][0] | parse_genie(command='show running-config | section ^interface', os='ios') | str | from_json }}"
+    msg: "{{ result['stdout'][0] | parse_genie(command='show running-config | section ^interface', os='ios')[0] | to_yaml }}"
   delegate_to: localhost
   tags:
     - test
