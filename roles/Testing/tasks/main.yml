@@ -8,7 +8,7 @@
 
 - name: IOS show interfaces
   ios_command:
-    commands: show interfaces
+    commands: show running-config | section ^interface
   register: result
   vars:
     ansible_command_timeout: 300
@@ -18,7 +18,7 @@
 
 - name: Debug Genie Filter
   debug:
-    msg: "{{ result['stdout'][0] | parse_genie(command='show interfaces', os='ios') }}"
+    msg: "{{ result['stdout'] | parse_genie(command='show interfaces', os='ios') }}"
   delegate_to: localhost
   tags:
     - test
