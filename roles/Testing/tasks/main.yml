@@ -33,14 +33,14 @@
 
 - name: Debug Genie Filter show result2
   debug:
-    msg: "{{ result2.stdout }}"
+    msg: "{{ result2.stdout_lines }}"
   delegate_to: localhost
   tags:
     - test
 
 - name: Debug Genie Filter
   debug:
-    msg: "{{ result2.stdout[0] }}"
+    msg: "{{ result2.stdout_lines[0] }}"
   delegate_to: localhost
   tags:
     - test
