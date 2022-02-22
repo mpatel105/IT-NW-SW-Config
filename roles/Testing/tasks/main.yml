@@ -18,7 +18,7 @@
 
 - name: Debug Genie Filter
   debug:
-    msg: "{{ result['stdout'] | parse_genie(command='show interfaces', os='ios') }}"
+    msg: "{{ result['stdout'][0] | parse_genie(command='show interfaces', os='ios') }}"
   delegate_to: localhost
   tags:
     - test
