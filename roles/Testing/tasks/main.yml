@@ -38,9 +38,9 @@
   tags:
     - test
 
-- name: Debug Genie Filter
+- name: Debug Genie Filter interfaces
   debug:
-    msg: "{{ result2[msg] }}"
+    msg: "{{ result2[interfaces] }}"
   delegate_to: localhost
   tags:
     - test
