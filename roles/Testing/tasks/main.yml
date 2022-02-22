@@ -38,9 +38,9 @@
   tags:
     - test
 
-- name: Debug Genie Filter interfaces
+- name: Debug Genie Filter interfaces in yaml
   debug:
-    msg: "{{ result2.msg.msg }}"
+    msg: "{{ result2.msg | to_yaml }}"
   delegate_to: localhost
   tags:
     - test
