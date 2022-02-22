@@ -26,14 +26,14 @@
 - name: Debug Genie Filter
   debug:
     msg: "{{ result['stdout'][0] | parse_genie(command='show running-config | section ^interface', os='ios') }}"
+  register: result2
   delegate_to: localhost
   tags:
     - test
 
 - name: Debug Genie Filter in YAML
   debug:
-    msg: "{{ result['stdout'][0] | parse_genie(command='show running-config | section ^interface', os='ios')[0] }}"
-  register: result2
+    msg: "{{ result2[0] }}"
   delegate_to: localhost
   tags:
     - test
