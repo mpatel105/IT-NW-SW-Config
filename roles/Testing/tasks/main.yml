@@ -40,7 +40,7 @@
 
 - name: Debug Genie Filter interfaces in yaml
   debug:
-    msg: "{{ result2.msg | to_yaml }}"
+    msg: "{{ result2.msg | to_nice_yaml }}"
   delegate_to: localhost
   tags:
     - test
@@ -63,10 +63,10 @@
   tags:
     - test
 
-- name: save logs
+- name: copy to file
   copy:
     dest: "{{ dest_folder }}/{{ inventory_hostname }}.yml"
-    content: "{{ result2.msg | to_yaml }}"
+    content: "{{ result2.msg | to_nice_yaml }}"
   delegate_to: localhost
   tags:
     - test
