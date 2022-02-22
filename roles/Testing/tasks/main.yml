@@ -23,16 +23,56 @@
   tags:
     - test
 
-- name: Debug show interfaces in YAML
-  debug:
-    msg: "{{ result['stdout'][0] | to_nice_json }}"
-  delegate_to: localhost
-  tags:
-    - test
-
 - name: Debug Genie Filter
   debug:
     msg: "{{ result['stdout'][0] | parse_genie(command='show running-config | section ^interface', os='ios') }}"
   delegate_to: localhost
+  tags:
+    - test
+
+- name: Debug Genie Filter in YAML
+  debug:
+    msg: "{{ result['stdout'][0] | parse_genie(command='show running-config | section ^interface', os='ios') | to_nice_json }}"
+  delegate_to: localhost
+  tags:
+    - test
+
+- name: clone repository
+  run_once: true
+  git:
+    repo: "https://{{awx_user_github}}:{{awx_pwd_github}}@github.com/TalendIT/IT-Network-Scripts.git"
+    dest: "{{ dest_folder }}"
+    force: yes
+    version: testing
+  tags:
+    - test
+
+- name: create new inventory file
+  run_once: true
+  file:
+    state: touch
+    path: "{{ dest_folder }}/{{ inventory_hostname }}.yml"
+  tags:
+    - test
+
+- name: save logs
+  copy:
+    dest: "{{ dest_folder }}/{{ inventory_hostname }}.yml"
+    content: "{{ result['stdout'][0] | parse_genie(command='show running-config | section ^interface', os='ios') | to_nice_json }}"
+  delegate_to: localhost
+  tags:
+    - test
+
+- name: push to git
+  run_once: true
+  shell: |
+    git config --global user.email "networks@talend.com"
+    git config --global user.name "sa-netgit"
+    git add .
+    git commit -m "testing: $(date +"%Y-%m-%d %H:%M:%S")"
+    git push origin master
+    exit 0
+  args:
+    chdir: "{{ dest_folder }}"
   tags:
     - test
