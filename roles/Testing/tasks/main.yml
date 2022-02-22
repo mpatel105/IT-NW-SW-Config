@@ -33,14 +33,14 @@
 
 - name: Debug Genie Filter show result2
   debug:
-    msg: "{{ result2 | type_debug }}"
+    msg: "{{ result2 }}"
   delegate_to: localhost
   tags:
     - test
 
 - name: Debug Genie Filter interfaces
   debug:
-    msg: "{{ result2.interfaces }}"
+    msg: "{{ result2.msg }}"
   delegate_to: localhost
   tags:
     - test
