@@ -11,6 +11,7 @@
   tags:
     - global
     - interfaces
+    - pwdtype6
 
 
 - name: napalm get_facts
@@ -486,7 +487,7 @@
     - key config-key password-encrypt
     - password encryption aes
     - exit
-  when: ansible_network_os == 'ios' and '2960' in ansible_net_model 
+  when: ansible_network_os == 'ios' and '2960' in ansible_net_model
   tags:
     - pwdtype6
 
