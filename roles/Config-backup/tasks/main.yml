@@ -18,26 +18,6 @@
   when: ansible_network_os == 'ios'
   tags: save
 
-- name: Display file
-  command: cat "{{ inventory_hostname }}.txt" chdir="{{ backup_folder }}"
-  tags: save
-
-- name: remove commented lines with timestamps
-  # Cisco/NXOS specific - avoid timestamp from always marking config as changed
-  shell: |
-    sed -i -e '/^! Last configuration change at/d' {{ backup_folder }}/*.txt
-    sed -i -e '/^! NVRAM config last updated at/d' {{ backup_folder }}/*.txt
-    sed -i -e 's/^ key 7.*/ key 7 ********/' {{ backup_folder }}/*.txt
-    sed -i -e 's/^ client 10.44.32.19 server-key 7.*/  client 10.44.32.19 server-key 7 ********/' {{ backup_folder }}/*.txt
-    sed -i -e 's/^ client 10.1.32.19 server-key 7.*/  client 10.1.32.19 server-key 7 ********/' {{ backup_folder }}/*.txt
-    sed -i -e '/^rogue client alert/d' {{ backup_folder }}/*.txt
-  args:
-    warn: no
-
-- name: Display file after sed
-  command: cat "{{ inventory_hostname }}.txt" chdir="{{ backup_folder }}"
-  tags: save
-
 ##############################################################################
 ### NXOS
 ##############################################################################
@@ -87,7 +67,7 @@
 - name: PAN - Get backup
   uri:
     validate_certs: no
-    url: "https://{{inventory_hostname}}/api/?type=op&cmd=<show><config><running><%2Frunning><%2Fconfig><%2Fshow>&key={{ api_key.matches[0].key }}"
+#    url: "https://{{inventory_hostname}}/api/?type=op&cmd=<show><config><running><%2Frunning><%2Fconfig><%2Fshow>&key={{ api_key.matches[0].key }}"
     return_content: yes
     method: GET
   register: result_palo
@@ -100,3 +80,29 @@
     dest: "{{ backup_folder }}/{{inventory_hostname}}.txt"
   when: ansible_network_os == 'panos' and result_palo != "" and api_key !=""
   tags: panos
+
+##############################################################################
+### Modify files and Upload files to GIT
+##############################################################################
+
+- name: Display file
+  command: cat "{{ inventory_hostname }}.txt" chdir="{{ backup_folder }}"
+  tags: save
+
+# Remove clear test password and timestamp for github upload and revision history showing changes
+- name: Remove commented lines with timestamps
+  run_once: true
+  shell: |
+    sed -i -e '/^! Last configuration change at/d' {{ backup_folder }}/*.txt
+    sed -i -e '/^! NVRAM config last updated at/d' {{ backup_folder }}/*.txt
+    sed -i -e 's/^ key 7.*/ key 7 ********/' {{ backup_folder }}/*.txt
+    sed -i -e 's/^ client 10.44.32.19 server-key 7.*/  client 10.44.32.19 server-key 7 ********/' {{ backup_folder }}/*.txt
+    sed -i -e 's/^ client 10.1.32.19 server-key 7.*/  client 10.1.32.19 server-key 7 ********/' {{ backup_folder }}/*.txt
+    sed -i -e '/^rogue client alert/d' {{ backup_folder }}/*.txt
+  args:
+    warn: no
+  delegate_to: localhost
+
+- name: Display file after sed
+  command: cat "{{ inventory_hostname }}.txt" chdir="{{ backup_folder }}"
+  tags: save
