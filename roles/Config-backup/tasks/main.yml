@@ -18,6 +18,14 @@
   when: ansible_network_os == 'ios'
   tags: save
 
+- name: Display file
+  command: cat "{{ inventory_hostname }}.txt" chdir="{{ backup_folder }}"
+  register: command_output
+  tags: save
+
+- name: Print to console
+  debug:
+    msg: "{{command_output.stdout}}"
 
 ##############################################################################
 ### NXOS
