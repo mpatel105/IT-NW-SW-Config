@@ -18,9 +18,6 @@
   when: ansible_network_os == 'ios'
   tags: save
 
-- debug:
-    msg: "User: {{ ansible_user }}"
-  tags: save
 
 ##############################################################################
 ### NXOS
@@ -47,6 +44,11 @@
 ##############################################################################
 ### PALO ALTO
 ##############################################################################
+
+- debug:
+    msg: "PANOS : {{ ansible_user }} on {{inventory_hostname}}"
+  when: ansible_network_os == 'panos'
+  tags: save
 
 - name: PAN - get API key xml reponse
   uri:
