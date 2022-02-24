@@ -56,7 +56,7 @@
     url: "https://{{inventory_hostname}}/api/?type=keygen&user={{ ansible_user }}&password={{ ansible_password }}"
     return_content: yes
     method: GET
-#  no_log: True
+  no_log: True
   register: xml_resp
   when: ansible_network_os == 'panos'
   tags: save
@@ -73,7 +73,7 @@
 - name: PAN - Get backup
   uri:
     validate_certs: no
-#    url: "https://{{inventory_hostname}}/api/?type=op&cmd=<show><config><running><%2Frunning><%2Fconfig><%2Fshow>&key={{ api_key.matches[0].key }}"
+    url: "https://{{inventory_hostname}}/api/?type=op&cmd=<show><config><running><%2Frunning><%2Fconfig><%2Fshow>&key={{ api_key.matches[0].key }}"
     return_content: yes
     method: GET
   register: result_palo
