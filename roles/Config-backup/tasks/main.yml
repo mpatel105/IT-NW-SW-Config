@@ -95,9 +95,12 @@
   shell: |
     sed -i -e '/^! Last configuration change at/d' {{ backup_folder }}/*.txt
     sed -i -e '/^! NVRAM config last updated at/d' {{ backup_folder }}/*.txt
+    sed -i -e '/^!Time: /d' {{ backup_folder }}/*.txt
     sed -i -e 's/^ key 7.*/ key 7 ********/' {{ backup_folder }}/*.txt
-    sed -i -e 's/^ client 10.44.32.19 server-key 7.*/  client 10.44.32.19 server-key 7 ********/' {{ backup_folder }}/*.txt
-    sed -i -e 's/^ client 10.1.32.19 server-key 7.*/  client 10.1.32.19 server-key 7 ********/' {{ backup_folder }}/*.txt
+    sed -i -e 's/^ client {{ talend_portnox_PA7 }} server-key 7.*/ client {{ talend_portnox_PA7 }} server-key 7 ********/' {{ backup_folder }}/*.txt
+    sed -i -e 's/^ client {{ talend_portnox_SV2 }} server-key 7.*/ client {{ talend_portnox_SV2 }} server-key 7 ********/' {{ backup_folder }}/*.txt
+    sed -i -e 's/^radius-server host {{ talend_radius_PA7 }} key 7.*/ radius-server host {{ talend_radius_PA7 }} key 7 ******** authentication accounting timeout 3/' {{ backup_folder }}/*.txt
+    sed -i -e 's/^radius-server host {{ talend_radius_SV2 }} key 7.*/ radius-server host {{ talend_radius_SV2 }} key 7 ******** authentication accounting timeout 3/' {{ backup_folder }}/*.txt
     sed -i -e '/^rogue client alert/d' {{ backup_folder }}/*.txt
   args:
     warn: no
