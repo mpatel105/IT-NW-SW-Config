@@ -27,7 +27,7 @@
   shell: |
     sed -i -e '/^! Last configuration change at/d' {{ backup_folder }}/*.txt
     sed -i -e '/^! NVRAM config last updated at/d' {{ backup_folder }}/*.txt
-    sed -i -e '/^! key 7/ key 7 ********' {{ backup_folder }}/*.txt
+    sed -i -e '/^ key 7/ key 7 ********' {{ backup_folder }}/*.txt
     sed -i -e '/^rogue client alert/d' {{ backup_folder }}/*.txt
   args:
     warn: no
