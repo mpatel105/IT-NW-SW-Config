@@ -122,7 +122,7 @@
     git config --global user.name "sa-netgit"
     git add .
     git commit -m "config snapshot from $(date +"%Y-%m-%d %H:%M:%S")"
-    git push origin master
+    git push
     exit 0
   args:
     chdir: "{{ backup_folder }}"
