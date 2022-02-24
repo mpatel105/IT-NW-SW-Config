@@ -1,6 +1,12 @@
 ---
 # tasks file for Config-backup
 
+- name: Create backup directory if it does not exist
+  file:
+    path: "{{ backup_folder }}"
+    state: directory
+    mode: '0755'
+
 - name: IOS - Save running to startup
   ios_config:
     save_when: always
@@ -84,7 +90,8 @@
   copy:
     content: "{{ result_palo['content'] }}"
     dest: "{{ backup_folder }}/{{inventory_hostname}}.txt"
-  when: ansible_network_os == 'panos' and result_palo != "" and api_key !=""
+#when: ansible_network_os == 'panos' and result_palo != "" and api_key !=""
+  when: ansible_network_os == 'panos'
   tags: save
 
 ##############################################################################
