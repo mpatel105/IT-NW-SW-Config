@@ -1,18 +1,25 @@
 ---
 # tasks file for Config-backup
 
-- name: Create backup directory if it does not exist
-  file:
-    path: "{{ backup_folder }}"
-    state: directory
-    mode: '0755'
+- name: clone repository
+  run_once: true
+  git:
+    repo: "https://{{awx_user_github}}:{{awx_pwd_github}}@github.com/TalendIT/IT-Network-Scripts.git"
+    dest: "{{ backup_folder }}"
+    force: yes
+    version: config_backup
+  delegate_to: localhost
+  tags: save
+
+##############################################################################
+### IOS
+##############################################################################
 
 - name: IOS - Save running to startup
   ios_config:
     save_when: always
   when: ansible_network_os == 'ios'
-  tags:
-    - save
+  tags: save
 
 - name: IOS - backup switch
   ios_config:
@@ -33,8 +40,7 @@
   nxos_config:
     save_when: always
   when: ansible_network_os == 'nxos'
-  tags:
-    - save
+  tags: save
 
 - name: NXOS - Backup switch
   nxos_config:
@@ -50,11 +56,6 @@
 ##############################################################################
 ### PALO ALTO
 ##############################################################################
-
-- debug:
-    msg: "PANOS : {{ ansible_user }} on {{inventory_hostname}}"
-  when: ansible_network_os == 'panos'
-  tags: save
 
 - name: PAN - get API key xml reponse
   uri:
@@ -90,17 +91,12 @@
   copy:
     content: "{{ result_palo['content'] }}"
     dest: "{{ backup_folder }}/{{inventory_hostname}}.txt"
-#when: ansible_network_os == 'panos' and result_palo != "" and api_key !=""
-  when: ansible_network_os == 'panos'
+  when: ansible_network_os == 'panos' and result_palo != "" and api_key !=""
   tags: save
 
 ##############################################################################
 ### Modify files and Upload files to GIT
 ##############################################################################
-
-- name: Display file
-  command: cat "{{ inventory_hostname }}.txt" chdir="{{ backup_folder }}"
-  tags: save
 
 # Remove clear test password and timestamp for github upload and revision history showing changes
 - name: Remove commented lines with timestamps
@@ -114,11 +110,21 @@
     sed -i -e 's/^ client {{ talend_portnox_SV2 }} server-key 7.*/ client {{ talend_portnox_SV2 }} server-key 7 ********/' {{ backup_folder }}/*.txt
     sed -i -e 's/^radius-server host {{ talend_radius_PA7 }} key 7.*/ radius-server host {{ talend_radius_PA7 }} key 7 ******** authentication accounting timeout 3/' {{ backup_folder }}/*.txt
     sed -i -e 's/^radius-server host {{ talend_radius_SV2 }} key 7.*/ radius-server host {{ talend_radius_SV2 }} key 7 ******** authentication accounting timeout 3/' {{ backup_folder }}/*.txt
-    sed -i -e '/^rogue client alert/d' {{ backup_folder }}/*.txt
   args:
     warn: no
   delegate_to: localhost
+  tags: save
 
-- name: Display file after sed
-  command: cat "{{ inventory_hostname }}.txt" chdir="{{ backup_folder }}"
+- name: Push to git
+  run_once: true
+  shell: |
+    git config --global user.email "networks@talend.com"
+    git config --global user.name "sa-netgit"
+    git add .
+    git commit -m "config snapshot from $(date +"%Y-%m-%d %H:%M:%S")"
+    git push origin master
+    exit 0
+  args:
+    chdir: "{{ backup_folder }}"
+  delegate_to: localhost
   tags: save
