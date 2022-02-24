@@ -20,8 +20,6 @@
 
 - debug:
     msg: "User: {{ ansible_user }}"
-  when:
-    - ansible_network_os == "ios"
   tags: save
 
 ##############################################################################
