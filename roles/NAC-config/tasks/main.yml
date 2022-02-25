@@ -126,9 +126,9 @@
     lines:
       - authentication event fail action next-method
       - authentication event server dead action reinitialize vlan {% if
-          ansible_net_interfaces[item.name].description is not null and ansible_net_interfaces[item.name].description.startswith('Wired Users VLAN') %}8
-          {% elif ansible_net_interfaces[item.name].description is not null and ansible_net_interfaces[item.name].description.startswith('VLAN24') %}24
-          {% elif ansible_net_interfaces[item.name].description is not null and ansible_net_interfaces[item.name].description.startswith('VLAN48') %}48
+          ansible_net_interfaces[item.name].description != 'None' and ansible_net_interfaces[item.name].description.startswith('Wired Users VLAN') %}8
+          {% elif ansible_net_interfaces[item.name].description != 'None' and ansible_net_interfaces[item.name].description.startswith('VLAN24') %}24
+          {% elif ansible_net_interfaces[item.name].description != 'None' and ansible_net_interfaces[item.name].description.startswith('VLAN48') %}48
           {% else %}169{% endif %}
       - authentication timer reauthenticate server
       - authentication timer inactivity server
