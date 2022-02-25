@@ -114,7 +114,7 @@
     - NACglobal
 
 - debug:
-    msg: "{{ ansible_net_interfaces[item.name] }}"
+    msg: "{{ ansible_net_interfaces[item.name].description }}"
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
     - (item.access.vlan is defined and (item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 48))
