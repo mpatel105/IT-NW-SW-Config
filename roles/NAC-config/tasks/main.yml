@@ -6,8 +6,7 @@
     gather_network_resources:
       - 'l2_interfaces'
   tags:
-    - NACint
-    - NACconfig
+    - NACinterfaces
     - NACglobal
 
 - name: IOS - Configure NAC - new-model
@@ -19,7 +18,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - NACconfig
+
 
 - name: IOS - Configure Portnox-Radius-SV2
   ios_config:
@@ -31,7 +30,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - NACconfig
+
 
 - name: IOS - Configure Portnox-Radius-PA7
   ios_config:
@@ -43,7 +42,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - NACconfig
+
 
 - name: IOS - Configure NAC group Portnox-RADIUS-Group
   ios_config:
@@ -57,7 +56,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - NACconfig
+
 
 - name: IOS - Configure NAC server radius dynamic-author
   ios_config:
@@ -70,7 +69,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - NACconfig
+
 
 - name: IOS - Configure NAC - global config
   ios_command:
@@ -90,7 +89,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - NACconfig
+
 
 - name: IOS 3650/3850/9200 - Configure NAC - global config device tracking
   ios_command:
@@ -102,7 +101,7 @@
   when: ansible_network_os == 'ios' and (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model))
   tags:
     - NACglobal
-    - NACconfig
+
 
 - name: IOS 2960X/3560CX - Configure NAC - global config device tracking
   ios_command:
@@ -113,7 +112,7 @@
   when: ansible_network_os == 'ios' and ('2960' in ansible_net_model or '3560' in ansible_net_model)
   tags:
     - NACglobal
-    - NACconfig
+
 
 
 - name: Configure interface for NAC
@@ -137,5 +136,4 @@
   when:
     - (item.access.vlan is defined and (item.access.vlan == 8 or item.access.vlan == 16 or item.access.vlan == 24 or item.access.vlan == 48))
   tags:
-    - NACint
-    - NACconfig
+    - NACinterfaces
