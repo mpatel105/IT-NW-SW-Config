@@ -91,14 +91,14 @@
     - NACglobal
 
 
-- name: IOS 3650/3850/9200 - Configure NAC - global config device tracking
+- name: IOS 3650/3850/9x00 - Configure NAC - global config device tracking
   ios_command:
     commands:
       - configure terminal
       - device-tracking policy ip_device_tracking_policy
       - tracking enable
       - exit
-  when: ansible_network_os == 'ios' and (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model))
+  when: ansible_network_os == 'ios' and (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model) or ('9300' in ansible_net_model))
   tags:
     - NACglobal
 
