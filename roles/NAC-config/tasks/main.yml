@@ -75,7 +75,7 @@
   ios_command:
     commands:
       - configure terminal
-      - aaa authentication dot1x default group Portnox-RADIUS-group
+      - aaa authentication dot1x default group Portnox-RADIUS-Group
       - aaa authorization network default group Portnox-RADIUS-Group
       - aaa accounting update newinfo periodic 2880
       - aaa accounting dot1x default start-stop group Portnox-RADIUS-Group
