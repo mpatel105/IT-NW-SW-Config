@@ -1,5 +1,5 @@
-ansible_user: {{ adminlocal_username }}
-ansible_password: {{ adminlocal_password }}
+ansible_user: "{{ adminlocal_username }}"
+ansible_password: "{{ adminlocal_password }}"
 #ansible_become: yes
 #ansible_become_method: enable
 #ansible_become_password: admin
