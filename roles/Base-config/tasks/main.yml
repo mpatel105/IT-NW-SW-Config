@@ -451,46 +451,6 @@
   tags:
     - global
 
-- name: IOS-XE - Configure AES128 type 6 password
-  cli_command:
-    command: "{{ item }}"
-    prompt:
-      - "Old key"
-      - "New key"
-      - "Confirm key"
-    answer:
-      - "{{ password_encrypt_key_old }}"
-      - "{{ password_encrypt_key_new }}"
-      - "{{ password_encrypt_key_new }}"
-  loop:
-    - configure terminal
-    - config-key password-encrypt
-    - password encryption aes
-    - exit
-  when: ansible_network_os == 'ios' and ansible_net_iostype == 'IOS-XE'
-  tags:
-    - pwdtype6
-
-- name: IOS - 2960X Configure AES128 type 6 password
-  cli_command:
-    command: "{{ item }}"
-    prompt:
-      - "Old key"
-      - "New key"
-      - "Confirm key"
-    answer:
-      - "{{ password_encrypt_key_old }}"
-      - "{{ password_encrypt_key_new }}"
-      - "{{ password_encrypt_key_new }}"
-  loop:
-    - configure terminal
-    - key config-key password-encrypt
-    - password encryption aes
-    - exit
-  when: ansible_network_os == 'ios' and '2960' in ansible_net_model
-  tags:
-    - pwdtype6
-
 - name: IOS - Save config
   ios_config:
     save_when: always
