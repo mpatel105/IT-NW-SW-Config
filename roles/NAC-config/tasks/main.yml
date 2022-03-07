@@ -154,7 +154,8 @@
       - authentication event server dead action reinitialize vlan {% if
           ansible_net_interfaces[item.name].description.startswith('Wired Users VLAN') %}8
           {% elif ansible_net_interfaces[item.name].description.startswith('VLAN24') %}24
-          {% elif ansible_net_interfaces[item.name].descriptioPot.add.cow-5f999780638121c0a032317889c357ca9c8d9acfdddd
+          {% elif ansible_net_interfaces[item.name].description.startswith('VLAN48') %}48
+          {% else %}{{ vlan_quarantine_id }}{% endif %}
       - authentication timer reauthenticate server
       - authentication timer inactivity server
       - authentication order dot1x mab
