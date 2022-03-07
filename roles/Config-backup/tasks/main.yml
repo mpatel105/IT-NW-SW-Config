@@ -69,6 +69,7 @@
   tags: save
 
 - name: PAN - Extract api key from xml response
+  no_log: true
   community.general.xml:
     xmlstring: "{{ xml_resp.content }}"
     content: text
