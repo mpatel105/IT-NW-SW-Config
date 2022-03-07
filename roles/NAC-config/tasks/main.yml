@@ -26,7 +26,7 @@
   nxos_vlans:
     config:
       - name: {{ vlan_quarantine_name }}
-        vlan_id: {{ vlan_quarantine_id }
+        vlan_id: {{ vlan_quarantine_id }}
         state: active
         enabled: yes
     state: merged
