@@ -167,6 +167,7 @@
       - dot1x pae authenticator
       - dot1x timeout tx-period 10
       - switchport access vlan {{ vlan_quarantine_id }}
+    parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
     - ansible_network_os == 'ios' and (item.access.vlan is defined and (item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 48))
