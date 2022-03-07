@@ -147,7 +147,7 @@
   tags:
     - NACinterfaces
 
-- name: Configure interface for NAC
+- name: IOS - Configure interface for NAC
   ios_config:
     lines:
       - authentication event fail action next-method
@@ -167,21 +167,31 @@
       - dot1x pae authenticator
       - dot1x timeout tx-period 10
       - switchport access vlan {{ vlan_quarantine_id }}
-    parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
-    - (item.access.vlan is defined and (item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 48))
+    - ansible_network_os == 'ios' and (item.access.vlan is defined and (item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 48))
   tags:
     - NACinterfaces
 
-- name: Configure mab interface for NAC
+- name: IOS - Configure mab interface for NAC
   ios_config:
     lines:
       - authentication control-direction in
     parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
-    - ansible_net_interfaces[item.name].description is defined and ansible_net_interfaces[item.name].description != None and 
+    - ansible_network_os == 'ios' and ansible_net_interfaces[item.name].description is defined and ansible_net_interfaces[item.name].description != None and
       (ansible_net_interfaces[item.name].description.startswith('VLAN24') or ansible_net_interfaces[item.name].description.startswith('VLAN48'))
+  tags:
+    - NACinterfaces
+
+- name: IOS - Configure device tracking interface for NAC
+  ios_config:
+    lines:
+      - device-tracking attach-policy ip_device_tracking_policy
+    parents: interface {{ item.name }}
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - ansible_network_os == 'ios' and (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model) or ('9300' in ansible_net_model))
   tags:
     - NACinterfaces
