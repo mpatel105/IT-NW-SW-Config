@@ -9,6 +9,32 @@
     - NACinterfaces
     - NACglobal
 
+- name: IOS - Configure Quarantine vlan
+  ios_vlans:
+    config:
+      - name: {{ vlan_quarantine_name }}
+        vlan_id: {{ vlan_quarantine_id }}
+        state: active
+        shutdown: disabled
+    state: merged
+  when: ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - NACinterfaces
+
+- name: NXOS - Configure Quarantine vlan
+  nxos_vlans:
+    config:
+      - name: {{ vlan_quarantine_name }}
+        vlan_id: {{ vlan_quarantine_id }
+        state: active
+        enabled: yes
+    state: merged
+  when: ansible_network_os == 'nxos'
+  tags:
+    - NACglobal
+    - NACinterfaces
+
 - name: IOS - Configure NAC - new-model
   ios_command:
     commands:
