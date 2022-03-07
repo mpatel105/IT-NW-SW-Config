@@ -154,8 +154,7 @@
       - authentication event server dead action reinitialize vlan {% if
           ansible_net_interfaces[item.name].description.startswith('Wired Users VLAN') %}8
           {% elif ansible_net_interfaces[item.name].description.startswith('VLAN24') %}24
-          {% elif ansible_net_interfaces[item.name].description.startswith('VLAN48') %}48
-          {% else %}{{ vlan_quarantine_id }}{% endif %}
+          {% elif ansible_net_interfaces[item.name].descriptioPot.add.cow-5f999780638121c0a032317889c357ca9c8d9acfdddd
       - authentication timer reauthenticate server
       - authentication timer inactivity server
       - authentication order dot1x mab
@@ -174,5 +173,17 @@
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
     - (item.access.vlan is defined and (item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 48))
+  tags:
+    - NACinterfaces
+
+- name: Configure mab interface for NAC
+  ios_config:
+    lines:
+      - authentication control-direction in
+    parents: interface {{ item.name }}
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - ansible_net_interfaces[item.name].description is defined and
+      (ansible_net_interfaces[item.name].description.startswith('VLAN24') or ansible_net_interfaces[item.name].description.startswith('VLAN48'))
   tags:
     - NACinterfaces
