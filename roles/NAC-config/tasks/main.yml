@@ -12,8 +12,8 @@
 - name: IOS - Configure Quarantine vlan
   ios_vlans:
     config:
-      - name: {{ vlan_quarantine_name }}
-        vlan_id: {{ vlan_quarantine_id }}
+      - name: "{{ vlan_quarantine_name }}"
+        vlan_id: "{{ vlan_quarantine_id }}"
         state: active
         shutdown: disabled
     state: merged
@@ -25,8 +25,8 @@
 - name: NXOS - Configure Quarantine vlan
   nxos_vlans:
     config:
-      - name: {{ vlan_quarantine_name }}
-        vlan_id: {{ vlan_quarantine_id }}
+      - name: "{{ vlan_quarantine_name }}"
+        vlan_id: "{{ vlan_quarantine_id }}"
         state: active
         enabled: yes
     state: merged
