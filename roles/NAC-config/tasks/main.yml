@@ -181,7 +181,7 @@
     parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
-    - ansible_net_interfaces[item.name].description is defined and
+    - ansible_net_interfaces[item.name].description is defined and ansible_net_interfaces[item.name].description != None and 
       (ansible_net_interfaces[item.name].description.startswith('VLAN24') or ansible_net_interfaces[item.name].description.startswith('VLAN48'))
   tags:
     - NACinterfaces
