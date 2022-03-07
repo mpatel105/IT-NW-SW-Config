@@ -193,7 +193,7 @@
     parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
-    - ansible_network_os == 'ios' and item.access.vlan is defined and item.access.vlan == 169 and
-      (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model) or ('9300' in ansible_net_model))
+    - ansible_network_os == 'ios' and item.access.vlan is defined and item.access.vlan == 169 and ansible_net_iostype == 'IOS-XE'
+#      (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model) or ('9300' in ansible_net_model))
   tags:
     - NACinterfaces
