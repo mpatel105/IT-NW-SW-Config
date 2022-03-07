@@ -167,9 +167,9 @@
       - dot1x pae authenticator
       - dot1x timeout tx-period 10
       - switchport access vlan 169
-      - {% if ansible_net_interfaces[item.name].description.startswith('VLAN24') %}authentication control-direction in
-          {% elif ansible_net_interfaces[item.name].description.startswith('VLAN48') %}authentication control-direction in
-          {% else %}{% endif %}
+#      - {% if ansible_net_interfaces[item.name].description.startswith('VLAN24') %}authentication control-direction in
+#          {% elif ansible_net_interfaces[item.name].description.startswith('VLAN48') %}authentication control-direction in
+#          {% else %}{% endif %}
     parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
