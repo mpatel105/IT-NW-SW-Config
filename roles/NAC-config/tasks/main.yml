@@ -155,7 +155,7 @@
           ansible_net_interfaces[item.name].description.startswith('Wired Users VLAN') %}8
           {% elif ansible_net_interfaces[item.name].description.startswith('VLAN24') %}24
           {% elif ansible_net_interfaces[item.name].description.startswith('VLAN48') %}48
-          {% else %}169{% endif %}
+          {% else %}{{ vlan_quarantine_id }}{% endif %}
       - authentication timer reauthenticate server
       - authentication timer inactivity server
       - authentication order dot1x mab
@@ -166,10 +166,10 @@
       - mab
       - dot1x pae authenticator
       - dot1x timeout tx-period 10
-      - switchport access vlan 169
-#      - {% if ansible_net_interfaces[item.name].description.startswith('VLAN24') %}authentication control-direction in
-#          {% elif ansible_net_interfaces[item.name].description.startswith('VLAN48') %}authentication control-direction in
-#          {% else %}{% endif %}
+      - switchport access vlan {{ vlan_quarantine_id }}
+      - {% if ansible_net_interfaces[item.name].description.startswith('VLAN24') %}authentication control-direction in
+          {% elif ansible_net_interfaces[item.name].description.startswith('VLAN48') %}authentication control-direction in
+          {% else %}{% endif %}
     parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
