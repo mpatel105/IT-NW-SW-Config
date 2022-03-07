@@ -186,14 +186,26 @@
   tags:
     - NACinterfaces
 
-- name: IOS - Configure device tracking interface for NAC
+- name: IOS-XE - Configure device tracking interface for NAC
   ios_config:
     lines:
       - device-tracking attach-policy ip_device_tracking_policy
     parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
-    - ansible_network_os == 'ios' and item.access.vlan is defined and item.access.vlan == 169 and ansible_net_iostype == 'IOS-XE'
+    - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS-XE' and item.access.vlan is defined and item.access.vlan == 169
+#      (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model) or ('9300' in ansible_net_model))
+  tags:
+    - NACinterfaces
+
+- name: IOS 2960X - Configure device tracking interface for NAC
+  ios_config:
+    lines:
+      - ip device tracking maximum 2
+    parents: interface {{ item.name }}
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS' and item.access.vlan is defined and item.access.vlan == 169 
 #      (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model) or ('9300' in ansible_net_model))
   tags:
     - NACinterfaces
