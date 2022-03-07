@@ -51,7 +51,8 @@ vlan_list_access_remove:
   - 998
   - 224
 
-vlan_quarantine: 169
+vlan_quarantine_id: 169
+vlan_quarantine_name: Quarantine
 
 vlan_tag_24: VLAN24
 vlan_tag_48: VLAN48
