@@ -106,6 +106,8 @@
   shell: |
     sed -i -e '/^! Last configuration change at/d' {{ backup_folder }}/*.txt
     sed -i -e '/^! NVRAM config last updated at/d' {{ backup_folder }}/*.txt
+    sed -i -e '/^Current configuration/d' {{ backup_folder }}/*.txt
+    sed -i -e '/^Building configuration/d' {{ backup_folder }}/*.txt
     sed -i -e '/^!Time: /d' {{ backup_folder }}/*.txt
     sed -i -e 's/^ key 7.*/ key 7 ********/' {{ backup_folder }}/*.txt
     sed -i -e 's/^enable secret 9.*/enable secret 9 ********/' {{ backup_folder }}/*.txt
