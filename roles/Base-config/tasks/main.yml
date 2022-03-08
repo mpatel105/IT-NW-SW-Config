@@ -11,7 +11,7 @@
   tags:
     - global
     - interfaces
-    - pwdtype6
+    - cdplldp
 
 
 - name: napalm get_facts
@@ -21,6 +21,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - interfaces
+    - cdplldp
 
 - name: IOS - set fact for portfast
   set_fact:
@@ -201,7 +202,6 @@
         severity: critical
       hosts:
         - hostname: "{{ talend_logs }}"
-          xml: True
       logging_on: enable
       source_interface:
         - interface: Vlan999
@@ -246,6 +246,7 @@
     - ("cisco" in item.value[0].platform)
   tags:
     - interfaces
+    - cdplldp
 
 - name: IOS - Configure interface in vlan 8 - End Users
   ios_config:
@@ -253,8 +254,6 @@
       - description Wired Users VLAN
       - switchport mode access
       - spanning-tree portfast {{ edge }}
-      - no spanning-tree guard loop
-      - no spanning-tree bpduguard enable
     parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
@@ -268,8 +267,6 @@
     lines:
       - switchport mode access
       - spanning-tree portfast {{ edge }}
-      - no spanning-tree guard loop
-      - no spanning-tree bpduguard enable
     parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
@@ -324,6 +321,7 @@
       (item.value[0].platform is defined and "Meraki" in item.value[0].platform)
   tags:
     - interfaces
+    - cdplldp
 
 - name: IOS - Disable AUX login
   ios_command:
