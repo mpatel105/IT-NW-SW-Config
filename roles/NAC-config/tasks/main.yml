@@ -158,8 +158,12 @@
           {% else %}{{ vlan_quarantine_id }}{% endif %}
       - authentication timer reauthenticate server
       - authentication timer inactivity server
-      - authentication order dot1x mab
-      - authentication priority dot1x mab
+      - authentication order {% if ansible_net_interfaces[item.name].description.startswith('VLAN24') or
+                                   ansible_net_interfaces[item.name].description.startswith('VLAN48') %}mab dot1x
+                             {% else %}dot1x mab{% endif %}
+      - authentication priority {% if ansible_net_interfaces[item.name].description.startswith('VLAN24') or
+                                   ansible_net_interfaces[item.name].description.startswith('VLAN48') %}mab dot1x
+                             {% else %}dot1x mab{% endif %}
       - authentication port-control auto
       - authentication violation restrict
       - authentication periodic
@@ -205,7 +209,7 @@
     parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
-    - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS' and item.access.vlan is defined and item.access.vlan == 169 
+    - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS' and item.access.vlan is defined and item.access.vlan == 169
 #      (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model) or ('9300' in ansible_net_model))
   tags:
     - NACinterfaces
