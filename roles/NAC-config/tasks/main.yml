@@ -178,7 +178,7 @@
   tags:
     - NACinterfaces
 
-- name: IOS - Configure mab interface for NAC
+- name: IOS - Configure interface for MAC authentication
   ios_config:
     lines:
       - authentication control-direction in
