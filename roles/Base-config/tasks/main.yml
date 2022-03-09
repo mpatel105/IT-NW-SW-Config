@@ -12,6 +12,7 @@
     - global
     - interfaces
     - cdplldp
+    - new
 
 
 - name: napalm get_facts
@@ -22,6 +23,7 @@
   tags:
     - interfaces
     - cdplldp
+    - new
 
 - name: IOS - set fact for portfast
   set_fact:
@@ -247,6 +249,7 @@
   tags:
     - interfaces
     - cdplldp
+    - new
 
 - name: IOS - Configure interface in vlan 8 - End Users
   ios_config:
@@ -262,7 +265,7 @@
   tags:
     - interfaces
 
-- name: IOS - Configure interface in vlan 24/48 - Ops devices & A/V
+- name: IOS - Configure interface in vlan 24/40/48 - Ops devices & A/V
   ios_config:
     lines:
       - switchport mode access
@@ -270,10 +273,11 @@
     parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
-    - (item.mode is defined and item.mode == 'access' and item.access.vlan is defined and (item.access.vlan == 24 or item.access.vlan == 48)) or
-      (item.mode is not defined and item.access.vlan is defined and (item.access.vlan == 24 or item.access.vlan == 48))
+    - (item.mode is defined and item.mode == 'access' and item.access.vlan is defined and (item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)) or
+      (item.mode is not defined and item.access.vlan is defined and (item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48))
   tags:
     - interfaces
+    - new
 
 - name: IOS - Configure description tags in vlan 24 - Ops devices
   ios_config:
@@ -290,6 +294,23 @@
       not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith('VLAN24 -')) )
   tags:
     - interfaces
+
+- name: IOS - Configure description tags in vlan 40 - Phones
+  ios_config:
+    lines:
+      - description VLAN40 - {{ output.ansible_facts.ansible_net_interfaces[item.name].description }}
+    parents: interface {{ item.name }}
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - ((item.mode is defined and item.mode == 'access' and item.access.vlan is defined and item.access.vlan == 40) or
+      (item.mode is not defined and item.access.vlan is defined and item.access.vlan == 40)) and
+      ( ( output.ansible_facts.ansible_net_interfaces[item.name].description is defined and
+      output.ansible_facts.ansible_net_interfaces[item.name].description == None) or
+      (output.ansible_facts.ansible_net_interfaces[item.name].description is defined and
+      not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith('VLAN40 -')) )
+  tags:
+    - interfaces
+    - new
 
 - name: IOS - Configure description tags in vlan 48 - Audio/Video
   ios_config:
@@ -322,6 +343,7 @@
   tags:
     - interfaces
     - cdplldp
+    - new
 
 - name: IOS - Disable AUX login
   ios_command:

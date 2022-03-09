@@ -143,7 +143,7 @@
     msg: "{{ ansible_net_interfaces[item.name].description }}"
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
-    - (item.access.vlan is defined and (item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 48))
+    - (item.access.vlan is defined and (item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48))
   tags:
     - NACinterfaces
 
@@ -154,6 +154,7 @@
       - authentication event server dead action reinitialize vlan {% if
           ansible_net_interfaces[item.name].description.startswith('Wired Users VLAN') %}8
           {% elif ansible_net_interfaces[item.name].description.startswith('VLAN24') %}24
+          {% elif ansible_net_interfaces[item.name].description.startswith('VLAN40') %}40
           {% elif ansible_net_interfaces[item.name].description.startswith('VLAN48') %}48
           {% else %}{{ vlan_quarantine_id }}{% endif %}
       - authentication timer reauthenticate server
@@ -174,7 +175,8 @@
     parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
-    - ansible_network_os == 'ios' and item.access.vlan is defined and (item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 48)
+    - ansible_network_os == 'ios' and item.access.vlan is defined and
+      (item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)
   tags:
     - NACinterfaces
 
@@ -186,7 +188,8 @@
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
     - ansible_network_os == 'ios' and ansible_net_interfaces[item.name].description is defined and ansible_net_interfaces[item.name].description != None and
-      (ansible_net_interfaces[item.name].description.startswith('VLAN24') or ansible_net_interfaces[item.name].description.startswith('VLAN48'))
+      (ansible_net_interfaces[item.name].description.startswith('VLAN24') or
+      ansible_net_interfaces[item.name].description.startswith('VLAN48') )
   tags:
     - NACinterfaces
 
@@ -198,18 +201,6 @@
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
     - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS-XE' and item.access.vlan is defined and item.access.vlan == 169
-#      (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model) or ('9300' in ansible_net_model))
-  tags:
-    - NACinterfaces
-
-- name: IOS 2960X - Configure device tracking interface for NAC
-  ios_config:
-    lines:
-      - ip device tracking maximum 2
-    parents: interface {{ item.name }}
-  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
-  when:
-    - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS' and item.access.vlan is defined and item.access.vlan == 169
 #      (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model) or ('9300' in ansible_net_model))
   tags:
     - NACinterfaces
