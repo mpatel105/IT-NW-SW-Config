@@ -180,6 +180,18 @@
   tags:
     - NACinterfaces
 
+- name: IOS-XE - Configure device tracking interface for NAC
+  ios_config:
+    lines:
+      - device-tracking attach-policy ip_device_tracking_policy
+    parents: interface {{ item.name }}
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS-XE' and item.access.vlan is defined and item.access.vlan == 169
+#      (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model) or ('9300' in ansible_net_model))
+  tags:
+    - NACinterfaces
+
 - name: IOS - Configure interface for MAC authentication
   ios_config:
     lines:
@@ -193,14 +205,30 @@
   tags:
     - NACinterfaces
 
-- name: IOS-XE - Configure device tracking interface for NAC
-  ios_config:
-    lines:
-      - device-tracking attach-policy ip_device_tracking_policy
-    parents: interface {{ item.name }}
+- name: IOS - shut VLAN24 & 48 interfaces
+  ios_interfaces:
+    config:
+      - name: {{ item.name }}
+        enabled: false
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
-    - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS-XE' and item.access.vlan is defined and item.access.vlan == 169
-#      (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model) or ('9300' in ansible_net_model))
+    - ansible_network_os == 'ios' and ansible_net_interfaces[item.name].description is defined and ansible_net_interfaces[item.name].description != None and
+      (ansible_net_interfaces[item.name].description.startswith('VLAN24') or
+      ansible_net_interfaces[item.name].description.startswith('VLAN48') )
   tags:
     - NACinterfaces
+    - shutnoshut
+
+- name: IOS - no shut VLAN24 & 48 interfaces
+  ios_interfaces:
+    config:
+      - name: {{ item.name }}
+        enabled: true
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - ansible_network_os == 'ios' and ansible_net_interfaces[item.name].description is defined and ansible_net_interfaces[item.name].description != None and
+      (ansible_net_interfaces[item.name].description.startswith('VLAN24') or
+      ansible_net_interfaces[item.name].description.startswith('VLAN48') )
+  tags:
+    - NACinterfaces
+    - shutnoshut
