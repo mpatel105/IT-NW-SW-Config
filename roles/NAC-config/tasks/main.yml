@@ -208,7 +208,7 @@
 - name: IOS - shut VLAN24 & 48 interfaces
   ios_interfaces:
     config:
-      - name: {{ item.name }}
+      - name: "{{ item.name }}"
         enabled: false
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
@@ -222,7 +222,7 @@
 - name: IOS - no shut VLAN24 & 48 interfaces
   ios_interfaces:
     config:
-      - name: {{ item.name }}
+      - name: "{{ item.name }}"
         enabled: true
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
