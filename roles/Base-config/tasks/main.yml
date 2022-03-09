@@ -33,6 +33,7 @@
   tags:
     - global
     - interfaces
+    - new
 
 - debug:
     #msg: "host is {{ item.value[0].host }} and platform is {{ item.value[0].platform }}"
