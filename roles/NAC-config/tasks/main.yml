@@ -8,6 +8,7 @@
   tags:
     - NACinterfaces
     - NACglobal
+    - shutnoshut
 
 - name: IOS - Configure Quarantine vlan
   ios_vlans:
@@ -188,7 +189,6 @@
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
     - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS-XE' and item.access.vlan is defined and item.access.vlan == 169
-#      (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model) or ('9300' in ansible_net_model))
   tags:
     - NACinterfaces
 
