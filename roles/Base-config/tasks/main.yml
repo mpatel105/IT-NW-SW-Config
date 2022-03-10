@@ -101,6 +101,18 @@
   tags:
     - global
 
+- name: IOS - configure NTP servers
+  cisco.ios.ios_ntp_global:
+    config:
+      servers:
+        - server: "{{ talend_ntp_server }}"
+          use_ipv4: True
+      source: vlan999
+    state: overridden
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+
 - name: IOS - UTC Timezone
   ios_command:
     commands:

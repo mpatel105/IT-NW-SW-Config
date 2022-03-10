@@ -1,0 +1,17 @@
+---
+# tasks file for Debug-config
+- name: IOS - get facts
+  ios_facts:
+    gather_network_resources:
+      - 'l2_interfaces'
+  register: output
+  when: ansible_network_os == 'ios'
+  tags:
+    - debug
+
+- debug:
+    msg: "{{ output }}"
+  when:
+    - ansible_network_os == "ios"
+  tags:
+    - debug
