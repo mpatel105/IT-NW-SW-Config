@@ -110,6 +110,7 @@
       - ip tcp window-size 65536
       - ip ssh window-size 65536
     save_when: modified
+  ignore_errors: yes
   when: ansible_network_os == 'ios'
   tags:
     - copy-window

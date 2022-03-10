@@ -1,0 +1,76 @@
+---
+# tasks file for Testing
+- name: Read in parse_genie role
+  include_role:
+    name: clay584.parse_genie
+  when: ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: IOS show interfaces
+  ios_command:
+    commands: show running-config | section ^interface
+  register: result
+  vars:
+    ansible_command_timeout: 300
+  when: ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: Debug show interfaces
+  debug:
+    msg: "{{ result['stdout'][0] }}"
+  delegate_to: localhost
+  when: ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: Debug Genie Filter
+  debug:
+    msg: "{{ result['stdout'][0] | parse_genie(command='show running-config | section ^interface', os='ios') }}"
+  register: result2
+  delegate_to: localhost
+  when: ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: clone repository
+  run_once: true
+  git:
+    repo: "https://{{awx_user_github}}:{{awx_pwd_github}}@github.com/TalendIT/IT-Network-Scripts.git"
+    dest: "{{ dest_folder }}"
+    force: yes
+    version: testing
+  tags:
+    - test
+
+- name: create new inventory file
+  file:
+    state: touch
+    path: "{{ dest_folder }}/{{ inventory_hostname }}.yml"
+  when: ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: copy to file
+  copy:
+    dest: "{{ dest_folder }}/{{ inventory_hostname }}.yml"
+    content: "{{ result2.msg | to_nice_yaml }}"
+  delegate_to: localhost
+  when: ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: push to git
+  run_once: true
+  shell: |
+    git config --global user.email "networks@talend.com"
+    git config --global user.name "sa-netgit"
+    git add .
+    git commit -m "testing: $(date +"%Y-%m-%d %H:%M:%S")"
+    git push
+    exit 0
+  args:
+    chdir: "{{ dest_folder }}"
+  tags:
+    - test

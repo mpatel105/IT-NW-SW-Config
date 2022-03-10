@@ -4,4 +4,4 @@
 #ansible_become_method: enable
 #ansible_become_password: admin
 ansible_network_os: ios
-ANSIBLE_HOST_KEY_CHECKING: false
+#ANSIBLE_HOST_KEY_CHECKING: false

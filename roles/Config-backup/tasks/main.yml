@@ -1,12 +1,25 @@
 ---
 # tasks file for Config-backup
 
+- name: clone repository
+  run_once: true
+  git:
+    repo: "https://{{awx_user_github}}:{{awx_pwd_github}}@github.com/TalendIT/IT-Network-Scripts.git"
+    dest: "{{ backup_folder }}"
+    force: yes
+    version: config_backup
+  delegate_to: localhost
+  tags: save
+
+##############################################################################
+### IOS
+##############################################################################
+
 - name: IOS - Save running to startup
   ios_config:
     save_when: always
   when: ansible_network_os == 'ios'
-  tags:
-    - save
+  tags: save
 
 - name: IOS - backup switch
   ios_config:
@@ -27,8 +40,7 @@
   nxos_config:
     save_when: always
   when: ansible_network_os == 'nxos'
-  tags:
-    - save
+  tags: save
 
 - name: NXOS - Backup switch
   nxos_config:
@@ -46,26 +58,28 @@
 ##############################################################################
 
 - name: PAN - get API key xml reponse
+  no_log: true
   uri:
     validate_certs: no
     url: "https://{{inventory_hostname}}/api/?type=keygen&user={{ ansible_user }}&password={{ ansible_password }}"
     return_content: yes
     method: GET
-  no_log: True
   register: xml_resp
   when: ansible_network_os == 'panos'
-  tags: panos
+  tags: save
 
 - name: PAN - Extract api key from xml response
+  no_log: true
   community.general.xml:
     xmlstring: "{{ xml_resp.content }}"
     content: text
     xpath: "/response/result/key"
   register: api_key
   when: ansible_network_os == 'panos'
-  tags: panos
+  tags: save
 
 - name: PAN - Get backup
+  no_log: true
   uri:
     validate_certs: no
     url: "https://{{inventory_hostname}}/api/?type=op&cmd=<show><config><running><%2Frunning><%2Fconfig><%2Fshow>&key={{ api_key.matches[0].key }}"
@@ -73,11 +87,53 @@
     method: GET
   register: result_palo
   when: ansible_network_os == 'panos'
-  tags: panos
+  tags: save
 
 - name: PAN - create_panos_config_file
   copy:
     content: "{{ result_palo['content'] }}"
     dest: "{{ backup_folder }}/{{inventory_hostname}}.txt"
   when: ansible_network_os == 'panos' and result_palo != "" and api_key !=""
-  tags: panos
+  tags: save
+
+##############################################################################
+### Modify files and Upload files to GIT
+##############################################################################
+
+# Remove clear test password and timestamp for github upload and revision history showing changes
+- name: Remove commented lines with timestamps
+  run_once: true
+  shell: |
+    sed -i -e '/^! Last configuration change at/d' {{ backup_folder }}/*.txt
+    sed -i -e '/^! NVRAM config last updated at/d' {{ backup_folder }}/*.txt
+    sed -i -e '/^Current configuration/d' {{ backup_folder }}/*.txt
+    sed -i -e '/^Building configuration/d' {{ backup_folder }}/*.txt
+    sed -i -e '/^!Time: /d' {{ backup_folder }}/*.txt
+    sed -i -e 's/^ key 7.*/ key 7 ********/' {{ backup_folder }}/*.txt
+    sed -i -e 's/^enable secret 9.*/enable secret 9 ********/' {{ backup_folder }}/*.txt
+    sed -i -e 's/^username admin privilege 15 secret 9.*/username admin privilege 15 secret 9 ********/' {{ backup_folder }}/*.txt
+    sed -i -e 's/^username admin password 5.*/username admin password 5 ******** role network-admin/' {{ backup_folder }}/*.txt
+    sed -i -e 's/^ client {{ talend_portnox_PA7 }} server-key 7.*/ client {{ talend_portnox_PA7 }} server-key 7 ********/' {{ backup_folder }}/*.txt
+    sed -i -e 's/^ client {{ talend_portnox_SV2 }} server-key 7.*/ client {{ talend_portnox_SV2 }} server-key 7 ********/' {{ backup_folder }}/*.txt
+    sed -i -e 's/^radius-server host {{ talend_radius_PA7 }} key 7.*/radius-server host {{ talend_radius_PA7 }} key 7 ******** authentication accounting timeout 3/' {{ backup_folder }}/*.txt
+    sed -i -e 's/^radius-server host {{ talend_radius_SV2 }} key 7.*/radius-server host {{ talend_radius_SV2 }} key 7 ******** authentication accounting timeout 3/' {{ backup_folder }}/*.txt
+    sed -i -e 's/^snmp-server community .*/snmp-server community ******** /' {{ backup_folder }}/*.txt
+    sed -i -e 's/^snmp-server user admin network-admin auth md5 .*/snmp-server user admin network-admin auth md5 ******** priv ******** localizedkey/' {{ backup_folder }}/*.txt
+  args:
+    warn: no
+  delegate_to: localhost
+  tags: save
+
+- name: Push to git
+  run_once: true
+  shell: |
+    git config --global user.email "networks@talend.com"
+    git config --global user.name "sa-netgit"
+    git add .
+    git commit -m "config snapshot from $(date +"%Y-%m-%d %H:%M:%S")"
+    git push
+    exit 0
+  args:
+    chdir: "{{ backup_folder }}"
+  delegate_to: localhost
+  tags: save

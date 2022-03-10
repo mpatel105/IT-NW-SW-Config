@@ -6,9 +6,35 @@
     gather_network_resources:
       - 'l2_interfaces'
   tags:
-    - NACint
-    - NACconfig
+    - NACinterfaces
     - NACglobal
+    - shutnoshut
+
+- name: IOS - Configure Quarantine vlan
+  ios_vlans:
+    config:
+      - name: "{{ vlan_quarantine_name }}"
+        vlan_id: "{{ vlan_quarantine_id }}"
+        state: active
+        shutdown: disabled
+    state: merged
+  when: ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - NACinterfaces
+
+- name: NXOS - Configure Quarantine vlan
+  nxos_vlans:
+    config:
+      - name: "{{ vlan_quarantine_name }}"
+        vlan_id: "{{ vlan_quarantine_id }}"
+        state: active
+        enabled: yes
+    state: merged
+  when: ansible_network_os == 'nxos'
+  tags:
+    - NACglobal
+    - NACinterfaces
 
 - name: IOS - Configure NAC - new-model
   ios_command:
@@ -19,7 +45,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - NACconfig
+
 
 - name: IOS - Configure Portnox-Radius-SV2
   ios_config:
@@ -31,7 +57,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - NACconfig
+
 
 - name: IOS - Configure Portnox-Radius-PA7
   ios_config:
@@ -43,7 +69,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - NACconfig
+
 
 - name: IOS - Configure NAC group Portnox-RADIUS-Group
   ios_config:
@@ -57,7 +83,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - NACconfig
+
 
 - name: IOS - Configure NAC server radius dynamic-author
   ios_config:
@@ -70,13 +96,13 @@
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - NACconfig
+
 
 - name: IOS - Configure NAC - global config
   ios_command:
     commands:
       - configure terminal
-      - aaa authentication dot1x default group Portnox-RADIUS-group
+      - aaa authentication dot1x default group Portnox-RADIUS-Group
       - aaa authorization network default group Portnox-RADIUS-Group
       - aaa accounting update newinfo periodic 2880
       - aaa accounting dot1x default start-stop group Portnox-RADIUS-Group
@@ -90,19 +116,19 @@
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - NACconfig
 
-- name: IOS 3650/3850/9200 - Configure NAC - global config device tracking
+
+- name: IOS 3650/3850/9x00 - Configure NAC - global config device tracking
   ios_command:
     commands:
       - configure terminal
       - device-tracking policy ip_device_tracking_policy
       - tracking enable
       - exit
-  when: ansible_network_os == 'ios' and (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model))
+  when: ansible_network_os == 'ios' and (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model) or ('9300' in ansible_net_model))
   tags:
     - NACglobal
-    - NACconfig
+
 
 - name: IOS 2960X/3560CX - Configure NAC - global config device tracking
   ios_command:
@@ -113,29 +139,96 @@
   when: ansible_network_os == 'ios' and ('2960' in ansible_net_model or '3560' in ansible_net_model)
   tags:
     - NACglobal
-    - NACconfig
 
+- debug:
+    msg: "{{ ansible_net_interfaces[item.name].description }}"
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - (item.access.vlan is defined and (item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48))
+  tags:
+    - NACinterfaces
 
-- name: Configure interface for NAC
+- name: IOS - Configure interface for NAC
   ios_config:
     lines:
       - authentication event fail action next-method
-      #- authentication event server dead action reinitialize vlan {{ item.access.vlan }}
+      - authentication event server dead action reinitialize vlan {% if
+          ansible_net_interfaces[item.name].description.startswith('Wired Users VLAN') %}8
+          {% elif ansible_net_interfaces[item.name].description.startswith('VLAN24') %}24
+          {% elif ansible_net_interfaces[item.name].description.startswith('VLAN40') %}40
+          {% elif ansible_net_interfaces[item.name].description.startswith('VLAN48') %}48
+          {% else %}{{ vlan_quarantine_id }}{% endif %}
       - authentication timer reauthenticate server
       - authentication timer inactivity server
-      - authentication open
-      - authentication order dot1x mab
-      - authentication priority dot1x mab
+      - authentication order {% if ansible_net_interfaces[item.name].description.startswith('VLAN24') or
+                                   ansible_net_interfaces[item.name].description.startswith('VLAN48') %}mab dot1x
+                             {% else %}dot1x mab{% endif %}
+      - authentication priority {% if ansible_net_interfaces[item.name].description.startswith('VLAN24') or
+                                   ansible_net_interfaces[item.name].description.startswith('VLAN48') %}mab dot1x
+                             {% else %}dot1x mab{% endif %}
       - authentication port-control auto
       - authentication violation restrict
       - authentication periodic
       - mab
       - dot1x pae authenticator
       - dot1x timeout tx-period 10
+      - switchport access vlan {{ vlan_quarantine_id }}
     parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
-    - (item.access.vlan is defined and (item.access.vlan == 8 or item.access.vlan == 16 or item.access.vlan == 24 or item.access.vlan == 48))
+    - ansible_network_os == 'ios' and item.access.vlan is defined and
+      (item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)
   tags:
-    - NACint
-    - NACconfig
+    - NACinterfaces
+
+- name: IOS-XE - Configure device tracking interface for NAC
+  ios_config:
+    lines:
+      - device-tracking attach-policy ip_device_tracking_policy
+    parents: interface {{ item.name }}
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS-XE' and item.access.vlan is defined and item.access.vlan == 169
+  tags:
+    - NACinterfaces
+
+- name: IOS - Configure interface for MAC authentication
+  ios_config:
+    lines:
+      - authentication control-direction in
+    parents: interface {{ item.name }}
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - ansible_network_os == 'ios' and ansible_net_interfaces[item.name].description is defined and ansible_net_interfaces[item.name].description != None and
+      (ansible_net_interfaces[item.name].description.startswith('VLAN24') or
+      ansible_net_interfaces[item.name].description.startswith('VLAN48') )
+  tags:
+    - NACinterfaces
+
+- name: IOS - shut VLAN24 & 48 interfaces
+  ios_interfaces:
+    config:
+      - name: "{{ item.name }}"
+        enabled: false
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - ansible_network_os == 'ios' and ansible_net_interfaces[item.name].description is defined and ansible_net_interfaces[item.name].description != None and
+      (ansible_net_interfaces[item.name].description.startswith('VLAN24') or
+      ansible_net_interfaces[item.name].description.startswith('VLAN48') )
+  tags:
+    - NACinterfaces
+    - shutnoshut
+
+- name: IOS - no shut VLAN24 & 48 interfaces
+  ios_interfaces:
+    config:
+      - name: "{{ item.name }}"
+        enabled: true
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - ansible_network_os == 'ios' and ansible_net_interfaces[item.name].description is defined and ansible_net_interfaces[item.name].description != None and
+      (ansible_net_interfaces[item.name].description.startswith('VLAN24') or
+      ansible_net_interfaces[item.name].description.startswith('VLAN48') )
+  tags:
+    - NACinterfaces
+    - shutnoshut
