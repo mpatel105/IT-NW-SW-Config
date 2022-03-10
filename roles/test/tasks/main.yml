@@ -10,11 +10,30 @@
   tags:
     - test
 
+- name: napalm get_facts
+  napalm.napalm.get_facts:
+    filter: facts,lldp_neighbors_detail,interfaces
+  register: napalmfacts
+  when: ansible_network_os == 'ios'
+  tags:
+    - interfaces
+    - cdplldp
+    - new
+
 
 - debug:
-    msg: "{{ item.access.vlan }}"
-  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+    msg: "{{ napalmfacts }}"
   when:
-    - ansible_network_os == "ios" and item.access is defined and item.access.vlan is defined
+    - ansible_network_os == "ios"
   tags:
     - test
+
+# {{ napalmfacts['ansible_facts']
+
+#- debug:
+#    msg: "{{ item.access.vlan }}"
+#  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+#  when:
+#    - ansible_network_os == "ios" and item.access is defined and item.access.vlan is defined
+#  tags:
+#    - test
