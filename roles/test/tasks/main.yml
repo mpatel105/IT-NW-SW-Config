@@ -25,8 +25,8 @@
   cli_command:
     command: "sh run int {{ item.name }}"
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
-  async: 10
-  poll: 0
+  async: 60
+  poll: 10
   register: async_loop
   when: ansible_network_os == 'ios'
   tags:
