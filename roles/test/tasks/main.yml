@@ -19,7 +19,9 @@
     - test
 
 - debug:
-    msg: "{{ napalmfacts['ansible_facts']['napalm_interface_list'] }}"
+    #msg: "{{ napalmfacts['ansible_facts']['napalm_interface_list'] }}"
+    msg: "{{  item.name }}"
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
     - ansible_network_os == "ios"
   tags:
