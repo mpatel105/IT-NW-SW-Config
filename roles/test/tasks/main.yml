@@ -35,7 +35,7 @@
           {% elif ansible_net_interfaces[item.name].description.startswith('VLAN24') %}24
           {% elif ansible_net_interfaces[item.name].description.startswith('VLAN40') %}40
           {% elif ansible_net_interfaces[item.name].description.startswith('VLAN48') %}48
-          {% else %}{{ vlan_quarantine_id }}{% endif %} QVLAN {{ vlan_quarantine_id }}
+          {% else %}{{ vlan_quarantine_id }}{% endif %}QUARANTINE {{ vlan_quarantine_id }}
 
     parents: interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"

@@ -71,7 +71,7 @@ scp_noram_server: sv2-nwsrv-001.talend.com
 macro_name_8: Wired_Users
 dot1x_macro_8:
   - switchport mode access
-  - switchport access vlan QVLAN
+  - switchport access vlan QUARANTINE
   - authentication event fail action next-method
   - authentication event server dead action reinitialize vlan VLAN
   - authentication timer reauthenticate server
