@@ -10,14 +10,6 @@
   tags:
     - test
 
-- name: napalm get_facts
-  napalm.napalm.get_facts:
-    filter: facts,interfaces,vlans
-  register: napalmfacts
-  when: ansible_network_os == 'ios'
-  tags:
-    - test
-
 - debug:
     #msg: "{{ napalmfacts['ansible_facts']['napalm_interface_list'] }}"
     msg: "{{  item.name }}"
@@ -27,12 +19,15 @@
   tags:
     - test
 
-#- name: show interface
-#  cli_command:
-#    command: "sh run int {{ napalmfacts['ansible_facts'][interfaces_list] }}"
-#  when: ansible_network_os == 'ios'
-#  tags:
-#    - test
+
+
+- name: show interface
+  cli_command:
+    command: "sh run int {{ item.name }}"
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when: ansible_network_os == 'ios'
+  tags:
+    - test
 
 
 #- debug:
