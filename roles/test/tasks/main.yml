@@ -9,16 +9,15 @@
   when: ansible_network_os == 'ios'
   tags:
     - test
-    - task1
 
-- debug:
-    #msg: "{{ napalmfacts['ansible_facts']['napalm_interface_list'] }}"
-    msg: "{{  item.name }}"
-  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
-  when:
-    - ansible_network_os == "ios"
-  tags:
-    - test
+#- debug:
+#    #msg: "{{ napalmfacts['ansible_facts']['napalm_interface_list'] }}"
+#    msg: "{{  item.name }}"
+#  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+#  when:
+#    - ansible_network_os == "ios"
+#  tags:
+#    - test
 
 - name: "Configure {{ macro_name_8 }} macro"
   ios_config:
@@ -31,7 +30,7 @@
 - name: IOS - Configure interface for NAC
   ios_config:
     lines:
-      - macro apply VLAN {% if
+      - macro apply {{ macro_name_8 }} VLAN {% if
           ansible_net_interfaces[item.name].description.startswith('Wired Users VLAN') %}8
           {% elif ansible_net_interfaces[item.name].description.startswith('VLAN24') %}24
           {% elif ansible_net_interfaces[item.name].description.startswith('VLAN40') %}40
@@ -45,7 +44,6 @@
       (item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)
   tags:
     - test
-    - task1
 
 #- debug:
 #    msg: "{{ napalmfacts }}"
