@@ -41,7 +41,10 @@
   loop: "{{ async_loop.results }}"
   register: async_poll_results
   until: async_poll_results.finished
+  delay: 10
   retries: 300
+
+
 
 - debug:
     msg: "{{ async_loop_jobs }}"
