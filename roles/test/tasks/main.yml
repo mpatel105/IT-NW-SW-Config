@@ -43,7 +43,8 @@
   until: async_poll_results.finished
   retries: 300
 
- - debug: var=async_loop_jobs
+ - debug:
+     msg: "{{ async_loop_jobs }}"
 
 #- debug:
 #    msg: "{{ napalmfacts }}"
