@@ -67,3 +67,21 @@ scp_emea_server: pa7-nwsrv-001.talend.com
 scp_noram_server: sv2-nwsrv-001.talend.com
 #scp_emea_server: 10.50.17.11
 #scp_noram_server: 10.10.17.6
+
+macro_name_8: Wired_Users
+dot1x_macro_8:
+  - switchport mode access
+  - switchport access vlan QVLAN
+  - authentication event fail action next-method
+  - authentication event server dead action reinitialize vlan VLAN
+  - authentication timer reauthenticate server
+  - authentication timer inactivity server
+  - authentication order dot1x mab
+  - authentication priority dot1x mab
+  - authentication port-control auto
+  - authentication violation restrict
+  - authentication periodic
+  - authentication open
+  - mab
+  - dot1x pae authenticator
+  - dot1x timeout tx-period 10
