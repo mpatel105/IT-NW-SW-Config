@@ -19,6 +19,97 @@
   tags:
     - test
 
+- name: IOS - Configure interface for NAC 1/5
+  ios_config:
+    lines:
+      - authentication event fail action next-method
+      - authentication event server dead action reinitialize vlan {% if
+          ansible_net_interfaces[item.name].description.startswith('Wired Users VLAN') %}8
+          {% elif ansible_net_interfaces[item.name].description.startswith('VLAN24') %}24
+          {% elif ansible_net_interfaces[item.name].description.startswith('VLAN40') %}40
+          {% elif ansible_net_interfaces[item.name].description.startswith('VLAN48') %}48
+          {% else %}{{ vlan_quarantine_id }}{% endif %}
+    parents: interface {{ item.name }}
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  async: 600
+  poll: 0
+  register: async_loop1
+  when:
+    - ansible_network_os == 'ios' and item.access.vlan is defined and
+      (item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)
+  tags:
+    - test
+
+- name: IOS - Configure interface for NAC 2/5
+  ios_config:
+    lines:
+      - authentication timer reauthenticate server
+      - authentication timer inactivity server
+    parents: interface {{ item.name }}
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  async: 600
+  poll: 0
+  register: async_loop2
+  when:
+    - ansible_network_os == 'ios' and item.access.vlan is defined and
+      (item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)
+  tags:
+    - test
+
+- name: IOS - Configure interface for NAC 3/5
+  ios_config:
+    lines:
+      - authentication order {% if ansible_net_interfaces[item.name].description.startswith('VLAN24') or
+                                   ansible_net_interfaces[item.name].description.startswith('VLAN48') %}mab dot1x
+                             {% else %}dot1x mab{% endif %}
+      - authentication priority {% if ansible_net_interfaces[item.name].description.startswith('VLAN24') or
+                                   ansible_net_interfaces[item.name].description.startswith('VLAN48') %}mab dot1x
+                             {% else %}dot1x mab{% endif %}
+    parents: interface {{ item.name }}
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  async: 600
+  poll: 0
+  register: async_loop3
+  when:
+    - ansible_network_os == 'ios' and item.access.vlan is defined and
+      (item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)
+  tags:
+    - test
+
+- name: IOS - Configure interface for NAC 4/5
+  ios_config:
+    lines:
+      - authentication port-control auto
+      - authentication violation restrict
+      - authentication periodic
+    parents: interface {{ item.name }}
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  async: 600
+  poll: 0
+  register: async_loop4
+  when:
+    - ansible_network_os == 'ios' and item.access.vlan is defined and
+      (item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)
+  tags:
+    - test
+
+- name: IOS - Configure interface for NAC 5/5
+  ios_config:
+    lines:
+      - mab
+      - dot1x pae authenticator
+      - dot1x timeout tx-period 10
+      - switchport access vlan {{ vlan_quarantine_id }}
+    parents: interface {{ item.name }}
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  async: 600
+  poll: 0
+  register: async_loop5
+  when:
+    - ansible_network_os == 'ios' and item.access.vlan is defined and
+      (item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)
+  tags:
+    - test
 
 
 - name: show interface
@@ -34,20 +125,65 @@
   tags:
     - test
 
-- name: Check sync status
+- name: Check sync status 1/5
   async_status:
     jid: "{{ item.ansible_job_id }}"
-#    mode: status
-  loop: "{{ async_loop.results }}"
+  loop: "{{ async_loop1.results }}"
   register: async_poll_results
   until: async_poll_results.finished
   delay: 10
   retries: 300
 
+- name: Check sync status 2/5
+  async_status:
+    jid: "{{ item.ansible_job_id }}"
+  loop: "{{ async_loop2.results }}"
+  register: async_poll_results
+  until: async_poll_results.finished
+  delay: 10
+  retries: 300
 
+- name: Check sync status 3/5
+  async_status:
+    jid: "{{ item.ansible_job_id }}"
+  loop: "{{ async_loop3.results }}"
+  register: async_poll_results
+  until: async_poll_results.finished
+  delay: 10
+  retries: 300
+
+- name: Check sync status 4/5
+  async_status:
+    jid: "{{ item.ansible_job_id }}"
+  loop: "{{ async_loop4.results }}"
+  register: async_poll_results
+  until: async_poll_results.finished
+  delay: 10
+  retries: 300
+
+- name: Check sync status 5/5
+  async_status:
+    jid: "{{ item.ansible_job_id }}"
+  loop: "{{ async_loop5.results }}"
+  register: async_poll_results
+  until: async_poll_results.finished
+  delay: 10
+  retries: 300
 
 - debug:
-    msg: "{{ async_loop_jobs }}"
+    msg: "{{ async_loop1_jobs }}"
+
+- debug:
+    msg: "{{ async_loop2_jobs }}"
+
+- debug:
+    msg: "{{ async_loop3_jobs }}"
+
+- debug:
+    msg: "{{ async_loop4_jobs }}"
+
+- debug:
+    msg: "{{ async_loop5_jobs }}"            
 
 #- debug:
 #    msg: "{{ napalmfacts }}"
