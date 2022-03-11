@@ -9,6 +9,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - test
+    - task1
 
 - debug:
     #msg: "{{ napalmfacts['ansible_facts']['napalm_interface_list'] }}"
@@ -33,12 +34,13 @@
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   async: 600
   poll: 0
-  register: async_loop1
+  register: async_loop_1
   when:
     - ansible_network_os == 'ios' and item.access.vlan is defined and
       (item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)
   tags:
     - test
+    - task1
 
 - name: IOS - Configure interface for NAC 2/5
   ios_config:
@@ -115,11 +117,14 @@
 - name: Check sync status 1/5
   async_status:
     jid: "{{ item.ansible_job_id }}"
-  loop: "{{ async_loop1.results }}"
-  register: async_poll1_results
-  until: async_poll1_results.finished
+  loop: "{{ async_loop_1.results }}"
+  register: async_poll_1_results
+  until: async_poll_1_results.finished
   delay: 10
   retries: 300
+  tags:
+    - test
+    - task1
 
 - name: Check sync status 2/5
   async_status:
@@ -158,7 +163,10 @@
   retries: 300
 
 - debug:
-    msg: "{{ async_loop1_jobs }}"
+    msg: "{{ async_loop_1_jobs }}"
+  tags:
+    - test
+    - task1
 
 - debug:
     msg: "{{ async_loop2_jobs }}"
