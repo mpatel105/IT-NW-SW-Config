@@ -37,7 +37,7 @@
 - name: Check sync status
   async_status:
     jid: "{{ item.ansible_job_id }}"
-    mode: status
+#    mode: status
   loop: "{{ async_loop.results }}"
   register: async_poll_results
   until: async_poll_results.finished
