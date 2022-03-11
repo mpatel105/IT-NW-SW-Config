@@ -42,6 +42,18 @@
     - test
     - task1
 
+- name: Check sync status 1/5
+  async_status:
+    jid: "{{ item.ansible_job_id }}"
+  loop: "{{ async_loop_1.results }}"
+  register: async_poll_1_results
+  until: async_poll_1_results.finished
+  delay: 10
+  retries: 300
+  tags:
+    - test
+    - task1
+
 - name: IOS - Configure interface for NAC 2/5
   ios_config:
     lines:
@@ -114,17 +126,7 @@
     - test
 
 
-- name: Check sync status 1/5
-  async_status:
-    jid: "{{ item.ansible_job_id }}"
-  loop: "{{ async_loop_1.results }}"
-  register: async_poll_1_results
-  until: async_poll_1_results.finished
-  delay: 10
-  retries: 300
-  tags:
-    - test
-    - task1
+
 
 - name: Check sync status 2/5
   async_status:
