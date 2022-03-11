@@ -116,8 +116,8 @@
   async_status:
     jid: "{{ item.ansible_job_id }}"
   loop: "{{ async_loop1.results }}"
-  register: async_poll_results
-  until: async_poll_results.finished
+  register: async_poll1_results
+  until: async_poll1_results.finished
   delay: 10
   retries: 300
 
@@ -125,8 +125,8 @@
   async_status:
     jid: "{{ item.ansible_job_id }}"
   loop: "{{ async_loop2.results }}"
-  register: async_poll_results
-  until: async_poll_results.finished
+  register: async_poll2_results
+  until: async_poll2_results.finished
   delay: 10
   retries: 300
 
@@ -134,8 +134,8 @@
   async_status:
     jid: "{{ item.ansible_job_id }}"
   loop: "{{ async_loop3.results }}"
-  register: async_poll_results
-  until: async_poll_results.finished
+  register: async_poll3_results
+  until: async_poll3_results.finished
   delay: 10
   retries: 300
 
@@ -143,8 +143,8 @@
   async_status:
     jid: "{{ item.ansible_job_id }}"
   loop: "{{ async_loop4.results }}"
-  register: async_poll_results
-  until: async_poll_results.finished
+  register: async_poll4_results
+  until: async_poll4_results.finished
   delay: 10
   retries: 300
 
@@ -152,8 +152,8 @@
   async_status:
     jid: "{{ item.ansible_job_id }}"
   loop: "{{ async_loop5.results }}"
-  register: async_poll_results
-  until: async_poll_results.finished
+  register: async_poll5_results
+  until: async_pol5_results.finished
   delay: 10
   retries: 300
 
