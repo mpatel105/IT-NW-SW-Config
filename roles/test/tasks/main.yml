@@ -25,10 +25,25 @@
   cli_command:
     command: "sh run int {{ item.name }}"
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  async: 10
+  poll: 0
+  register: async_loop
   when: ansible_network_os == 'ios'
   tags:
     - test
 
+- name: Check sync status
+  async_status:
+    jid: "{{item.ansible_job_id}}"
+    mode: status
+  loop: "{{async_loop.results}}"
+#  loop_control:
+#    loop_var: "async_result_item"
+  register: async_poll_results
+  until: async_poll_results.finished
+  retries: 300
+
+ - debug: var=async_loop_jobs
 
 #- debug:
 #    msg: "{{ napalmfacts }}"
