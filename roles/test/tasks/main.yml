@@ -19,7 +19,7 @@
     - test
 
 - debug:
-    msg: "{{ napalmfacts['ansible_facts'] }}"
+    msg: "{{ napalmfacts['ansible_facts']['interface_list'] }}"
   when:
     - ansible_network_os == "ios"
   tags:
