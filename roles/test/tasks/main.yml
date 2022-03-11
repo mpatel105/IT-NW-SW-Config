@@ -26,10 +26,10 @@
     command: "sh run int {{ item.name }}"
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   async: 600
-  poll: 0
+  poll: 10
   register: async_loop
 #  vars:
-#    ansible_command_timeout: 600  
+#    ansible_command_timeout: 600
   when: ansible_network_os == 'ios'
   tags:
     - test
