@@ -112,19 +112,6 @@
     - test
 
 
-- name: show interface
-  cli_command:
-    command: "sh run int {{ item.name }}"
-  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
-  async: 600
-  poll: 1
-  register: async_loop
-#  vars:
-#    ansible_command_timeout: 600
-  when: ansible_network_os == 'ios'
-  tags:
-    - test
-
 - name: Check sync status 1/5
   async_status:
     jid: "{{ item.ansible_job_id }}"
@@ -183,7 +170,7 @@
     msg: "{{ async_loop4_jobs }}"
 
 - debug:
-    msg: "{{ async_loop5_jobs }}"            
+    msg: "{{ async_loop5_jobs }}"
 
 #- debug:
 #    msg: "{{ napalmfacts }}"
