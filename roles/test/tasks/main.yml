@@ -34,17 +34,15 @@
 
 - name: Check sync status
   async_status:
-    jid: "{{item.ansible_job_id}}"
+    jid: "{{ item.ansible_job_id }}"
     mode: status
-  loop: "{{async_loop.results}}"
-#  loop_control:
-#    loop_var: "async_result_item"
+  loop: "{{ async_loop.results }}"
   register: async_poll_results
   until: async_poll_results.finished
   retries: 300
 
- - debug:
-     msg: "{{ async_loop_jobs }}"
+- debug:
+    msg: "{{ async_loop_jobs }}"
 
 #- debug:
 #    msg: "{{ napalmfacts }}"
