@@ -54,6 +54,9 @@ vlan_list_access_remove:
 vlan_quarantine_id: 169
 vlan_quarantine_name: Quarantine
 
+vlan_blackhole_id: 99
+vlan_blackhole_name: Blackhole
+
 vlan_tag_24: VLAN24
 vlan_tag_48: VLAN48
 
@@ -71,7 +74,7 @@ scp_noram_server: sv2-nwsrv-001.talend.com
 macro_dot1x_name: Corp_switchport
 macro_dot1x_corp:
   - switchport mode access
-  - switchport access vlan 1
+  - switchport access vlan 99
   - authentication event fail action next-method
   - authentication event server dead action reinitialize vlan VLAN
   - authentication timer reauthenticate server
@@ -89,7 +92,7 @@ macro_dot1x_corp:
 macro_mab_name: dot1x_mab.first
 macro_mab_first:
   - switchport mode access
-  - switchport access vlan 1
+  - switchport access vlan 99
   - authentication event fail action next-method
   - authentication event server dead action reinitialize vlan VLAN
   - authentication timer reauthenticate server
