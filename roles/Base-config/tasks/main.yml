@@ -363,7 +363,6 @@
   ios_config:
     lines:
       - description VLAN40 - Polycom
-      - switchport access vlan 40
     parents: interface {{ item.key }}
   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when:
