@@ -13,6 +13,7 @@
     - interfaces
     - cdplldp
     - new
+    - mdh
 
 
 - name: napalm get_facts
@@ -357,6 +358,18 @@
     - interfaces
     - cdplldp
     - new
+
+- name: IOS - Set IOS Interface Description from CDP MDH DEDICATED
+  ios_config:
+    lines:
+      - switchport access vlan 40
+    parents: interface {{ item.key }}
+  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
+  when:
+    - ansible_network_os == 'ios' and item.value[0].platform is defined and ("Polycom" in item.value[0].platform)
+  tags:
+    - mdh
+
 
 - name: IOS - Disable AUX login
   ios_command:

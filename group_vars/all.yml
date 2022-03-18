@@ -54,6 +54,9 @@ vlan_list_access_remove:
 vlan_quarantine_id: 169
 vlan_quarantine_name: Quarantine
 
+vlan_blackhole_id: 99
+vlan_blackhole_name: Blackhole
+
 vlan_tag_24: VLAN24
 vlan_tag_48: VLAN48
 
@@ -67,3 +70,38 @@ scp_emea_server: pa7-nwsrv-001.talend.com
 scp_noram_server: sv2-nwsrv-001.talend.com
 #scp_emea_server: 10.50.17.11
 #scp_noram_server: 10.10.17.6
+
+macro_dot1x_name: Corp_switchport
+macro_dot1x_corp:
+  - switchport mode access
+  - switchport access vlan 99
+  - authentication event fail action next-method
+  - authentication event server dead action reinitialize vlan VLAN
+  - authentication timer reauthenticate server
+  - authentication timer inactivity server
+  - authentication order dot1x mab
+  - authentication priority dot1x mab
+  - authentication port-control auto
+  - authentication violation restrict
+  - authentication periodic
+  - mab
+  - dot1x pae authenticator
+  - dot1x timeout tx-period 5
+  - authentication timer restart 15
+
+macro_mab_name: dot1x_mab.first
+macro_mab_first:
+  - switchport mode access
+  - switchport access vlan 99
+  - authentication event fail action next-method
+  - authentication event server dead action reinitialize vlan VLAN
+  - authentication timer reauthenticate server
+  - authentication timer inactivity server
+  - authentication order mab dot1x
+  - authentication priority mab dot1x
+  - authentication port-control auto
+  - authentication violation restrict
+  - authentication periodic
+  - mab
+  - dot1x pae authenticator
+  - dot1x timeout tx-period 10
