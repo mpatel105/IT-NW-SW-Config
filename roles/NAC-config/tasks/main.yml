@@ -190,39 +190,6 @@
   tags:
     - NACinterfaces
 
-#- name: IOS - Configure interface for NAC
-#  ios_config:
-#    lines:
-#      - authentication event fail action next-method
-#      - authentication event server dead action reinitialize vlan {% if
-#          ansible_net_interfaces[item.name].description.startswith('Wired Users VLAN') %}8
-#          {% elif ansible_net_interfaces[item.name].description.startswith('VLAN24') %}24
-#          {% elif ansible_net_interfaces[item.name].description.startswith('VLAN40') %}40
-#          {% elif ansible_net_interfaces[item.name].description.startswith('VLAN48') %}48
-#          {% else %}{{ vlan_quarantine_id }}{% endif %}
-#      - authentication timer reauthenticate server
-#      - authentication timer inactivity server
-#      - authentication order {% if ansible_net_interfaces[item.name].description.startswith('VLAN24') or
-#                                   ansible_net_interfaces[item.name].description.startswith('VLAN48') %}mab dot1x
-#                             {% else %}dot1x mab{% endif %}
-#      - authentication priority {% if ansible_net_interfaces[item.name].description.startswith('VLAN24') or
-#                                   ansible_net_interfaces[item.name].description.startswith('VLAN48') %}mab dot1x
-#                             {% else %}dot1x mab{% endif %}
-#      - authentication port-control auto
-#      - authentication violation restrict
-#      - authentication periodic
-#      - mab
-#      - dot1x pae authenticator
-#      - dot1x timeout tx-period 10
-#      - switchport access vlan {{ vlan_quarantine_id }}
-#    parents: interface {{ item.name }}
-#  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
-#  when:
-#    - ansible_network_os == 'ios' and item.access.vlan is defined and
-#      (item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)
-#  tags:
-#    - NACinterfaces
-
 - name: IOS-XE - Configure device tracking interface for NAC
   ios_config:
     lines:
@@ -274,30 +241,3 @@
       ansible_net_interfaces[item.name].description.startswith('VLAN48') )
   tags:
     - NACinterfaces
-
-
-- name: IOS - shut VLAN40  interfaces
-  ios_interfaces:
-    config:
-      - name: "{{ item.name }}"
-        enabled: false
-  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
-  when:
-    - ansible_network_os == 'ios' and ansible_net_interfaces[item.name].description is defined and ansible_net_interfaces[item.name].description != None and
-      ansible_net_interfaces[item.name].description.startswith('VLAN40')
-  tags:
-    - NACinterfaces
-    - shutnoshut
-
-- name: IOS - no shut VLAN40 interfaces
-  ios_interfaces:
-    config:
-      - name: "{{ item.name }}"
-        enabled: true
-  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
-  when:
-    - ansible_network_os == 'ios' and ansible_net_interfaces[item.name].description is defined and ansible_net_interfaces[item.name].description != None and
-      ansible_net_interfaces[item.name].description.startswith('VLAN40')
-  tags:
-    - NACinterfaces
-    - shutnoshut
