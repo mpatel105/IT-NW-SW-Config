@@ -84,12 +84,35 @@
   tags:
     - NACglobal
 
+- name: IOS - Configure Portnox-Radius-US
+  ios_config:
+    lines:
+      - address ipv4 {{ talend_portnox_US }} auth-port {{ talend_portnox_US_auth_port }} acct-port {{ talend_portnox_US_acct_port }}
+      - timeout 3
+      - key {{ talend_portnox_US_radius_key }}
+    parents: radius server {{ talend_portnox_US_name }}
+  when: ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+
+- name: IOS - Configure Portnox-Radius-EU
+  ios_config:
+    lines:
+      - address ipv4 {{ talend_portnox_EU }} auth-port {{ talend_portnox_EU_auth_port }} acct-port {{ talend_portnox_EU_acct_port }}
+      - timeout 3
+      - key {{ talend_portnox_EU_radius_key }}
+    parents: radius server {{ talend_portnox_EU_name }}
+  when: ansible_network_os == 'ios'
+  tags:
+    - NACglobal
 
 - name: IOS - Configure NAC group Portnox-RADIUS-Group
   ios_config:
     lines:
       - server name {{ talend_portnox_1_name }}
       - server name {{ talend_portnox_2_name }}
+      - server name {{ talend_portnox_3_name }}
+      - server name {{ talend_portnox_4_name }}
       - deadtime 5
     parents: aaa group server radius Portnox-RADIUS-Group
     before: no aaa group server radius Portnox-RADIUS-Group
@@ -104,6 +127,8 @@
     lines:
       - client {{ talend_portnox_1 }} server-key {{ talend_portnox_1_radius_key }}
       - client {{ talend_portnox_2 }} server-key {{ talend_portnox_2_radius_key }}
+      - client {{ talend_portnox_3 }} server-key {{ talend_portnox_3_radius_key }}
+      - client {{ talend_portnox_4 }} server-key {{ talend_portnox_4_radius_key }}
     parents: aaa server radius dynamic-author
     before: no aaa server radius dynamic-author
     match: exact
