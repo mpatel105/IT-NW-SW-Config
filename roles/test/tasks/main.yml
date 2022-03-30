@@ -40,10 +40,10 @@
 - name: IOS - Configure policy-map WIRED_POLICY
   ios_config:
     lines:
-      - event session-started match-all
-      -  10 class always do-until-failure
-      -   10 authenticate using dot1x retries 2 retry-time 0 priority 10
-      -   20 authenticate using mab priority 20
+      - "event session-started match-all"
+      - " 10 class always do-until-failure"
+      - "  10 authenticate using dot1x retries 2 retry-time 0 priority 10"
+      - "  20 authenticate using mab priority 20"
       - event authentication-failure match-first
       -  5 class DOT1X_FAILED do-until-failure
       -   10 terminate dot1x
