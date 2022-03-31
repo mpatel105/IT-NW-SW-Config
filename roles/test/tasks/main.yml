@@ -111,7 +111,7 @@
       - access-session port-control auto
       - authentication periodic
       - authentication timer reauthenticate server
-      - service-policy type control subscriber WIRED_POLICY
+      - service-policy type control subscriber WIRED_POLICY-TEST
       - description Wired_NAC
     parents: template WIRED_TEMPLATE
     replace: block
