@@ -90,7 +90,7 @@
 
 - name: IOS - Configure policy-map WIRED_POLICY
   cisco.ios.ios_config:
-    src: ios_template.j2
+    src: policy_map.j2
 
 - name: IOS - Configure template WIRED_TEMPLATE
   ios_config:
