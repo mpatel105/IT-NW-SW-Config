@@ -1,8 +1,9 @@
 policy-map type control subscriber WIRED_POLICY
  event session-started match-all
   10 class always do-until-failure
-   10 authenticate using dot1x retries 3 retry-time 0 priority 10
+   10 authenticate using dot1x retries 2 retry-time 0 priority 10
    20 authenticate using mab priority 20
+   30 terminate dot1x
  event authentication-failure match-first
   5 class DOT1X_FAILED do-until-failure
    10 terminate dot1x
