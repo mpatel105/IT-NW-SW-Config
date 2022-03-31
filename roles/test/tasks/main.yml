@@ -91,6 +91,8 @@
 - name: IOS - Configure policy-map WIRED_POLICY
   cisco.ios.ios_config:
     src: policy_map.j2
+    replace: block
+    before: no policy-map type control subscriber WIRED_POLICY
   when:
     - ansible_network_os == 'ios'
   tags:
