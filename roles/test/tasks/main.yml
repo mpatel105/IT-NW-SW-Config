@@ -66,10 +66,10 @@
       -   10 terminate dot1x
       -   20 terminate mab
       -   30 authentication-restart 60
-      - event agent-found match-all
-      -  10 class always do-until-failure
-      -   10 terminate mab
-      -   30 authenticate using dot1x retries 2 retry-time 0 priority 10
+#      - event agent-found match-all
+#      -  10 class always do-until-failure
+#      -   10 terminate mab
+#      -   20 authenticate using dot1x retries 2 retry-time 0 priority 10
       - event aaa-available match-all
       -  10 class IN_CRITICAL_VLAN do-until-failure
       -   10 clear-session
