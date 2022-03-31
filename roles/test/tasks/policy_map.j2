@@ -1,4 +1,4 @@
-policy-map type control subscriber WIRED_POLICY-TEST
+policy-map type control subscriber WIRED_POLICY
  event session-started match-all
   10 class always do-until-failure
    10 authenticate using dot1x retries 2 retry-time 0 priority 10
@@ -20,11 +20,11 @@ policy-map type control subscriber WIRED_POLICY-TEST
    20 authenticate using mab priority 20
   40 class MAB_FAILED do-until-failure
    10 terminate mab
+   20 authentication-restart 60
   60 class always do-until-failure
    10 terminate dot1x
    20 terminate mab
-   30 activate service-template FAIL_AUTH_VLAN
-   40 authorize
+   30 authentication-restart 60
  event agent-found match-all
   10 class always do-until-failure
    10 terminate mab
