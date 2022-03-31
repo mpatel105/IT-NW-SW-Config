@@ -91,6 +91,10 @@
 - name: IOS - Configure policy-map WIRED_POLICY
   cisco.ios.ios_config:
     src: policy_map.j2
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
 
 - name: IOS - Configure template WIRED_TEMPLATE
   ios_config:
