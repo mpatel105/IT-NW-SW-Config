@@ -75,7 +75,7 @@
       -  10 class always do-until-failure
       -   10 clear-session
       - event authentication-success match-all
-      -  10 class always do-until-failure
+      - "10 class always do-until-failure"
       -   10 activate service-template DEFAULT_LINKSEC_POLICY_SHOULD_SECURE
       - event violation match-all
       -  10 class always do-until-failure
