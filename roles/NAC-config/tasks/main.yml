@@ -182,10 +182,10 @@
 - name: IOS - Enable new-style authentication
   cli_command:
     command: '{{ item }}'
-#    prompt:
-#      - 'Do you wish to continue'
-#    answer:
-#      - yes
+    prompt:
+      - 'Do you wish to continue'
+    answer:
+      - 'yes'
   loop:
     - conf t
 #    - authentication convert-to new-style
