@@ -190,6 +190,7 @@
     - 'conf t'
     - 'authentication convert-to new-style'
     - 'exit'
+  ignore_errors: yes
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
@@ -205,13 +206,21 @@
   tags:
     - NACglobal
 
-- name: IOS - Configure class-map CRITICAL_VLAN
+- name: IOS - Configure class-map IN_CRITICAL_VLAN
   ios_config:
     lines:
-      - class-map type control subscriber match-any IN_CRITICAL_VLAN
       - match activated-service-template CRITICAL_AUTH_VLAN
-      - class-map type control subscriber match-none NOT_IN_CRITICAL_VLAN
+    parents: class-map type control subscriber match-any IN_CRITICAL_VLAN
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+
+- name: IOS - Configure class-map NOT_IN_CRITICAL_VLAN
+  ios_config:
+    lines:
       - match activated-service-template CRITICAL_AUTH_VLAN
+    parents: class-map type control subscriber match-none NOT_IN_CRITICAL_VLAN
   when:
     - ansible_network_os == 'ios'
   tags:
