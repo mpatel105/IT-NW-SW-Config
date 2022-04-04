@@ -179,6 +179,63 @@
   tags:
     - NACglobal
 
+- name: IOS - Configure service-template CRITICAL_AUTH_VLAN
+  ios_config:
+    lines:
+      - vlan 8
+    parents: service-template CRITICAL_AUTH_VLAN
+    replace: block
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: IOS - Configure class-map CRITICAL_VLAN
+  ios_config:
+    lines:
+      - class-map type control subscriber match-any IN_CRITICAL_VLAN
+      - match activated-service-template CRITICAL_AUTH_VLAN
+      - class-map type control subscriber match-none NOT_IN_CRITICAL_VLAN
+      - match activated-service-template CRITICAL_AUTH_VLAN
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: IOS - Configure policy-map WIRED_POLICY
+  cisco.ios.ios_config:
+    src: policy_map.j2
+    before: no policy-map type control subscriber WIRED_POLICY
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+
+- name: IOS - Configure template WIRED_TEMPLATE
+  ios_config:
+    lines:
+      - dot1x pae authenticator
+      - dot1x timeout tx-period 10
+      - spanning-tree portfast
+      - switchport access vlan {{ vlan_blackhole_id }}
+      - switchport mode access
+      - switchport nonegotiate
+      - mab
+      - access-session control-direction in
+      - access-session closed
+      - access-session port-control auto
+      - authentication periodic
+      - authentication timer reauthenticate server
+      - service-policy type control subscriber WIRED_POLICY
+      - description Wired_NAC
+    parents: template WIRED_TEMPLATE
+    replace: block
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+
+
 - debug:
     msg: "{{ ansible_net_interfaces[item.name].description }}"
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
@@ -187,57 +244,30 @@
   tags:
     - NACinterfaces
 
-- name: "Configure {{ macro_dot1x_name }} macro"
-  ios_config:
-    lines: "{{ macro_dot1x_corp }}"
-    parents: "macro name {{ macro_dot1x_name }}"
-    after: '@'
-    match: line
-    replace: block
-  when: ansible_network_os == 'ios'
-  tags:
-    - NACinterfaces
-
-- name: IOS - Configure interface for NAC using macro
-  ios_config:
-    lines:
-      - macro apply {{ macro_dot1x_name }} VLAN {% if
-          ansible_net_interfaces[item.name].description.startswith('Wired Users VLAN') %}8
-          {% elif ansible_net_interfaces[item.name].description.startswith('VLAN24') %}24
-          {% elif ansible_net_interfaces[item.name].description.startswith('VLAN40') %}40
-          {% elif ansible_net_interfaces[item.name].description.startswith('VLAN48') %}48
-          {% else %}{{ vlan_quarantine_id }}{% endif %}
-    parents: interface {{ item.name }}
-  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
-  when:
-    - ansible_network_os == 'ios' and item.access.vlan is defined and
-      (item.access.vlan == 99 or item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)
-  tags:
-    - NACinterfaces
-
-- name: IOS-XE - Configure device tracking interface for NAC
+- name: IOS-XE - Configure Interfaces for NAC
   ios_config:
     lines:
       - device-tracking attach-policy ip_device_tracking_policy
+      - source template WIRED_TEMPLATE
     parents: interface {{ item.name }}
+    before: default interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
     - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS-XE' and item.access.vlan is defined and
       (item.access.vlan == 99 or item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)
   tags:
     - NACinterfaces
-    - track
 
-- name: IOS - Configure interface for MAC authentication
+- name: IOS - Configure Interfaces for NAC
   ios_config:
     lines:
-      - authentication control-direction in
+      - source template WIRED_TEMPLATE
     parents: interface {{ item.name }}
+    before: default interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
-    - ansible_network_os == 'ios' and ansible_net_interfaces[item.name].description is defined and ansible_net_interfaces[item.name].description != None and
-      (ansible_net_interfaces[item.name].description.startswith('VLAN24') or
-      ansible_net_interfaces[item.name].description.startswith('VLAN48') )
+    - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS' and item.access.vlan is defined and
+      (item.access.vlan == 99 or item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)
   tags:
     - NACinterfaces
 

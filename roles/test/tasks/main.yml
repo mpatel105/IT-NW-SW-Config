@@ -29,6 +29,18 @@
   tags:
     - test
 
+- name: IOS - Configure class-map CRITICAL_VLAN
+  ios_config:
+    lines:
+      - class-map type control subscriber match-any IN_CRITICAL_VLAN
+      - match activated-service-template CRITICAL_AUTH_VLAN
+      - class-map type control subscriber match-none NOT_IN_CRITICAL_VLAN
+      - match activated-service-template CRITICAL_AUTH_VLAN
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
 #- name: IOS - Configure policy-map WIRED_POLICY
 #  ios_config:
 #    lines:
