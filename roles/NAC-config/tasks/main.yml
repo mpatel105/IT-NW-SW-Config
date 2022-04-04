@@ -179,6 +179,21 @@
   tags:
     - NACglobal
 
+- name: IOS - Enable new-style authentication
+  cli_command:
+    command: '{{ item }}'
+    prompt:
+      - 'Do you wish to continue'
+    answer:
+      - yes
+  loop:
+  - configure terminal
+  - authentication convert-to new-style
+  - exit
+  when: ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+
 - name: IOS - Configure service-template CRITICAL_AUTH_VLAN
   ios_config:
     lines:
@@ -188,7 +203,7 @@
   when:
     - ansible_network_os == 'ios'
   tags:
-    - test
+    - NACglobal
 
 - name: IOS - Configure class-map CRITICAL_VLAN
   ios_config:
@@ -200,7 +215,7 @@
   when:
     - ansible_network_os == 'ios'
   tags:
-    - test
+    - NACglobal
 
 - name: IOS - Configure policy-map WIRED_POLICY
   cisco.ios.ios_config:
