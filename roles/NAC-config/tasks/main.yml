@@ -187,9 +187,9 @@
     answer:
       - 'yes'
   loop:
-    - conf t
-#    - authentication convert-to new-style
-    - exit
+    - 'conf t'
+    - 'authentication convert-to new-style'
+    - 'exit'
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
