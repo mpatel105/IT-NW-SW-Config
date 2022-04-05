@@ -40,7 +40,7 @@
       - vlan 8
     parents: service-template CRITICAL_AUTH_VLAN
     before: no service-template CRITICAL_AUTH_VLAN
-    replace: block
+    match: exact
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -52,6 +52,7 @@
       - match activated-service-template CRITICAL_AUTH_VLAN
     parents: class-map type control subscriber match-any IN_CRITICAL_VLAN
     before: no lass-map type control subscriber match-any IN_CRITICAL_VLAN
+    match: exact
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -63,6 +64,7 @@
       - match activated-service-template CRITICAL_AUTH_VLAN
     parents: class-map type control subscriber match-none NOT_IN_CRITICAL_VLAN
     before: no class-map type control subscriber match-none NOT_IN_CRITICAL_VLAN
+    match: exact
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -75,6 +77,7 @@
       - match authorization-status authorized
     parents: class-map type control subscriber match-all AAA_SVR_DOWN_AUTHD_HOST
     before: no class-map type control subscriber match-all AAA_SVR_DOWN_AUTHD_HOST
+    match: exact
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -87,6 +90,7 @@
       - match authorization-status unauthorized
     parents: class-map type control subscriber match-all AAA_SVR_DOWN_UNAUTHD_HOST
     before: no class-map type control subscriber match-all AAA_SVR_DOWN_UNAUTHD_HOST
+    match: exact
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -98,6 +102,7 @@
       - match method dot1x
     parents: class-map type control subscriber match-all DOT1X
     before: no class-map type control subscriber match-all DOT1X
+    match: exact
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -110,6 +115,7 @@
       - match result-type method dot1x authoritative
     parents: class-map type control subscriber match-all DOT1X_FAILED
     before: no class-map type control subscriber match-all DOT1X_FAILED
+    match: exact
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -121,6 +127,7 @@
       - match authorizing-method-priority gt 20
     parents: class-map type control subscriber match-all DOT1X_MEDIUM_PRIO
     before: no class-map type control subscriber match-all DOT1X_MEDIUM_PRIO
+    match: exact
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -133,6 +140,7 @@
       - match result-type method dot1x agent-not-found
     parents: class-map type control subscriber match-all DOT1X_NO_RESP
     before: no class-map type control subscriber match-all DOT1X_NO_RESP
+    match: exact
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -145,6 +153,7 @@
       - match result-type method dot1x method-timeout
     parents: class-map type control subscriber match-all DOT1X_TIMEOUT
     before: no class-map type control subscriber match-all DOT1X_TIMEOUT
+    match: exact
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -156,6 +165,7 @@
       - match method mab
     parents: class-map type control subscriber match-all MAB
     before: no class-map type control subscriber match-all MAB
+    match: exact
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -168,6 +178,7 @@
       - match result-type method mab authoritative
     parents: class-map type control subscriber match-all MAB_FAILED
     before: no class-map type control subscriber match-all MAB_FAILED
+    match: exact
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -179,6 +190,7 @@
       - match authorization-status unauthorized
     parents: class-map type control subscriber match-all SESSION_UNAUTH
     before: no class-map type control subscriber match-all SESSION_UNAUTH
+    match: exact
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -195,7 +207,7 @@
       - policy-map type control subscriber WIRED_POLICY
       - event session-started match-all
       - 10 class always do-until-failure
-    replace: block
+    match: exact
     before:
       - policy-map type control subscriber WIRED_POLICY
       - event session-started match-all
@@ -214,7 +226,7 @@
       - policy-map type control subscriber WIRED_POLICY
       - event authentication-failure match-first
       - 5 class DOT1X_FAILED do-until-failure
-    replace: block
+    match: exact
     before:
       - policy-map type control subscriber WIRED_POLICY
       - event authentication-failure match-first
@@ -235,7 +247,7 @@
       - policy-map type control subscriber WIRED_POLICY
       - event authentication-failure match-first
       - 10 class AAA_SVR_DOWN_UNAUTHD_HOST do-until-failure
-    replace: block
+    match: exact
     before:
       - policy-map type control subscriber WIRED_POLICY
       - event authentication-failure match-first
@@ -254,7 +266,7 @@
       - policy-map type control subscriber WIRED_POLICY
       - event authentication-failure match-first
       - 20 class AAA_SVR_DOWN_AUTHD_HOST do-until-failure
-    replace: block
+    match: exact
     before:
       - policy-map type control subscriber WIRED_POLICY
       - event authentication-failure match-first
@@ -273,7 +285,7 @@
       - policy-map type control subscriber WIRED_POLICY
       - event authentication-failure match-first
       - 30 class DOT1X_NO_RESP do-until-failure
-    replace: block
+    match: exact
     before:
       - policy-map type control subscriber WIRED_POLICY
       - event authentication-failure match-first
@@ -292,7 +304,7 @@
       - policy-map type control subscriber WIRED_POLICY
       - event authentication-failure match-first
       - 40 class MAB_FAILED do-until-failure
-    replace: block
+    match: exact
     before:
       - policy-map type control subscriber WIRED_POLICY
       - event authentication-failure match-first
@@ -312,7 +324,7 @@
       - policy-map type control subscriber WIRED_POLICY
       - event authentication-failure match-first
       - 60 class always do-until-failure
-    replace: block
+    match: exact
     before:
       - policy-map type control subscriber WIRED_POLICY
       - event authentication-failure match-first
@@ -331,7 +343,7 @@
       - policy-map type control subscriber WIRED_POLICY
       - event agent-found match-all
       - 10 class always do-until-failure
-    replace: block
+    match: exact
     before:
       - policy-map type control subscriber WIRED_POLICY
       - event agent-found match-all
@@ -349,7 +361,7 @@
       - policy-map type control subscriber WIRED_POLICY
       - event aaa-available match-all
       - 10 class IN_CRITICAL_VLAN do-until-failure
-    replace: block
+    match: exact
     before:
       - policy-map type control subscriber WIRED_POLICY
       - event aaa-available match-all
@@ -367,7 +379,7 @@
       - policy-map type control subscriber WIRED_POLICY
       - event aaa-available match-all
       - 20 class NOT_IN_CRITICAL_VLAN do-until-failure
-    replace: block
+    match: exact
     before:
       - policy-map type control subscriber WIRED_POLICY
       - event aaa-available match-all
@@ -385,7 +397,7 @@
       - policy-map type control subscriber WIRED_POLICY
       - event inactivity-timeout match-all
       - 10 class always do-until-failure
-    replace: block
+    match: exact
     before:
       - policy-map type control subscriber WIRED_POLICY
       - event inactivity-timeout match-all
@@ -403,7 +415,7 @@
       - policy-map type control subscriber WIRED_POLICY
       - event authentication-success match-all
       - 10 class always do-until-failure
-    replace: block
+    match: exact
     before:
       - policy-map type control subscriber WIRED_POLICY
       - event authentication-success match-all
@@ -421,7 +433,7 @@
       - policy-map type control subscriber WIRED_POLICY
       - event violation match-all
       - 10 class always do-until-failure
-    replace: block
+    match: exact
     before:
       - policy-map type control subscriber WIRED_POLICY
       - event violation match-all
