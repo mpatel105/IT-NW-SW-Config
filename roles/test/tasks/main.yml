@@ -173,7 +173,7 @@
 
 
 
-- name: IOS - Configure policy-map WIRED_POLICY 1
+- name: IOS - Configure policy-map WIRED_POLICY event session-started 1/13
   ios_config:
     lines:
       - 10 authenticate using dot1x retries 2 retry-time 0 priority 10
@@ -188,7 +188,7 @@
   tags:
     - test
 
-- name: IOS - Configure policy-map WIRED_POLICY 2
+- name: IOS - Configure policy-map WIRED_POLICY authentication-failure 2/13
   ios_config:
     lines:
       - 10 terminate dot1x
@@ -203,7 +203,7 @@
   tags:
     - test
 
-- name: IOS - Configure policy-map WIRED_POLICY 3
+- name: IOS - Configure policy-map WIRED_POLICY authentication-failure 3/13
   ios_config:
     lines:
       - 10 clear-authenticated-data-hosts-on-port
@@ -220,7 +220,7 @@
   tags:
     - test
 
-- name: IOS - Configure policy-map WIRED_POLICY 4
+- name: IOS - Configure policy-map WIRED_POLICY authentication-failure 4/13
   ios_config:
     lines:
       - 10 pause reauthentication
@@ -235,7 +235,7 @@
   tags:
     - test
 
-- name: IOS - Configure policy-map WIRED_POLICY 5
+- name: IOS - Configure policy-map WIRED_POLICY authentication-failure 5/13
   ios_config:
     lines:
       - 10 terminate dot1x
@@ -250,7 +250,7 @@
   tags:
     - test
 
-- name: IOS - Configure policy-map WIRED_POLICY 6
+- name: IOS - Configure policy-map WIRED_POLICY authentication-failure 6/13
   ios_config:
     lines:
       - 10 terminate mab
@@ -265,7 +265,7 @@
   tags:
     - test
 
-- name: IOS - Configure policy-map WIRED_POLICY 7
+- name: IOS - Configure policy-map WIRED_POLICY authentication-failure 7/13
   ios_config:
     lines:
       - 10 terminate dot1x
@@ -281,7 +281,7 @@
   tags:
     - test
 
-- name: IOS - Configure policy-map WIRED_POLICY 8
+- name: IOS - Configure policy-map WIRED_POLICY agent-found 8/13
   ios_config:
     lines:
       - 10 terminate mab
@@ -296,7 +296,7 @@
   tags:
     - test
 
-- name: IOS - Configure policy-map WIRED_POLICY 9
+- name: IOS - Configure policy-map WIRED_POLICY aaa-available 9/13
   ios_config:
     lines:
       - 10 clear-session
@@ -310,7 +310,7 @@
   tags:
     - test
 
-- name: IOS - Configure policy-map WIRED_POLICY 10
+- name: IOS - Configure policy-map WIRED_POLICY aaa-available 10/13
   ios_config:
     lines:
       - 10 resume reauthentication
@@ -324,7 +324,7 @@
   tags:
     - test
 
-- name: IOS - Configure policy-map WIRED_POLICY 11
+- name: IOS - Configure policy-map WIRED_POLICY inactivity-timeout 11/13
   ios_config:
     lines:
       - 10 clear-session
@@ -338,7 +338,7 @@
   tags:
     - test
 
-- name: IOS - Configure policy-map WIRED_POLICY 12
+- name: IOS - Configure policy-map WIRED_POLICY authentication-success 12/13
   ios_config:
     lines:
       - 10 activate service-template DEFAULT_LINKSEC_POLICY_SHOULD_SECURE
@@ -352,7 +352,7 @@
   tags:
     - test
 
-- name: IOS - Configure policy-map WIRED_POLICY 13
+- name: IOS - Configure policy-map WIRED_POLICY violation 13/13
   ios_config:
     lines:
       - 10 restrict
@@ -453,7 +453,29 @@
     parents: template WIRED_TEMPLATE
     replace: block
   when:
-    - ansible_network_os == 'ios'
+    - ansible_network_os == 'ios' and ansible_net_model != 'IOSv'
+  tags:
+    - test
+
+- name: IOS - Configure template WIRED_TEMPLATE
+  ios_config:
+    lines:
+      - dot1x pae authenticator
+      - spanning-tree portfast
+      - switchport access vlan {{ vlan_blackhole_id }}
+      - switchport mode access
+      - mab
+      - access-session control-direction in
+      - access-session closed
+      - access-session port-control auto
+      - authentication periodic
+      - authentication timer reauthenticate server
+      - service-policy type control subscriber WIRED_POLICY
+      - description Wired_NAC
+    parents: template WIRED_TEMPLATE
+    replace: block
+  when:
+    - ansible_network_os == 'ios' and ansible_net_model == 'IOSv'
   tags:
     - test
 
