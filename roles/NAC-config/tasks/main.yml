@@ -10,6 +10,27 @@
     - NACglobal
     - shutnoshut
     - track
+    - napalm
+
+- name: napalm get_facts
+  napalm.napalm.get_facts:
+    filter: facts,lldp_neighbors_detail
+  register: napalmfacts
+  when: ansible_network_os == 'ios'
+  tags:
+    - NACinterfaces
+    - NACglobal
+    - napalm
+
+
+- debug:
+    msg: "{{ napalmfacts['ansible_facts']['napalm_interface_list'] }}"
+    #msg: "{{  item.name }}"
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - ansible_network_os == "ios"
+  tags:
+    - napalm
 
 - name: IOS - Configure Quarantine vlan
   ios_vlans:
