@@ -18,6 +18,22 @@
 #  tags:
 #    - test
 
+- name: IOS - Enable new-style authentication
+  cli_command:
+    command: '{{ item }}'
+    prompt:
+      - 'Do you wish to continue'
+    answer:
+      - 'yes'
+  loop:
+    - 'conf t'
+    - 'authentication convert-to new-style'
+    - 'exit'
+  ignore_errors: yes
+  when: ansible_network_os == 'ios'
+  tags:
+    - test
+
 - name: IOS - Configure service-template CRITICAL_AUTH_VLAN
   ios_config:
     lines:
@@ -29,13 +45,217 @@
   tags:
     - test
 
-- name: IOS - Configure class-map CRITICAL_VLAN
+- name: IOS - Configure class-map IN_CRITICAL_VLAN
   ios_config:
     lines:
-      - class-map type control subscriber match-any IN_CRITICAL_VLAN
       - match activated-service-template CRITICAL_AUTH_VLAN
-      - class-map type control subscriber match-none NOT_IN_CRITICAL_VLAN
+    parents: class-map type control subscriber match-any IN_CRITICAL_VLAN
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: IOS - Configure class-map NOT_IN_CRITICAL_VLAN
+  ios_config:
+    lines:
       - match activated-service-template CRITICAL_AUTH_VLAN
+    parents: class-map type control subscriber match-none NOT_IN_CRITICAL_VLAN
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+
+- name: IOS - Configure policy-map WIRED_POLICY 1
+  ios_config:
+    lines:
+      - 10 authenticate using dot1x retries 2 retry-time 0 priority 10
+      - 20 authenticate using mab priority 20
+    parents:
+      - policy-map type control subscriber WIRED_POLICY
+      - event session-started match-all
+      - 10 class always do-until-failure
+    replace: block
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+
+
+- name: IOS - Configure policy-map WIRED_POLICY 2
+  ios_config:
+    lines:
+      - 10 terminate dot1x
+      - 20 authenticate using mab priority 20
+    parents:
+      - policy-map type control subscriber WIRED_POLICY
+      - event authentication-failure match-first
+      - 5 class DOT1X_FAILED do-until-failure
+    replace: block
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: IOS - Configure policy-map WIRED_POLICY 3
+  ios_config:
+    lines:
+      - 10 clear-authenticated-data-hosts-on-port
+      - 20 activate service-template CRITICAL_AUTH_VLAN
+      - 30 authorize
+      - 40 pause reauthentication
+    parents:
+      - policy-map type control subscriber WIRED_POLICY
+      - event authentication-failure match-first
+      - 10 class AAA_SVR_DOWN_UNAUTHD_HOST do-until-failure
+    replace: block
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: IOS - Configure policy-map WIRED_POLICY 4
+  ios_config:
+    lines:
+      - 10 pause reauthentication
+      - 20 authorize
+    parents:
+      - policy-map type control subscriber WIRED_POLICY
+      - event authentication-failure match-first
+      - 20 class AAA_SVR_DOWN_AUTHD_HOST do-until-failure
+    replace: block
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: IOS - Configure policy-map WIRED_POLICY 5
+  ios_config:
+    lines:
+      - 10 terminate dot1x
+      - 20 authenticate using mab priority 20
+    parents:
+      - policy-map type control subscriber WIRED_POLICY
+      - event authentication-failure match-first
+      - 30 class DOT1X_NO_RESP do-until-failure
+    replace: block
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: IOS - Configure policy-map WIRED_POLICY 6
+  ios_config:
+    lines:
+      - 10 terminate mab
+      - 20 authentication-restart 60
+    parents:
+      - policy-map type control subscriber WIRED_POLICY
+      - event authentication-failure match-first
+      - 40 class MAB_FAILED do-until-failure
+    replace: block
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: IOS - Configure policy-map WIRED_POLICY 7
+  ios_config:
+    lines:
+      - 10 terminate dot1x
+      - 20 terminate mab
+      - 30 authentication-restart 60
+    parents:
+      - policy-map type control subscriber WIRED_POLICY
+      - event authentication-failure match-first
+      - 60 class always do-until-failure
+    replace: block
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: IOS - Configure policy-map WIRED_POLICY 8
+  ios_config:
+    lines:
+      - 10 terminate mab
+      - 20 authenticate using dot1x retries 2 retry-time 0 priority 10
+    parents:
+      - policy-map type control subscriber WIRED_POLICY
+      - event agent-found match-all
+      - 10 class always do-until-failure
+    replace: block
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: IOS - Configure policy-map WIRED_POLICY 9
+  ios_config:
+    lines:
+      - 10 clear-session
+    parents:
+      - policy-map type control subscriber WIRED_POLICY
+      - event aaa-available match-all
+      - 10 class IN_CRITICAL_VLAN do-until-failure
+    replace: block
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: IOS - Configure policy-map WIRED_POLICY 10
+  ios_config:
+    lines:
+      - 10 resume reauthentication
+    parents:
+      - policy-map type control subscriber WIRED_POLICY
+      - event aaa-available match-all
+      - 20 class NOT_IN_CRITICAL_VLAN do-until-failure
+    replace: block
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: IOS - Configure policy-map WIRED_POLICY 11
+  ios_config:
+    lines:
+      - 10 clear-session
+    parents:
+      - policy-map type control subscriber WIRED_POLICY
+      - event inactivity-timeout match-all
+      - 10 class always do-until-failure
+    replace: block
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: IOS - Configure policy-map WIRED_POLICY 12
+  ios_config:
+    lines:
+      - 10 activate service-template DEFAULT_LINKSEC_POLICY_SHOULD_SECURE
+    parents:
+      - policy-map type control subscriber WIRED_POLICY
+      - event authentication-success match-all
+      - 10 class always do-until-failure
+    replace: block
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: IOS - Configure policy-map WIRED_POLICY 13
+  ios_config:
+    lines:
+      - 10 restrict
+    parents:
+      - policy-map type control subscriber WIRED_POLICY
+      - event violation match-all
+      - 10 class always do-until-failure
+    replace: block
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -100,14 +320,14 @@
 #  tags:
 #    - test
 
-- name: IOS - Configure policy-map WIRED_POLICY
-  cisco.ios.ios_config:
-    src: policy_map.j2
-    before: no policy-map type control subscriber WIRED_POLICY
-  when:
-    - ansible_network_os == 'ios'
-  tags:
-    - test
+#- name: IOS - Configure policy-map WIRED_POLICY
+#  cisco.ios.ios_config:
+#    src: policy_map.j2
+#    before: no policy-map type control subscriber WIRED_POLICY
+#  when:
+#    - ansible_network_os == 'ios'
+#  tags:
+#    - test
 
 - name: IOS - Configure template WIRED_TEMPLATE
   ios_config:
