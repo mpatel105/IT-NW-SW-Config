@@ -620,6 +620,7 @@
       - service-policy type control subscriber WIRED_POLICY
       - description Wired_NAC
     parents: template WIRED_TEMPLATE
+    match: exact
     replace: block
   when:
     - ansible_network_os == 'ios' and ansible_net_model != 'IOSv'
@@ -642,6 +643,7 @@
       - service-policy type control subscriber WIRED_POLICY
       - description Wired_NAC
     parents: template WIRED_TEMPLATE
+    match: exact
     replace: block
   when:
     - ansible_network_os == 'ios' and ansible_net_model == 'IOSv'
@@ -663,6 +665,7 @@
       - source template WIRED_TEMPLATE
     parents: interface {{ item.name }}
     before: default interface {{ item.name }}
+    match: exact
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
     - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS-XE' and item.access.vlan is defined and
@@ -676,6 +679,7 @@
       - source template WIRED_TEMPLATE
     parents: interface {{ item.name }}
     before: default interface {{ item.name }}
+    match: exact
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
     - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS' and item.access.vlan is defined and
