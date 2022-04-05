@@ -39,6 +39,7 @@
     lines:
       - vlan 8
     parents: service-template CRITICAL_AUTH_VLAN
+    before: no service-template CRITICAL_AUTH_VLAN
     replace: block
   when:
     - ansible_network_os == 'ios'
@@ -50,6 +51,7 @@
     lines:
       - match activated-service-template CRITICAL_AUTH_VLAN
     parents: class-map type control subscriber match-any IN_CRITICAL_VLAN
+    before: no lass-map type control subscriber match-any IN_CRITICAL_VLAN
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -60,6 +62,7 @@
     lines:
       - match activated-service-template CRITICAL_AUTH_VLAN
     parents: class-map type control subscriber match-none NOT_IN_CRITICAL_VLAN
+    before: no class-map type control subscriber match-none NOT_IN_CRITICAL_VLAN
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -71,6 +74,7 @@
       - match result-type aaa-timeout
       - match authorization-status authorized
     parents: class-map type control subscriber match-all AAA_SVR_DOWN_AUTHD_HOST
+    before: no class-map type control subscriber match-all AAA_SVR_DOWN_AUTHD_HOST
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -82,6 +86,7 @@
       - match result-type aaa-timeout
       - match authorization-status unauthorized
     parents: class-map type control subscriber match-all AAA_SVR_DOWN_UNAUTHD_HOST
+    before: no class-map type control subscriber match-all AAA_SVR_DOWN_UNAUTHD_HOST
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -92,6 +97,7 @@
     lines:
       - match method dot1x
     parents: class-map type control subscriber match-all DOT1X
+    before: no class-map type control subscriber match-all DOT1X
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -103,6 +109,7 @@
       - match method dot1x
       - match result-type method dot1x authoritative
     parents: class-map type control subscriber match-all DOT1X_FAILED
+    before: no class-map type control subscriber match-all DOT1X_FAILED
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -113,6 +120,7 @@
     lines:
       - match authorizing-method-priority gt 20
     parents: class-map type control subscriber match-all DOT1X_MEDIUM_PRIO
+    before: no class-map type control subscriber match-all DOT1X_MEDIUM_PRIO
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -124,6 +132,7 @@
       - match method dot1x
       - match result-type method dot1x agent-not-found
     parents: class-map type control subscriber match-all DOT1X_NO_RESP
+    before: no class-map type control subscriber match-all DOT1X_NO_RESP
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -135,6 +144,7 @@
       - match method dot1x
       - match result-type method dot1x method-timeout
     parents: class-map type control subscriber match-all DOT1X_TIMEOUT
+    before: no class-map type control subscriber match-all DOT1X_TIMEOUT
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -145,6 +155,7 @@
     lines:
       - match method mab
     parents: class-map type control subscriber match-all MAB
+    before: no class-map type control subscriber match-all MAB
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -156,6 +167,7 @@
       - match method mab
       - match result-type method mab authoritative
     parents: class-map type control subscriber match-all MAB_FAILED
+    before: no class-map type control subscriber match-all MAB_FAILED
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -166,6 +178,7 @@
     lines:
       - match authorization-status unauthorized
     parents: class-map type control subscriber match-all SESSION_UNAUTH
+    before: no class-map type control subscriber match-all SESSION_UNAUTH
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -183,6 +196,10 @@
       - event session-started match-all
       - 10 class always do-until-failure
     replace: block
+    before:
+      - policy-map type control subscriber WIRED_POLICY
+      - event session-started match-all
+      - no 10
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -198,6 +215,10 @@
       - event authentication-failure match-first
       - 5 class DOT1X_FAILED do-until-failure
     replace: block
+    before:
+      - policy-map type control subscriber WIRED_POLICY
+      - event authentication-failure match-first
+      - no 5
   when:
     - ansible_network_os == 'ios'
   tags:
