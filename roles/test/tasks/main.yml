@@ -207,7 +207,7 @@
       - policy-map type control subscriber WIRED_POLICY
       - event session-started match-all
       - 10 class always do-until-failure
-    match: strict
+    match: exact
     before:
       - policy-map type control subscriber WIRED_POLICY
       - event session-started match-all
