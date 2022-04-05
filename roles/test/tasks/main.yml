@@ -65,6 +65,113 @@
   tags:
     - test
 
+- name: IOS - Configure class-map AAA_SVR_DOWN_AUTHD_HOST
+  ios_config:
+    lines:
+      - match result-type aaa-timeout
+      - match authorization-status authorized
+    parents: class-map type control subscriber match-all AAA_SVR_DOWN_AUTHD_HOST
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: IOS - Configure class-map AAA_SVR_DOWN_UNAUTHD_HOST
+  ios_config:
+    lines:
+      - match result-type aaa-timeout
+      - match authorization-status unauthorized
+    parents: class-map type control subscriber match-all AAA_SVR_DOWN_UNAUTHD_HOST
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: IOS - Configure class-map DOT1X
+  ios_config:
+    lines:
+      - match method dot1x
+    parents: class-map type control subscriber match-all DOT1X
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: IOS - Configure class-map DOT1X_FAILED
+  ios_config:
+    lines:
+      - match method dot1x
+      - match result-type method dot1x authoritative
+    parents: class-map type control subscriber match-all DOT1X_FAILED
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: IOS - Configure class-map DOT1X_MEDIUM_PRIO
+  ios_config:
+    lines:
+      - match authorizing-method-priority gt 20
+    parents: class-map type control subscriber match-all DOT1X_MEDIUM_PRIO
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: IOS - Configure class-map DOT1X_NO_RESP
+  ios_config:
+    lines:
+      - match method dot1x
+      - match result-type method dot1x agent-not-found
+    parents: class-map type control subscriber match-all DOT1X_NO_RESP
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: IOS - Configure class-map DOT1X_TIMEOUT
+  ios_config:
+    lines:
+      - match method dot1x
+      - match result-type method dot1x method-timeout
+    parents: class-map type control subscriber match-all DOT1X_TIMEOUT
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: IOS - Configure class-map MAB
+  ios_config:
+    lines:
+      - match method mab
+    parents: class-map type control subscriber match-all MAB
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: IOS - Configure class-map MAB_FAILED
+  ios_config:
+    lines:
+      - match method mab
+      - match result-type method mab authoritative
+    parents: class-map type control subscriber match-all MAB_FAILED
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+- name: IOS - Configure class-map SESSION_UNAUTH
+  ios_config:
+    lines:
+      - match authorization-status unauthorized
+    parents: class-map type control subscriber match-all SESSION_UNAUTH
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test
+
+
 
 - name: IOS - Configure policy-map WIRED_POLICY 1
   ios_config:
@@ -80,8 +187,6 @@
     - ansible_network_os == 'ios'
   tags:
     - test
-
-
 
 - name: IOS - Configure policy-map WIRED_POLICY 2
   ios_config:
