@@ -25,7 +25,7 @@
 
 
 - debug:
-    msg: "{{ napalm_interfaces }}"
+    msg: "{{ napalm_interfaces["GigabitEthernet1/1"] }}"
     #msg: "{{  item.name }}"
 #  loop: "{{ napalmfacts  }}"
   when:
