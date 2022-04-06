@@ -715,6 +715,7 @@
       napalm_interfaces[item.name]['description'] == 'Wired_NAC')
   tags:
     - NACinterfaces
+    - napalm
 
 - name: IOS - shut VLAN24 40 48 interfaces
   ios_interfaces:
