@@ -25,7 +25,7 @@
 
 
 - debug:
-    msg: "{{ napalm_interfaces['GigabitEthernet1/1'] }}"
+    msg: "{{ napalm_interfaces['GigabitEthernet1/1']['description'] }}"
     #msg: "{{ napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key][0]['remote_system_name'] }}"
     #msg: "{{  item.name }}"
 #  loop: "{{ napalmfacts  }}"
