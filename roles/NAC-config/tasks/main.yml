@@ -389,6 +389,9 @@
     parents:
       - policy-map type control subscriber WIRED_POLICY
     match: exact
+    before:
+      - policy-map type control subscriber WIRED_POLICY
+      - no event session-started
   when:
     - ansible_network_os == 'ios'
   tags:
