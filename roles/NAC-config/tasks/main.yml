@@ -25,7 +25,7 @@
 
 
 - debug:
-    msg: "{{ napalmfacts }}"
+    msg: "{{ napalm_interfaces }}"
     #msg: "{{  item.name }}"
 #  loop: "{{ napalmfacts  }}"
   when:
