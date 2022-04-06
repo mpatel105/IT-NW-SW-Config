@@ -11,6 +11,7 @@
     - shutnoshut
     - track
     - napalm
+    - NACtest
 
 - name: napalm get_facts
   napalm.napalm.get_facts:
@@ -397,6 +398,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
+    - NACtest
 
 - name: IOS - Configure policy-map WIRED_POLICY event session-started 1/13
   ios_config:
