@@ -382,11 +382,29 @@
   tags:
     - NACglobal
 
+- name: IOS - Configure policy-map WIRED_POLICY event session-started 0/13
+  ios_config:
+    lines:
+      - 10 class always do-until-failure
+    parents:
+      - policy-map type control subscriber WIRED_POLICY
+      - event session-started match-all
+    match: exact
+    before:
+      - policy-map type control subscriber WIRED_POLICY
+      - event session-started match-all
+      - no 10
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - NACtest
+
 - name: IOS - Configure policy-map WIRED_POLICY event session-started 1/13
   ios_config:
     lines:
       - 10 authenticate using dot1x retries 2 retry-time 0 priority 10
-#      - 20 authenticate using mab priority 20
+      - 20 authenticate using mab priority 20
     parents:
       - policy-map type control subscriber WIRED_POLICY
       - event session-started match-all
@@ -402,7 +420,6 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - NACtest
 
 - name: IOS - Configure policy-map WIRED_POLICY authentication-failure 2/13
   ios_config:
