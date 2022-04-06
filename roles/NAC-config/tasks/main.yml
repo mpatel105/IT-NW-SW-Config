@@ -388,7 +388,7 @@
       - event session-started match-all
     parents:
       - policy-map type control subscriber WIRED_POLICY
-    match: exact
+    #match: exact
   when:
     - ansible_network_os == 'ios'
   tags:
@@ -402,7 +402,7 @@
     parents:
       - policy-map type control subscriber WIRED_POLICY
       - event session-started match-all
-    match: exact
+    #match: exact
     before:
       - policy-map type control subscriber WIRED_POLICY
       - event session-started match-all
