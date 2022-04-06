@@ -390,7 +390,7 @@
       - policy-map type control subscriber test
       - event session-started match-all
       - 10 class always do-until-failure
-    match: strict
+#    match: lines
     before:
       - policy-map type control subscriber test
       - event session-started match-all
