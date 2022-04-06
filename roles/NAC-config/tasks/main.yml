@@ -15,7 +15,7 @@
 - name: napalm get_facts
   napalm.napalm.get_facts:
     #filter: facts,lldp_neighbors_detail
-    filter: facts,interfaces
+    filter: interfaces
   register: napalmfacts
   when: ansible_network_os == 'ios'
   tags:
@@ -27,7 +27,7 @@
 - debug:
     msg: "{{ napalmfacts }}"
     #msg: "{{  item.name }}"
-  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+#  loop: "{{ napalmfacts  }}"
   when:
     - ansible_network_os == "ios"
   tags:
