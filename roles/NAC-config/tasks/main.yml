@@ -703,6 +703,7 @@
 - name: IOS - Configure Interfaces for NAC
   ios_config:
     lines:
+      - negotiation auto
       - source template WIRED_TEMPLATE
     parents: interface {{ item.name }}
     before: default interface {{ item.name }}
