@@ -196,6 +196,24 @@
   tags:
     - test
 
+- name: IOS - Configure policy-map test
+  ios_config:
+    lines:
+      - 10 authenticate using dot1x retries 2 retry-time 0 priority 10
+    parents:
+      - policy-map type control subscriber test
+      - event session-started match-all
+      - 10 class always do-until-failure
+    match: exact
+    before:
+      - policy-map type control subscriber test
+      - event session-started match-all
+      - no 10
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - test2
+
 - name: IOS - Configure policy-map WIRED_POLICY
   ios_config:
     lines:

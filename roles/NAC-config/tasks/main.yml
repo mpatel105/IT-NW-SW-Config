@@ -26,10 +26,11 @@
 
 
 - debug:
-    msg: "{{ napalm_interfaces['GigabitEthernet1/1']['description'] }}"
+    msg: "{{ napalm_interfaces[item.name]['description'] }}"
     #msg: "{{ napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key][0]['remote_system_name'] }}"
     #msg: "{{  item.name }}"
 #  loop: "{{ napalmfacts  }}"
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
     - ansible_network_os == "ios"
   tags:
@@ -382,24 +383,6 @@
   tags:
     - NACglobal
 
-- name: IOS - Configure policy-map test
-  ios_config:
-    lines:
-      - 10 authenticate using dot1x retries 2 retry-time 0 priority 10
-    parents:
-      - policy-map type control subscriber test
-      - event session-started match-all
-      - 10 class always do-until-failure
-    match: exact
-    before:
-      - policy-map type control subscriber test
-      - event session-started match-all
-      - no 10
-  when:
-    - ansible_network_os == 'ios'
-  tags:
-    - NACtest
-
 - name: IOS - Configure policy-map WIRED_POLICY event session-started 1/13
   ios_config:
     lines:
@@ -727,7 +710,8 @@
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
     - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS' and item.access.vlan is defined and
-      (item.access.vlan == 99 or item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)
+      (item.access.vlan == 99 or item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48 or
+      napalm_interfaces[item.description] == 'Wired_NAC')
   tags:
     - NACinterfaces
 
