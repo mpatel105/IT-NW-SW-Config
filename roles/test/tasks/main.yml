@@ -39,7 +39,7 @@
     - convertNAC
 
 - debug:
-    msg: "the value of test.txt is {{lookup('file', '{{ inventory_hostname }}.txt') }}"
+    msg: "the value of '{{ inventory_hostname }}.txt' is {{lookup('file', '{{ inventory_hostname }}.txt') }}"
   tags:
     - convertNAC
 
