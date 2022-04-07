@@ -8,15 +8,39 @@
   when: ansible_network_os == 'ios'
   tags:
     - test
+    - convertNAC
 
-#- debug:
-#    #msg: "{{ napalmfacts['ansible_facts']['napalm_interface_list'] }}"
-#    msg: "{{  item.name }}"
+- name: napalm get_facts
+  napalm.napalm.get_facts:
+    filter: interfaces
+  register: napalmfacts
+  when: ansible_network_os == 'ios'
+  tags:
+    - convertNAC
+
+- debug:
+    msg: "{{  item.name }} - VLAN {{ item.access.vlan }} - {{ item.description }}"
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS' and item.access.vlan is defined and
+      (item.access.vlan == 99 or item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)
+  tags:
+    - convertNAC
+
+#- name: IOS - Configure Interfaces for NAC
+#  ios_config:
+#    lines:
+#      - negotiation auto
+#      - source template WIRED_TEMPLATE
+#    parents: interface {{ item.name }}
+#    before: default interface {{ item.name }}
+#    match: exact
 #  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
 #  when:
-#    - ansible_network_os == "ios"
+#    - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS' and item.access.vlan is defined and
+#      (item.access.vlan == 99 or item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)
 #  tags:
-#    - test
+#    - convertNAC
 
 - name: IOS - Enable new-style authentication
   cli_command:
