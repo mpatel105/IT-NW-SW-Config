@@ -29,7 +29,7 @@
 
 - name: copy to file
   shell:
-    echo "{{ item.name }}" >> test.txt
+    echo "{{ item.name }}" >> "{{ inventory_hostname }}.txt"
   delegate_to: localhost
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
@@ -39,7 +39,7 @@
     - convertNAC
 
 - debug:
-    msg: "the value of test.txt is {{lookup('file', 'test.txt') }}"
+    msg: "the value of test.txt is {{lookup('file', '{{ inventory_hostname }}.txt') }}"
   tags:
     - convertNAC
 
