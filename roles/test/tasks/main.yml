@@ -27,6 +27,24 @@
   tags:
     - convertNAC
 
+- name: copy to file
+  copy:
+    dest: "test.txt"
+    content: "{{ item.name }}"
+  delegate_to: localhost
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS' and item.access.vlan is defined and
+      (item.access.vlan == 99 or item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)
+  tags:
+    - convertNAC
+
+- debug:
+    msg: "the value of test.txt is {{lookup('file', 'test.txt') }}"
+  tags:
+    - convertNAC
+
+
 #- name: IOS - Configure Interfaces for NAC
 #  ios_config:
 #    lines:
