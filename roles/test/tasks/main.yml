@@ -28,9 +28,8 @@
     - convertNAC
 
 - name: copy to file
-  copy:
-    dest: "test.txt"
-    content: "{{ item.name }}"
+  shell:
+    echo "{{ item.name }}" >> test.txt
   delegate_to: localhost
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
