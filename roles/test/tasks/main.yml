@@ -19,7 +19,7 @@
     - convertNAC
 
 - debug:
-    msg: "{{  item.name }} - VLAN {{ item.access.vlan }} - {{ item.description }}"
+    msg: "{{  item.name }} - VLAN {{ item.access.vlan }}"
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
     - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS' and item.access.vlan is defined and
