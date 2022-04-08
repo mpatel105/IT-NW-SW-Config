@@ -596,7 +596,6 @@
     lines:
       - dot1x pae authenticator
       - dot1x timeout tx-period 10
-      - spanning-tree portfast
       - switchport access vlan {{ vlan_blackhole_id }}
       - switchport mode access
       - mab
