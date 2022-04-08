@@ -127,7 +127,7 @@
     - convertNAC
 
 - debug:
-    msg: "{{ ansible_network_resources["l2_interfaces"] }}"
+    msg: "{{ ansible_network_resources['l2_interfaces'] }}"
     #msg: "{{ item.key }}"
   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when:
