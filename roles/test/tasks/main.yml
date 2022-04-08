@@ -14,7 +14,6 @@
   ios_config:
     lines:
       - 10 class always do-until-failure
-      - 10 authenticate using dot1x retries 2 retry-time 0 priority 10
     parents:
       - policy-map type control subscriber test
       - event session-started match-all
