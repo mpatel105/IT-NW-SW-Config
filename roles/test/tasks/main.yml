@@ -18,6 +18,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - convertNAC
+    - trunk
 
 - name: copy to file
   shell:
@@ -127,7 +128,7 @@
     - convertNAC
 
 - debug:
-    msg: "{{ ansible_network_resources['l2_interfaces'] }}"
+    msg: "{{ }}"
     #msg: "{{ item.key }}"
   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when:
