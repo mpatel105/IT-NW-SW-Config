@@ -10,21 +10,6 @@
     - test
     - convertNAC
 
-- name: IOS - Configure policy-map test
-  ios_config:
-    lines:
-      - 10 class always do-until-failure
-    parents:
-      - policy-map type control subscriber test
-      - event session-started match-all
-    match: exact
-    before:
-      - policy-map type control subscriber test
-      - event session-started match-all
-      - no 10
-  tags:
-    - policy
-
 - name: napalm get_facts
   napalm.napalm.get_facts:
     filter: interfaces
@@ -56,6 +41,47 @@
       - switchport mode access
       - description Wired_NAC
     parents: template TEMPLATE_NAC_ENDPOINTS
+    replace: block
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - convertNAC
+
+- name: IOS - Configure template TEMPLATE_TRUNK_WIFI_AP
+  ios_config:
+    lines:
+      - switchport mode trunk
+      - switch trunk native vlan 999
+      - switchport trunk allowed vlan 16,24,240,999
+      - description Wifi AP
+    parents: template TEMPLATE_TRUNK_WIFI_AP
+    replace: block
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - convertNAC
+
+- name: IOS - Configure template TEMPLATE_TRUNK_ACCESS_SWITCH
+  ios_config:
+    lines:
+      - switchport mode trunk
+      - switch trunk native vlan 999
+      - switchport trunk allowed vlan 8,16,24,40,169,240,999
+      - description Uplink To Access Switch
+    parents: template TEMPLATE_TRUNK_ACCESS_SWITCH
+    replace: block
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - convertNAC
+
+- name: IOS - Configure template TEMPLATE_TRUNK_ALL
+  ios_config:
+    lines:
+      - switchport mode trunk
+      - switch trunk native vlan 999
+      - description Uplink To Core Switch / Firewalls
+    parents: template TEMPLATE_TRUNK_ALL
     replace: block
   when:
     - ansible_network_os == 'ios'
