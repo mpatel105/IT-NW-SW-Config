@@ -127,7 +127,8 @@
     - convertNAC
 
 - debug:
-    msg: "{{ ansible_network_resources[item.value[0]] }}"
+    #msg: "{{ ansible_network_resources[item.value[0]] }}"
+    msg: "{{ item.value[0] }}"
   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when:
     - ansible_network_os == 'ios' and item.value[0].platform is defined and "Cisco" in item.value[0].platform
