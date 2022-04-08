@@ -9,6 +9,7 @@
   tags:
     - test
     - convertNAC
+    - trunk
 
 - name: napalm get_facts
   napalm.napalm.get_facts:
@@ -124,6 +125,13 @@
     - ansible_network_os == "ios" and (item.value[0].platform is defined and "Meraki" in item.value[0].platform)
   tags:
     - convertNAC
+
+- debug:
+    msg: "{{ ansible_network_resources[item.value[0]].mode }}"
+  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
+  tags:
+    - trunk
+
 
 - name: IOS - Configure interface for Cisco access switch Trunk ports
   ios_config:
