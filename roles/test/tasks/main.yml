@@ -10,6 +10,22 @@
     - test
     - convertNAC
 
+- name: IOS - Configure policy-map test
+  ios_config:
+    lines:
+      - 10 class always do-until-failure
+      - 10 authenticate using dot1x retries 2 retry-time 0 priority 10
+    parents:
+      - policy-map type control subscriber test
+      - event session-started match-all
+    match: exact
+    before:
+      - policy-map type control subscriber test
+      - event session-started match-all
+      - no 10
+  tags:
+    - policy
+
 - name: napalm get_facts
   napalm.napalm.get_facts:
     filter: interfaces
