@@ -13,6 +13,21 @@
     - track
     - napalm
 
+- name: IOS - Configure policy-map test
+  ios_config:
+    lines:
+      - 10 class always do-until-failure
+      - 10 authenticate using dot1x retries 2 retry-time 0 priority 10
+    parents:
+      - policy-map type control subscriber test
+      - event session-started match-all
+    match: exact
+    before:
+      - policy-map type control subscriber test
+      - event session-started match-all
+      - no 10
+  tags:
+    - policy
 
 - name: napalm get_facts
   napalm.napalm.get_facts:
@@ -239,7 +254,7 @@
     lines:
       - match activated-service-template CRITICAL_AUTH_VLAN
     parents: class-map type control subscriber match-any IN_CRITICAL_VLAN
-    before: no lass-map type control subscriber match-any IN_CRITICAL_VLAN
+    before: no class-map type control subscriber match-any IN_CRITICAL_VLAN
     match: exact
   when:
     - ansible_network_os == 'ios'
@@ -631,7 +646,7 @@
   tags:
     - NACglobal
 
-- name: IOS - Configure template WIRED_TEMPLATE
+- name: IOS - Configure template TEMPLATE_NAC_ENDPOINTS
   ios_config:
     lines:
       - dot1x pae authenticator
@@ -647,7 +662,7 @@
       - authentication timer reauthenticate server
       - service-policy type control subscriber WIRED_POLICY
       - description Wired_NAC
-    parents: template WIRED_TEMPLATE
+    parents: template TEMPLATE_NAC_ENDPOINTS
     match: exact
     replace: block
   when:
@@ -655,7 +670,7 @@
   tags:
     - NACglobal
 
-- name: IOS - Configure template WIRED_TEMPLATE
+- name: IOS - Configure template TEMPLATE_NAC_ENDPOINTS
   ios_config:
     lines:
       - dot1x pae authenticator
@@ -670,7 +685,7 @@
       - authentication timer reauthenticate server
       - service-policy type control subscriber WIRED_POLICY
       - description Wired_NAC
-    parents: template WIRED_TEMPLATE
+    parents: template TEMPLATE_NAC_ENDPOINTS
     match: exact
     replace: block
   when:
@@ -690,7 +705,7 @@
   ios_config:
     lines:
       - device-tracking attach-policy ip_device_tracking_policy
-      - source template WIRED_TEMPLATE
+      - source template TEMPLATE_NAC_ENDPOINTS
     parents: interface {{ item.name }}
     before: default interface {{ item.name }}
     match: exact
@@ -706,7 +721,7 @@
   ios_config:
     lines:
       - negotiation auto
-      - source template WIRED_TEMPLATE
+      - source template TEMPLATE_NAC_ENDPOINTS
     parents: interface {{ item.name }}
     before: default interface {{ item.name }}
     match: exact
