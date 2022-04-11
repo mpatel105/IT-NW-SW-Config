@@ -129,7 +129,7 @@
     - convertNAC
 
 - debug:
-    msg: "{{ }}"
+    msg: "{{ item }}"
     #msg: "{{ item.key }}"
   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when:
