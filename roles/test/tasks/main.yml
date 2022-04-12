@@ -71,7 +71,7 @@
       - switchport mode trunk
       - switch trunk native vlan 999
       - switchport trunk allowed vlan 8,16,24,40,169,240,999
-      - description Uplink To Access Switch
+      - description Uplink To Switch
     parents: template TEMPLATE_TRUNK_ACCESS_SWITCH
     replace: block
   when:
