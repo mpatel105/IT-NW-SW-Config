@@ -689,7 +689,7 @@
       - source template TEMPLATE_NAC_ENDPOINTS
     parents: interface {{ item.name }}
     match: exact
-    before: default interface {{ item.name }}
+#    before: default interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
     - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS-XE' and napalm_interfaces[item.name]['description'] == 'Wired_NAC'
@@ -702,7 +702,7 @@
       - source template TEMPLATE_NAC_ENDPOINTS
     parents: interface {{ item.name }}
     match: exact
-    before: default interface {{ item.name }}
+#    before: default interface {{ item.name }}
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
     - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS' and napalm_interfaces[item.name]['description'] == 'Wired_NAC'
