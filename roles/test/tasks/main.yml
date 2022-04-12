@@ -646,7 +646,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - test
-    - convertNAC
+    - convertNAC2
 
 - name: napalm get_facts
   napalm.napalm.get_facts:
@@ -655,7 +655,7 @@
   register: napalmfacts
   when: ansible_network_os == 'ios'
   tags:
-    - convertNAC
+    - convertNAC2
     - trunk
 
 - name: IOS-XE - Configure Interfaces for NAC
@@ -670,7 +670,7 @@
   when:
     - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS-XE' and napalm_interfaces[item.name]['description'] == 'Wired_NAC'
   tags:
-    - convertNAC
+    - convertNAC2
 
 - name: IOS - Configure Interfaces for NAC
   ios_config:
@@ -683,4 +683,4 @@
   when:
     - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS' and napalm_interfaces[item.name]['description'] == 'Wired_NAC'
   tags:
-    - convertNAC
+    - convertNAC2
