@@ -654,3 +654,12 @@
     - ansible_network_os == 'ios' and ansible_net_model == 'IOSv'
   tags:
     - test
+
+- name: IOS - get facts
+  ios_facts:
+    gather_network_resources:
+      - 'l2_interfaces'
+  when: ansible_network_os == 'ios'
+  tags:
+    - test
+    - convertNAC
