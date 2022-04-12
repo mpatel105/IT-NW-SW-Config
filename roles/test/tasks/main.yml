@@ -10,19 +10,16 @@
     - NACglobal
     - convertNAC1
     - convertNAC2
-    - convertNAC3
 
 
 - name: napalm get_facts
   napalm.napalm.get_facts:
-    filter: facts,interfaces,lldp_neighbors_detail,vlans
-    #filter: facts,interfaces,lldp_neighbors_detail
+    filter: facts,interfaces,lldp_neighbors_detail
   register: napalmfacts
   when: ansible_network_os == 'ios'
   tags:
     - convertNAC1
     - convertNAC2
-    - convertNAC3
     - NACglobal
 
 - name: copy to file
@@ -150,7 +147,6 @@
     - NACglobal
     - convertNAC1
 
-
 - name: IOS - Configure interface for Cisco access switch Trunk ports
   ios_config:
     lines:
@@ -169,18 +165,33 @@
     - convertNAC1
     - NACglobal
 
+- name: IOS-XE - Configure Interfaces for NAC
+  ios_config:
+    lines:
+      - device-tracking attach-policy ip_device_tracking_policy
+      - source template TEMPLATE_NAC_ENDPOINTS
+    parents: interface {{ item.name }}
+    before: default interface {{ item.name }}
+    match: exact
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS-XE' and ((item.access.vlan is defined and
+      (item.access.vlan == 99 or item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)) or
+      napalm_interfaces[item.name]['description'] == 'Wired_NAC')
+  tags:
+    - convertNAC1
+    - NACglobal
+
 - name: IOS - Configure Interfaces for NAC
   ios_config:
     lines:
       - source template TEMPLATE_NAC_ENDPOINTS
     parents: interface {{ item.name }}
-#    before: default interface {{ item.name }}
-    after:
-      - no description
+    before: default interface {{ item.name }}
     match: exact
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
-    - ansible_network_os == 'ios' and ((item.access.vlan is defined and
+    - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS' and ((item.access.vlan is defined and
       (item.access.vlan == 99 or item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)) or
       napalm_interfaces[item.name]['description'] == 'Wired_NAC')
   tags:
@@ -685,29 +696,3 @@
   tags:
     - NACglobal
     - convertNAC2
-
-- name: IOS-XE - Configure Interfaces for NAC
-  ios_config:
-    lines:
-      - device-tracking attach-policy ip_device_tracking_policy
-      - source template TEMPLATE_NAC_ENDPOINTS
-    parents: 'interface {{ item.name }}'
-    before: 'default interface {{ item.name }}'
-    match: exact
-  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
-  when:
-    - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS-XE' and napalm_interfaces[item.name]['description'] == 'Wired_NAC'
-  tags:
-    - convertNAC3
-
-- name: IOS - Configure Interfaces for NAC
-  ios_config:
-    lines: 'source template TEMPLATE_NAC_ENDPOINTS'
-    parents: 'interface {{ item.name }}'
-    before: 'default interface {{ item.name }}'
-    match: exact
-  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
-  when:
-    - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS' and napalm_interfaces[item.name]['description'] == 'Wired_NAC'
-  tags:
-    - convertNAC3
