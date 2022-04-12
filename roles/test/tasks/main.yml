@@ -143,7 +143,7 @@
       - source template TEMPLATE_TRUNK_ACCESS_SWITCH
     parents: interface {{ item.key }}
     after:
-      - no switchport trunk native
+      - no switchport trunk native vlan
       - no switchport trunk allowed vlan
       - no switchport mode trunk
   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
