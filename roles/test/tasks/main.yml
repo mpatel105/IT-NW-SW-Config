@@ -650,7 +650,7 @@
 
 - name: napalm get_facts
   napalm.napalm.get_facts:
-    filter: facts,interfaces,lldp_neighbors_detail,vlans
+    filter: facts,interfaces
     #filter: facts,interfaces,lldp_neighbors_detail
   register: napalmfacts
   when: ansible_network_os == 'ios'
