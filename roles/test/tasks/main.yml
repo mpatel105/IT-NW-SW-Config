@@ -689,9 +689,8 @@
     lines:
       - device-tracking attach-policy ip_device_tracking_policy
       - source template TEMPLATE_NAC_ENDPOINTS
-    parents: interface {{ item.name }}
-    before:
-      - default interface {{ item.name }}
+    parents: 'interface {{ item.name }}'
+    before: 'default interface {{ item.name }}'
     match: exact
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
@@ -703,9 +702,8 @@
   ios_config:
     lines:
       - source template TEMPLATE_NAC_ENDPOINTS
-    parents: interface {{ item.name }}
-    before:
-      - default interface {{ item.name }}
+    parents: 'interface {{ item.name }}'
+    before: 'default interface {{ item.name }}'
     match: exact
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
