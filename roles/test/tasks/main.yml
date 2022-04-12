@@ -700,8 +700,7 @@
 
 - name: IOS - Configure Interfaces for NAC
   ios_config:
-    lines:
-      - source template TEMPLATE_NAC_ENDPOINTS
+    lines: 'source template TEMPLATE_NAC_ENDPOINTS'
     parents: 'interface {{ item.name }}'
     before: 'default interface {{ item.name }}'
     match: exact
