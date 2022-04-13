@@ -10,17 +10,20 @@
     - NACglobal
     - convertNAC1
     - convertNAC2
+    - convertNAC3
 
 
 - name: napalm get_facts
   napalm.napalm.get_facts:
-    filter: facts,interfaces,lldp_neighbors_detail
+    filter: facts,interfaces,lldp_neighbors_detail,vlans
   register: napalmfacts
   when: ansible_network_os == 'ios'
   tags:
     - convertNAC1
     - convertNAC2
+    - convertNAC3
     - NACglobal
+    - napalm
 
 # - name: copy to file
 #   shell:
@@ -738,3 +741,25 @@
   tags:
     - NACglobal
     - convertNAC2
+
+- name: IOS - shut vlan99 connected interfaces
+  ios_interfaces:
+    config:
+      - name: "{{ item.name }}"
+        enabled: false
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - ansible_network_os == 'ios' and ansible_net_interfaces[item.name].operstatus == 'up' and item.access.vlan is defined and item.access.vlan == 99
+  tags:
+    - convertNAC3
+
+- name: IOS - no shut vlan99 connected interfaces
+  ios_interfaces:
+    config:
+      - name: "{{ item.name }}"
+        enabled: true
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - ansible_network_os == 'ios' and ansible_net_interfaces[item.name].operstatus == 'up' and item.access.vlan is defined and item.access.vlan == 99
+  tags:
+    - convertNAC3
