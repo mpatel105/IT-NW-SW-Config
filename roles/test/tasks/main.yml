@@ -46,8 +46,22 @@
     lines:
       - switchport access vlan {{ vlan_blackhole_id }}
       - switchport mode access
-      - description Wired_NAC
+      - description NAC Endpoints
     parents: template TEMPLATE_NAC_ENDPOINTS
+    replace: block
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - convertNAC1
+    - NACglobal
+
+- name: IOS - Configure template TEMPLATE_STANDARD_ENDPOINTS
+  ios_config:
+    lines:
+      - switchport access vlan 8
+      - switchport mode access
+      - description Standard Endpoints (NO NAC)
+    parents: template TEMPLATE_STANDARD_ENDPOINTS
     replace: block
   when:
     - ansible_network_os == 'ios'
@@ -59,8 +73,8 @@
   ios_config:
     lines:
       - switchport mode trunk
-      - switch trunk native vlan 999
       - switchport trunk allowed vlan 16,24,240,999
+      - switch trunk native vlan 999
       - description Wifi AP
     parents: template TEMPLATE_TRUNK_WIFI_AP
     replace: block
@@ -74,8 +88,8 @@
   ios_config:
     lines:
       - switchport mode trunk
-      - switch trunk native vlan 999
       - switchport trunk allowed vlan 8,16,24,40,169,240,999
+      - switch trunk native vlan 999
       - description Uplink To Switch
     parents: template TEMPLATE_TRUNK_ACCESS_SWITCH
     replace: block
@@ -118,9 +132,8 @@
     lines:
       - switchport mode access
       - switchport access vlan 998
-      - spanning-tree portfast
       - description Link to PAN FW MGMT
-    parents: template TEMPLATE_CSW
+    parents: template TEMPLATE_PANFW_MGMT
     replace: block
   when:
     - ansible_network_os == 'ios'
@@ -206,7 +219,7 @@
   when:
     - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS-XE' and ((item.access.vlan is defined and
       (item.access.vlan == 99 or item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)) or
-      napalm_interfaces[item.name]['description'] == 'Wired_NAC')
+      napalm_interfaces[item.name]['description'] == 'NAC Endpoints')
   tags:
     - convertNAC1
     - NACglobal
@@ -222,7 +235,7 @@
   when:
     - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS' and ((item.access.vlan is defined and
       (item.access.vlan == 99 or item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)) or
-      napalm_interfaces[item.name]['description'] == 'Wired_NAC')
+      napalm_interfaces[item.name]['description'] == 'NAC Endpoints')
   tags:
     - convertNAC1
     - NACglobal
@@ -694,7 +707,7 @@
       - authentication periodic
       - authentication timer reauthenticate server
       - service-policy type control subscriber WIRED_POLICY
-      - description Wired_NAC
+      - description NAC Endpoints
     parents: template TEMPLATE_NAC_ENDPOINTS
     replace: block
   when:
@@ -717,7 +730,7 @@
       - authentication periodic
       - authentication timer reauthenticate server
       - service-policy type control subscriber WIRED_POLICY
-      - description Wired_NAC
+      - description NAC Endpoints
     parents: template TEMPLATE_NAC_ENDPOINTS
     replace: block
   when:
