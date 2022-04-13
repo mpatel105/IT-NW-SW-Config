@@ -99,6 +99,35 @@
     - convertNAC1
     - NACglobal
 
+- name: IOS - Configure template TEMPLATE_CSW
+  ios_config:
+    lines:
+      - switchport mode access
+      - switchport access vlan 995
+      - description Link to Opengear Console Switch
+    parents: template TEMPLATE_CSW
+    replace: block
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - convertNAC1
+    - NACglobal
+
+- name: IOS - Configure template TEMPLATE_PANFW_MGMT
+  ios_config:
+    lines:
+      - switchport mode access
+      - switchport access vlan 998
+      - spanning-tree portfast
+      - description Link to PAN FW MGMT
+    parents: template TEMPLATE_CSW
+    replace: block
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - convertNAC1
+    - NACglobal
+
 - name: IOS 3650/3850/9x00 - Configure NAC - global config device tracking
   ios_command:
     commands:
