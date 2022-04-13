@@ -22,24 +22,24 @@
     - convertNAC2
     - NACglobal
 
-- name: copy to file
-  shell:
-    echo "{{ item.name }}" >> "{{ inventory_hostname }}.txt"
-  delegate_to: localhost
-  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
-  when:
-    - ansible_network_os == 'ios' and item.access.vlan is defined and
-      (item.access.vlan == 99 or item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)
-  tags:
-    - convertNAC1
-    - NACglobal
-
-- debug:
-    msg: "the value of '{{ inventory_hostname }}.txt' is {{lookup('file', '{{ inventory_hostname }}.txt') }}"
-  ignore_errors: yes
-  tags:
-    - convertNAC1
-    - NACglobal
+# - name: copy to file
+#   shell:
+#     echo "{{ item.name }}" >> "{{ inventory_hostname }}.txt"
+#   delegate_to: localhost
+#   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+#   when:
+#     - ansible_network_os == 'ios' and item.access.vlan is defined and
+#       (item.access.vlan == 99 or item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)
+#   tags:
+#     - convertNAC1
+#     - NACglobal
+#
+# - debug:
+#     msg: "the value of '{{ inventory_hostname }}.txt' is {{lookup('file', '{{ inventory_hostname }}.txt') }}"
+#   ignore_errors: yes
+#   tags:
+#     - convertNAC1
+#     - NACglobal
 
 - name: IOS - Configure template TEMPLATE_NAC_ENDPOINTS
   ios_config:
@@ -179,15 +179,15 @@
     - convertNAC1
     - NACglobal
 
-- debug:
-    msg: "{{ item }}"
-    #msg: "{{ item.key }}"
-  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
-  when:
-    - ansible_network_os == 'ios' and item.value[0].platform is defined and "Cisco" in item.value[0].platform|lower
-  tags:
-    - NACglobal
-    - convertNAC1
+# - debug:
+#     msg: "{{ item }}"
+#     #msg: "{{ item.key }}"
+#   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
+#   when:
+#     - ansible_network_os == 'ios' and item.value[0].platform is defined and "Cisco" in item.value[0].platform|lower
+#   tags:
+#     - NACglobal
+#     - convertNAC1
 
 # - name: IOS - Configure interface for Cisco access switch Trunk ports
 #  ios_config:
@@ -433,18 +433,18 @@
     - convertNAC2
 
 
-- name: IOS - Configure policy-map WIRED_POLICY event session-started 1/13
+- name: IOS - Configure policy-map NAC_POLICY event session-started 1/13
   ios_config:
     lines:
       - 10 authenticate using dot1x retries 2 retry-time 0 priority 10
       - 20 authenticate using mab priority 20
     parents:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event session-started match-all
       - 10 class always do-until-failure
     match: exact
     before:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event session-started match-all
       - 10 class always do-until-failure
       - no 10
@@ -455,18 +455,18 @@
     - NACglobal
     - convertNAC2
 
-- name: IOS - Configure policy-map WIRED_POLICY authentication-failure 2/13
+- name: IOS - Configure policy-map NAC_POLICY authentication-failure 2/13
   ios_config:
     lines:
       - 10 terminate dot1x
       - 20 authenticate using mab priority 20
     parents:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event authentication-failure match-first
       - 5 class DOT1X_FAILED do-until-failure
     match: exact
     before:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event authentication-failure match-first
       - no 5
   when:
@@ -475,7 +475,7 @@
     - NACglobal
     - convertNAC2
 
-- name: IOS - Configure policy-map WIRED_POLICY authentication-failure 3/13
+- name: IOS - Configure policy-map NAC_POLICY authentication-failure 3/13
   ios_config:
     lines:
       - 10 clear-authenticated-data-hosts-on-port
@@ -483,12 +483,12 @@
       - 30 authorize
       - 40 pause reauthentication
     parents:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event authentication-failure match-first
       - 10 class AAA_SVR_DOWN_UNAUTHD_HOST do-until-failure
     match: exact
     before:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event authentication-failure match-first
       - no 10
   when:
@@ -497,18 +497,18 @@
     - NACglobal
     - convertNAC2
 
-- name: IOS - Configure policy-map WIRED_POLICY authentication-failure 4/13
+- name: IOS - Configure policy-map NAC_POLICY authentication-failure 4/13
   ios_config:
     lines:
       - 10 pause reauthentication
       - 20 authorize
     parents:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event authentication-failure match-first
       - 20 class AAA_SVR_DOWN_AUTHD_HOST do-until-failure
     match: exact
     before:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event authentication-failure match-first
       - no 20
   when:
@@ -517,18 +517,18 @@
     - NACglobal
     - convertNAC2
 
-- name: IOS - Configure policy-map WIRED_POLICY authentication-failure 5/13
+- name: IOS - Configure policy-map NAC_POLICY authentication-failure 5/13
   ios_config:
     lines:
       - 10 terminate dot1x
       - 20 authenticate using mab priority 20
     parents:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event authentication-failure match-first
       - 30 class DOT1X_NO_RESP do-until-failure
     match: exact
     before:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event authentication-failure match-first
       - no 30
   when:
@@ -537,18 +537,18 @@
     - NACglobal
     - convertNAC2
 
-- name: IOS - Configure policy-map WIRED_POLICY authentication-failure 6/13
+- name: IOS - Configure policy-map NAC_POLICY authentication-failure 6/13
   ios_config:
     lines:
       - 10 terminate mab
       - 20 authentication-restart 60
     parents:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event authentication-failure match-first
       - 40 class MAB_FAILED do-until-failure
     match: exact
     before:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event authentication-failure match-first
       - no 40
   when:
@@ -557,19 +557,19 @@
     - NACglobal
     - convertNAC2
 
-- name: IOS - Configure policy-map WIRED_POLICY authentication-failure 7/13
+- name: IOS - Configure policy-map NAC_POLICY authentication-failure 7/13
   ios_config:
     lines:
       - 10 terminate dot1x
       - 20 terminate mab
       - 30 authentication-restart 60
     parents:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event authentication-failure match-first
       - 60 class always do-until-failure
     match: exact
     before:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event authentication-failure match-first
       - no 60
   when:
@@ -578,18 +578,18 @@
     - NACglobal
     - convertNAC2
 
-- name: IOS - Configure policy-map WIRED_POLICY agent-found 8/13
+- name: IOS - Configure policy-map NAC_POLICY agent-found 8/13
   ios_config:
     lines:
       - 10 terminate mab
       - 20 authenticate using dot1x retries 2 retry-time 0 priority 10
     parents:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event agent-found match-all
       - 10 class always do-until-failure
     match: exact
     before:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event agent-found match-all
       - no 10
   when:
@@ -598,17 +598,17 @@
     - NACglobal
     - convertNAC2
 
-- name: IOS - Configure policy-map WIRED_POLICY aaa-available 9/13
+- name: IOS - Configure policy-map NAC_POLICY aaa-available 9/13
   ios_config:
     lines:
       - 10 clear-session
     parents:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event aaa-available match-all
       - 10 class IN_CRITICAL_VLAN do-until-failure
     match: exact
     before:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event aaa-available match-all
       - no 10
   when:
@@ -617,17 +617,17 @@
     - NACglobal
     - convertNAC2
 
-- name: IOS - Configure policy-map WIRED_POLICY aaa-available 10/13
+- name: IOS - Configure policy-map NAC_POLICY aaa-available 10/13
   ios_config:
     lines:
       - 10 resume reauthentication
     parents:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event aaa-available match-all
       - 20 class NOT_IN_CRITICAL_VLAN do-until-failure
     match: exact
     before:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event aaa-available match-all
       - no 20
   when:
@@ -636,17 +636,17 @@
     - NACglobal
     - convertNAC2
 
-- name: IOS - Configure policy-map WIRED_POLICY inactivity-timeout 11/13
+- name: IOS - Configure policy-map NAC_POLICY inactivity-timeout 11/13
   ios_config:
     lines:
       - 10 clear-session
     parents:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event inactivity-timeout match-all
       - 10 class always do-until-failure
     match: exact
     before:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event inactivity-timeout match-all
       - no 10
   when:
@@ -655,17 +655,17 @@
     - NACglobal
     - convertNAC2
 
-- name: IOS - Configure policy-map WIRED_POLICY authentication-success 12/13
+- name: IOS - Configure policy-map NAC_POLICY authentication-success 12/13
   ios_config:
     lines:
       - 10 activate service-template DEFAULT_LINKSEC_POLICY_SHOULD_SECURE
     parents:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event authentication-success match-all
       - 10 class always do-until-failure
     match: exact
     before:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event authentication-success match-all
       - no 10
   when:
@@ -674,17 +674,17 @@
     - NACglobal
     - convertNAC2
 
-- name: IOS - Configure policy-map WIRED_POLICY violation 13/13
+- name: IOS - Configure policy-map NAC_POLICY violation 13/13
   ios_config:
     lines:
       - 10 restrict
     parents:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event violation match-all
       - 10 class always do-until-failure
     match: exact
     before:
-      - policy-map type control subscriber WIRED_POLICY
+      - policy-map type control subscriber NAC_POLICY
       - event violation match-all
       - no 10
   when:
@@ -706,7 +706,7 @@
       - access-session port-control auto
       - authentication periodic
       - authentication timer reauthenticate server
-      - service-policy type control subscriber WIRED_POLICY
+      - service-policy type control subscriber NAC_POLICY
       - description NAC Endpoints
     parents: template TEMPLATE_NAC_ENDPOINTS
     replace: block
@@ -729,7 +729,7 @@
       - access-session port-control auto
       - authentication periodic
       - authentication timer reauthenticate server
-      - service-policy type control subscriber WIRED_POLICY
+      - service-policy type control subscriber NAC_POLICY
       - description NAC Endpoints
     parents: template TEMPLATE_NAC_ENDPOINTS
     replace: block
