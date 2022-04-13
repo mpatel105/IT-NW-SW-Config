@@ -38,13 +38,11 @@
     - NACglobal
     - NACinterfaces
 
- - debug:
-     msg: "{{ napalm_vlans['99'] }}"
-   ignore_errors: yes
-   tags:
-     - convertNAC1
-     - NACglobal
-     - napalm
+- debug:
+    msg: "{{ napalm_vlans['99'] }}"
+  ignore_errors: yes
+  tags:
+    - napalm
 
 # - name: copy to file
 #   shell:
