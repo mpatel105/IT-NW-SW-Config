@@ -39,7 +39,8 @@
     - NACinterfaces
 
 - debug:
-    msg: "{{ napalm_vlans['99'] }}"
+    msg: "{{ item }}"
+  loop: "{{ napalm_vlans['99']['interfaces'] }}"
   ignore_errors: yes
   tags:
     - napalm
