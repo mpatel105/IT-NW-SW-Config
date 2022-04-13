@@ -25,6 +25,27 @@
     - NACglobal
     - napalm
 
+- name: IOS - Configure Blackhole vlan
+  ios_vlans:
+    config:
+      - name: "{{ vlan_blackhole_name }}"
+        vlan_id: "{{ vlan_blackhole_id }}"
+        state: active
+        shutdown: disabled
+    state: merged
+  when: ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - NACinterfaces
+
+ - debug:
+     msg: "{{ napalm_vlans['99'] }}"
+   ignore_errors: yes
+   tags:
+     - convertNAC1
+     - NACglobal
+     - napalm
+
 # - name: copy to file
 #   shell:
 #     echo "{{ item.name }}" >> "{{ inventory_hostname }}.txt"
