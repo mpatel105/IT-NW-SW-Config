@@ -38,7 +38,7 @@
     msg: "{{ item }}"
   delegate_to: localhost
   loop: "{{ int['interfaces'] | dict2items }}"
-  when: ansible_network_os == 'ios'
+  when: ansible_network_os == 'ios' and item.value['vlan'] == 24
   tags:
     - test
 
