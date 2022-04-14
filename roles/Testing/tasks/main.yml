@@ -37,7 +37,7 @@
   debug:
     msg: "{{ item }}"
   delegate_to: localhost
-  loop: "{{ int['interfaces'] }}"
+  loop: "{{ int['interfaces'] | dict2items }}"
   when: ansible_network_os == 'ios'
   tags:
     - test
