@@ -27,10 +27,10 @@
 
 - name: Debug Genie Filter
   debug:
-    msg: "{{ result['stdout'][0] | parse_genie(command='show interfaces status', os='ios') }}"
-  register: result2
+    msg: "{{ item }}"
+  loop: "{{ result['stdout'][0] | parse_genie(command='show interfaces status', os='ios') }}[interfaces]"
   delegate_to: localhost
-  when: ansible_network_os == 'ios'
+  when: ansible_network_os == 'ios' 
   tags:
     - test
 
