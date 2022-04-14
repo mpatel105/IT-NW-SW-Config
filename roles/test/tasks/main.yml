@@ -37,7 +37,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - NACinterfaces
+    - convertNAC1
 
 - debug:
     msg: "{{ item }}"
@@ -54,7 +54,7 @@
       - exit
   when: ansible_network_os == 'ios'
   tags:
-    - NACglobal
+    - radius
 
 
 - name: IOS - Configure Portnox-Radius-SV2
