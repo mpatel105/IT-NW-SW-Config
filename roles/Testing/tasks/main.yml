@@ -17,17 +17,17 @@
   tags:
     - test
 
-- name: Debug show interfaces
-  debug:
-    msg: "{{ result['stdout'][0] }}"
-  delegate_to: localhost
-  when: ansible_network_os == 'ios'
-  tags:
-    - test
+# - name: Debug show interfaces
+#   debug:
+#     msg: "{{ result['stdout'][0] }}"
+#   delegate_to: localhost
+#   when: ansible_network_os == 'ios'
+#   tags:
+#     - test
 
 - name: Debug Genie Filter
   debug:
-    msg: "{{ result['stdout'][0] | parse_genie(command='show interfaces status', os='ios') }}['interfaces']"
+    msg: "{{ result['stdout'][0] | parse_genie(command='show interfaces status', os='ios') }}['msg']['interfaces']"
   register: result2
   delegate_to: localhost
   when: ansible_network_os == 'ios'
