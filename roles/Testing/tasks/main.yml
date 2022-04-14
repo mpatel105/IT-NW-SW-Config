@@ -35,8 +35,9 @@
 
 - name: Debug Genie Filter Interfaces
   debug:
-    var: int['interfaces']
+    msg: "{{ item }}"
   delegate_to: localhost
+  loop: int['interfaces']
   when: ansible_network_os == 'ios'
   tags:
     - test
