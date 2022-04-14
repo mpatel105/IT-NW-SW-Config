@@ -36,7 +36,7 @@
 
 - name: Debug Genie Filter Interfaces
   debug:
-    var: result2
+    var: result2['msg']
   register: result3
   delegate_to: localhost
   when: ansible_network_os == 'ios'
