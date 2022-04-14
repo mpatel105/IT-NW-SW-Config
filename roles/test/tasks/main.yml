@@ -11,6 +11,7 @@
     - convertNAC1
     - convertNAC2
     - convertNAC3
+    - convertNACops
     - radius
 
 
@@ -26,6 +27,34 @@
     - NACglobal
     - napalm
 
+- name: Read in parse_genie role
+  include_role:
+    name: clay584.parse_genie
+  when: ansible_network_os == 'ios'
+  tags:
+    - convertNAC1
+    - convertNACops
+
+- name: IOS show interfaces status
+  ios_command:
+    commands: show interfaces status
+  register: intstatusresult
+  vars:
+    ansible_command_timeout: 300
+  when: ansible_network_os == 'ios'
+  tags:
+    - convertNAC1
+    - convertNACops
+
+- name: Debug Genie Filter
+  set_fact:
+    int: "{{ intstatusresult['stdout'][0] | parse_genie(command='show interfaces status', os='ios') }}"
+  delegate_to: localhost
+  when: ansible_network_os == 'ios'
+  tags:
+    - convertNAC1
+    - convertNACops
+
 - name: IOS - Configure Blackhole vlan
   ios_vlans:
     config:
@@ -38,6 +67,7 @@
   tags:
     - NACglobal
     - convertNAC1
+    - convertNACops
 
 - debug:
     msg: "{{ item }}"
@@ -132,25 +162,6 @@
   tags:
     - radius
 
-# - name: copy to file
-#   shell:
-#     echo "{{ item.name }}" >> "{{ inventory_hostname }}.txt"
-#   delegate_to: localhost
-#   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
-#   when:
-#     - ansible_network_os == 'ios' and item.access.vlan is defined and
-#       (item.access.vlan == 99 or item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)
-#   tags:
-#     - convertNAC1
-#     - NACglobal
-#
-# - debug:
-#     msg: "the value of '{{ inventory_hostname }}.txt' is {{lookup('file', '{{ inventory_hostname }}.txt') }}"
-#   ignore_errors: yes
-#   tags:
-#     - convertNAC1
-#     - NACglobal
-
 - name: IOS - Configure template TEMPLATE_NAC_ENDPOINTS
   ios_config:
     lines:
@@ -164,6 +175,7 @@
   tags:
     - convertNAC1
     - NACglobal
+    - convertNACops
 
 - name: IOS - Configure template TEMPLATE_STANDARD_ENDPOINTS
   ios_config:
@@ -178,6 +190,7 @@
   tags:
     - convertNAC1
     - NACglobal
+    - convertNACops
 
 - name: IOS - Configure template TEMPLATE_TRUNK_WIFI_AP
   ios_config:
@@ -193,6 +206,7 @@
   tags:
     - convertNAC1
     - NACglobal
+    - convertNACops
 
 - name: IOS - Configure template TEMPLATE_TRUNK_ACCESS_SWITCH
   ios_config:
@@ -208,6 +222,7 @@
   tags:
     - convertNAC1
     - NACglobal
+    - convertNACops
 
 - name: IOS - Configure template TEMPLATE_TRUNK_ALL
   ios_config:
@@ -222,6 +237,7 @@
   tags:
     - convertNAC1
     - NACglobal
+    - convertNACops
 
 - name: IOS - Configure template TEMPLATE_CSW
   ios_config:
@@ -236,6 +252,7 @@
   tags:
     - convertNAC1
     - NACglobal
+    - convertNACops
 
 - name: IOS - Configure template TEMPLATE_PANFW_MGMT
   ios_config:
@@ -250,6 +267,7 @@
   tags:
     - convertNAC1
     - NACglobal
+    - convertNACops
 
 - name: IOS 3650/3850/9x00 - Configure NAC - global config device tracking
   ios_command:
@@ -274,6 +292,7 @@
   tags:
     - convertNAC1
     - NACglobal
+    - convertNACops
 
 - name: IOS - Configure interface for Cisco Meraki
   ios_config:
@@ -349,6 +368,20 @@
   tags:
     - convertNAC1
     - NACglobal
+
+- name: IOS - Configure Interfaces for NAC - Ops Device
+  ios_config:
+    lines:
+      - source template TEMPLATE_NAC_ENDPOINTS
+    parents: interface {{ item.key }}
+    before: default interface {{ item.key }}
+    match: exact
+  loop: "{{ int['interfaces'] | dict2items }}"
+  when: ansible_network_os == 'ios' and (item.value['vlan'] == '24' or item.value['vlan'] == '40' or item.value['vlan'] == '48')
+  tags:
+    - convertNAC1
+    - convertNACops
+
 
 - name: IOS - Enable new-style authentication
   cli_command:
