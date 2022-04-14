@@ -28,9 +28,9 @@
 - name: Debug Genie Filter
   debug:
     msg: "{{ item }}"
-  loop: "{{ result['stdout'][0] | parse_genie(command='show interfaces status', os='ios') }}[interfaces]"
+  loop: "{{ result['stdout'][0] | parse_genie(command='show interfaces status', os='ios') | dict2items }}"
   delegate_to: localhost
-  when: ansible_network_os == 'ios' 
+  when: ansible_network_os == 'ios'
   tags:
     - test
 
