@@ -10,7 +10,7 @@
 - name: IOS show interfaces status
   ios_command:
     commands: show interfaces status
-  register: result
+  register: intstatusresult
   vars:
     ansible_command_timeout: 300
   when: ansible_network_os == 'ios'
@@ -19,7 +19,7 @@
 
 - name: Debug Genie Filter
   set_fact:
-    int: "{{ result['stdout'][0] | parse_genie(command='show interfaces status', os='ios') }}"
+    int: "{{ intstatusresult['stdout'][0] | parse_genie(command='show interfaces status', os='ios') }}"
   delegate_to: localhost
   when: ansible_network_os == 'ios'
   tags:
@@ -28,7 +28,6 @@
 - name: Debug Genie Filter Interfaces
   debug:
     msg: "{{ item.key }}"
-  delegate_to: localhost
   loop: "{{ int['interfaces'] | dict2items }}"
   when: ansible_network_os == 'ios' and (item.value['vlan'] == '24' or item.value['vlan'] == '40')
   tags:

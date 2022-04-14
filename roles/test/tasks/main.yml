@@ -392,6 +392,20 @@
     - convertNAC1
     - NACglobal
 
+- name: IOS-XE - Configure Interfaces for NAC - Ops Device
+  ios_config:
+    lines:
+      - device-tracking attach-policy ip_device_tracking_policy
+      - source template TEMPLATE_NAC_ENDPOINTS
+    parents: interface {{ item.key }}
+    before: default interface {{ item.key }}
+    match: exact
+  loop: "{{ int['interfaces'] | dict2items }}"
+  when: ansible_network_os == 'ios' and ansible_net_iostype == 'IOS-XE' and (item.value['vlan'] == '24' or item.value['vlan'] == '40' or item.value['vlan'] == '48')
+  tags:
+    - convertNAC1
+    - convertNACops
+
 - name: IOS - Configure Interfaces for NAC - Ops Device
   ios_config:
     lines:
@@ -400,7 +414,7 @@
     before: default interface {{ item.key }}
     match: exact
   loop: "{{ int['interfaces'] | dict2items }}"
-  when: ansible_network_os == 'ios' and (item.value['vlan'] == '24' or item.value['vlan'] == '40' or item.value['vlan'] == '48')
+  when: ansible_network_os == 'ios' and ansible_net_iostype == 'IOS' and (item.value['vlan'] == '24' or item.value['vlan'] == '40' or item.value['vlan'] == '48')
   tags:
     - convertNAC1
     - convertNACops
