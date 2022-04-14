@@ -32,6 +32,7 @@
     name: clay584.parse_genie
   when: ansible_network_os == 'ios'
   tags:
+    - NACglobal
     - convertNAC1
     - convertNACops
 
@@ -43,6 +44,7 @@
     ansible_command_timeout: 300
   when: ansible_network_os == 'ios'
   tags:
+    - NACglobal
     - convertNAC1
     - convertNACops
 
@@ -52,6 +54,7 @@
   delegate_to: localhost
   when: ansible_network_os == 'ios'
   tags:
+    - NACglobal
     - convertNAC1
     - convertNACops
 
@@ -69,6 +72,19 @@
     - convertNAC1
     - convertNACops
 
+- name: IOS - Configure Quarantine vlan
+  ios_vlans:
+    config:
+      - name: "{{ vlan_quarantine_name }}"
+        vlan_id: "{{ vlan_quarantine_id }}"
+        state: active
+        shutdown: disabled
+    state: merged
+  when: ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - NACinterfaces
+
 - debug:
     msg: "{{ item }}"
   loop: "{{ napalm_vlans['99']['interfaces'] }}"
@@ -85,6 +101,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - radius
+    - NACglobal
 
 
 - name: IOS - Configure Portnox-Radius-SV2
@@ -97,6 +114,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - radius
+    - NACglobal
 
 
 - name: IOS - Configure Portnox-Radius-PA7
@@ -109,6 +127,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - radius
+    - NACglobal
 
 - name: IOS - Configure Portnox-Radius-US
   ios_config:
@@ -120,6 +139,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - radius
+    - NACglobal
 
 - name: IOS - Configure Portnox-Radius-EU
   ios_config:
@@ -131,6 +151,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - radius
+    - NACglobal
 
 - name: IOS - Configure NAC group Portnox-RADIUS-Group
   ios_config:
@@ -146,6 +167,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - radius
+    - NACglobal
 
 
 - name: IOS - Configure NAC server radius dynamic-author
@@ -161,6 +183,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - radius
+    - NACglobal
 
 - name: IOS - Configure template TEMPLATE_NAC_ENDPOINTS
   ios_config:
@@ -886,21 +909,25 @@
 - name: IOS - shut vlan99 connected interfaces
   ios_interfaces:
     config:
-      - name: "{{ item.name }}"
+      - name: "{{ item.key }}"
         enabled: false
-  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  loop: "{{ int['interfaces'] | dict2items }}"
   when:
-    - ansible_network_os == 'ios' and ansible_net_interfaces[item.name].operstatus == 'up' and item.access.vlan is defined and item.access.vlan == 99
+    - ansible_network_os == 'ios' and (item.value['vlan'] == '24' or item.value['vlan'] == '40' or item.value['vlan'] == '48')
   tags:
     - convertNAC3
+    - convertNACops
+    - NACglobal
 
-- name: IOS - no shut vlan99 connected interfaces
+- name: IOS - shut vlan99 connected interfaces
   ios_interfaces:
     config:
-      - name: "{{ item.name }}"
+      - name: "{{ item.key }}"
         enabled: true
-  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  loop: "{{ int['interfaces'] | dict2items }}"
   when:
-    - ansible_network_os == 'ios' and ansible_net_interfaces[item.name].operstatus == 'up' and item.access.vlan is defined and item.access.vlan == 99
+    - ansible_network_os == 'ios' and (item.value['vlan'] == '24' or item.value['vlan'] == '40' or item.value['vlan'] == '48')
   tags:
     - convertNAC3
+    - convertNACops
+    - NACglobal
