@@ -17,14 +17,6 @@
   tags:
     - test
 
-# - name: Debug show interfaces
-#   debug:
-#     msg: "{{ result['stdout'][0] }}"
-#   delegate_to: localhost
-#   when: ansible_network_os == 'ios'
-#   tags:
-#     - test
-
 - name: Debug Genie Filter
   set_fact:
     int: "{{ result['stdout'][0] | parse_genie(command='show interfaces status', os='ios') }}"
@@ -35,7 +27,7 @@
 
 - name: Debug Genie Filter Interfaces
   debug:
-    msg: "{{ item }}"
+    msg: "{{ item.key }}"
   delegate_to: localhost
   loop: "{{ int['interfaces'] | dict2items }}"
   when: ansible_network_os == 'ios' and item.value['vlan'] == '24'
