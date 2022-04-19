@@ -8,6 +8,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
+    - NACinterfaces
     - convertNAC1
     - convertNAC2
     - convertNAC3
@@ -25,6 +26,7 @@
     - convertNAC2
     - convertNAC3
     - NACglobal
+    - NACinterfaces
     - napalm
 
 - name: Read in parse_genie role
@@ -33,6 +35,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
+    - NACinterfaces
     - convertNAC1
     - convertNACops
 
@@ -45,6 +48,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
+    - NACinterfaces
     - convertNAC1
     - convertNACops
 
@@ -55,6 +59,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
+    - NACinterfaces
     - convertNAC1
     - convertNACops
 
@@ -83,7 +88,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - NACinterfaces
+
 
 - debug:
     msg: "{{ item }}"
@@ -231,36 +236,36 @@
     - NACglobal
     - convertNACops
 
-- name: IOS - Configure template TEMPLATE_TRUNK_ACCESS_SWITCH
-  ios_config:
-    lines:
-      - switchport trunk allowed vlan 8,16,24,40,169,240,999
-      - switch trunk native vlan 999
-      - switchport mode trunk
-      - description Uplink To Switch
-    parents: template TEMPLATE_TRUNK_ACCESS_SWITCH
-    replace: block
-  when:
-    - ansible_network_os == 'ios'
-  tags:
-    - convertNAC1
-    - NACglobal
-    - convertNACops
+# - name: IOS - Configure template TEMPLATE_TRUNK_ACCESS_SWITCH
+#   ios_config:
+#     lines:
+#       - switchport trunk allowed vlan 8,16,24,40,169,240,999
+#       - switch trunk native vlan 999
+#       - switchport mode trunk
+#       - description Uplink To Switch
+#     parents: template TEMPLATE_TRUNK_ACCESS_SWITCH
+#     replace: block
+#   when:
+#     - ansible_network_os == 'ios'
+#   tags:
+#     - convertNAC1
+#     - NACglobal
+#     - convertNACops
 
-- name: IOS - Configure template TEMPLATE_TRUNK_ALL
-  ios_config:
-    lines:
-      - switch trunk native vlan 999
-      - switchport mode trunk
-      - description Uplink To Core Switch / Firewalls
-    parents: template TEMPLATE_TRUNK_ALL
-    replace: block
-  when:
-    - ansible_network_os == 'ios'
-  tags:
-    - convertNAC1
-    - NACglobal
-    - convertNACops
+# - name: IOS - Configure template TEMPLATE_TRUNK_ALL
+#   ios_config:
+#     lines:
+#       - switch trunk native vlan 999
+#       - switchport mode trunk
+#       - description Uplink To Core Switch / Firewalls
+#     parents: template TEMPLATE_TRUNK_ALL
+#     replace: block
+#   when:
+#     - ansible_network_os == 'ios'
+#   tags:
+#     - convertNAC1
+#     - NACglobal
+#     - convertNACops
 
 - name: IOS - Configure template TEMPLATE_CSW
   ios_config:
@@ -271,7 +276,7 @@
     parents: template TEMPLATE_CSW
     replace: block
   when:
-    - ansible_network_os == 'ios'
+    - ansible_network_os == 'ios' and 'CORE' in group_names
   tags:
     - convertNAC1
     - NACglobal
@@ -286,7 +291,7 @@
     parents: template TEMPLATE_PANFW_MGMT
     replace: block
   when:
-    - ansible_network_os == 'ios'
+    - ansible_network_os == 'ios' and 'CORE' in group_names
   tags:
     - convertNAC1
     - NACglobal
@@ -329,7 +334,7 @@
     - ansible_network_os == "ios" and (item.value[0].platform is defined and "Meraki" in item.value[0].platform)
   tags:
     - convertNAC1
-    - NACglobal
+    - NACinterfaces
 
 # - debug:
 #     msg: "{{ item }}"
@@ -374,7 +379,7 @@
       napalm_interfaces[item.name]['description'] == 'NAC Endpoints')
   tags:
     - convertNAC1
-    - NACglobal
+    - NACinterfaces
 
 - name: IOS - Configure Interfaces for NAC
   ios_config:
@@ -390,7 +395,7 @@
       napalm_interfaces[item.name]['description'] == 'NAC Endpoints')
   tags:
     - convertNAC1
-    - NACglobal
+    - NACinterfaces
 
 - name: IOS-XE - Configure Interfaces for NAC - Ops Device
   ios_config:
@@ -405,6 +410,7 @@
   tags:
     - convertNAC1
     - convertNACops
+    - NACinterfaces
 
 - name: IOS - Configure Interfaces for NAC - Ops Device
   ios_config:
@@ -418,6 +424,7 @@
   tags:
     - convertNAC1
     - convertNACops
+    - NACinterfaces
 
 
 - name: IOS - Enable new-style authentication
@@ -931,7 +938,7 @@
   tags:
     - convertNAC3
     - convertNACops
-    - NACglobal
+    - NACinterfaces
 
 - name: IOS - no shut vlan 24 40 48 connected interfaces
   ios_interfaces:
@@ -944,4 +951,4 @@
   tags:
     - convertNAC3
     - convertNACops
-    - NACglobal
+    - NACinterfaces
