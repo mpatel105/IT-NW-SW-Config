@@ -170,6 +170,7 @@ interfaces:
         switchport_mode: trunk
         switchport_trunk_vlans: 8,24,40,48,169,240
         switchport_trunk_native_vlan: 99
+        shutdown: true
     Port-channel3:
         description: PO3 test2
         switchport_access_vlan: 169
