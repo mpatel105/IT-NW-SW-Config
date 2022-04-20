@@ -171,7 +171,7 @@ interfaces:
         switchport_trunk_vlans: 8,24,40,48,240
     Port-channel3:
         description: PO3 test
-        switchport_access_vlan: '8'
+        switchport_access_vlan: '40'
         switchport_mode: access
     Vlan1:
         shutdown: true
