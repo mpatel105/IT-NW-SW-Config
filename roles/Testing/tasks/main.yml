@@ -140,7 +140,7 @@
       - "{% if item.value.switchport_mode is defined %}switchport mode {{ item.value.switchport_mode }}{% endif %}"
     parents: interface {{ item.key }}
 #    before: default interface {{ item.key }}
-    match: exact
+#    match: exact
   loop: "{{ interfaces | default({}) | dict2items }}"
   when:
     - ansible_network_os == 'ios' and 'Port-channel' in item.key
