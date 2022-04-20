@@ -128,7 +128,7 @@
   when:
     - ansible_network_os == 'ios' and item.value.source_template is defined
   tags:
-    - write
+    - writeTEMPLATE
 
 - name: IOS - Configure Port-Channel
   ios_config:
@@ -143,4 +143,4 @@
   when:
     - ansible_network_os == 'ios' and 'Port-channel' in item.key
   tags:
-    - write
+    - writeTRUNK
