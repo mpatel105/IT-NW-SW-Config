@@ -140,7 +140,7 @@
       - "{% if item.value.switchport_mode is defined %}switchport mode {{ item.value.switchport_mode }}{% endif %}"
       - "{% if item.value.switchport_trunk_native_vlan is defined %}switchport trunk native vlan {{ item.value.switchport_trunk_native_vlan }}{% endif %}"
       - "{% if item.value.shutdown is defined and item.value.shutdown %}shutdown{% endif %}"
-      - "{% if item.value.shutdown is defined and !item.value.shutdown %}no shutdown{% endif %}"
+      - "{% if item.value.shutdown is defined and  not item.value.shutdown %}no shutdown{% endif %}"
       - "{% if item.value.shutdown is not defined %}no shutdown{% endif %}"
     parents: interface {{ item.key }}
 #    before: default interface {{ item.key }}
