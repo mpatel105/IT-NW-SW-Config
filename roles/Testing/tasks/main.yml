@@ -133,9 +133,9 @@
 - name: IOS - Configure Port-Channel
   ios_config:
     lines:
-      - "{% if item.value.description is defined %}description {{ item.value.description }}"
-      - "{% if item.value.switchport_mode is defined %}switchport mode {{ item.value.switchport_mode }}"
-      - "{% if item.value.switchport_trunk_vlans is defined %}switchport trunk allowed vlan {{ item.value.switchport_trunk_vlans }}"
+      - "{% if item.value.description is defined %}description {{ item.value.description }}{% endif %}"
+      - "{% if item.value.switchport_mode is defined %}switchport mode {{ item.value.switchport_mode }}{% else %}{% endif %}"
+      - "{% if item.value.switchport_trunk_vlans is defined %}switchport trunk allowed vlan {{ item.value.switchport_trunk_vlans }}{% else %}{% endif %}"
     parents: interface {{ item.key }}
 #    before: default interface {{ item.key }}
     match: exact
