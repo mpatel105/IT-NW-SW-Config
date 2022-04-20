@@ -111,8 +111,8 @@
 
 - name: read YAML file
   debug:
-    msg: "{{ item }}"
+    msg: "{{ item.value.source_template }}"
   loop: "{{ interfaces | default({}) | dict2items }}"
-  when: ansible_network_os == 'ios'
+  when: ansible_network_os == 'ios' and item.value.source_template is defined
   tags:
     - read
