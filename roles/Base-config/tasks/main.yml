@@ -1,3 +1,5 @@
 ---
 - include_tasks: ios_global.yml
 - include_tasks: nxos_global.yml
+#- include_tasks: ios_global_RADIUS.yml
+#- include_tasks: ios_global_NAC.yml
