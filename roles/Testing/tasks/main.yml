@@ -82,8 +82,8 @@
 - name: copy to file
   copy:
     dest: "{{ dest_folder }}/{{ inventory_hostname }}.yml"
-#    content: "{{ result2.msg | to_nice_yaml }}"
-    content: "{{ result2.msg }}"
+    content: "{{ result2.msg | to_nice_yaml }}"
+#    content: "{{ result2.msg }}"
   delegate_to: localhost
   when: ansible_network_os == 'ios'
   tags:
