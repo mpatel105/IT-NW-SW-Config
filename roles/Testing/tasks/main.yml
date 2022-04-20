@@ -116,3 +116,17 @@
   when: ansible_network_os == 'ios' and item.value.source_template is defined
   tags:
     - read
+    - write
+
+- name: IOS - Configure Interfaces from template
+  ios_config:
+    lines:
+      - source template {{ item.value.source_template }}
+    parents: interface {{ item.key }}
+    before: default interface {{ item.key }}
+    match: exact
+  loop: "{{ interfaces | default({}) | dict2items }}"
+  when:
+    - ansible_network_os == 'ios' and item.value.source_template is defined
+  tags:
+    - write
