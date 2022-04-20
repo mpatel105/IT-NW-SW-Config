@@ -24,6 +24,7 @@ banner: |
   *  law. Please disconnect immediately.                                     *
   ****************************************************************************
 
+hostname: "{{ inventory_hostname }}"
 
 vlan_list_core:
   ISP1.WAN: 900

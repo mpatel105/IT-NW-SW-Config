@@ -33,7 +33,9 @@
 #   tags:
 #     - test
 
-
+##############################################################################################
+### Create device YAML file
+##############################################################################################
 - name: IOS show interfaces
   ios_command:
     commands: show running-config | section ^interface
@@ -102,3 +104,15 @@
     chdir: "{{ dest_folder }}"
   tags:
     - test
+
+##############################################################################################
+### read device YAML files
+##############################################################################################
+
+- name: read YAML file
+  debug:
+    msg: "{{ item }}"
+  loop: "{{ interfaces | default({}) | dict2items }}"
+  when: ansible_network_os == 'ios'
+  tags:
+    - read
