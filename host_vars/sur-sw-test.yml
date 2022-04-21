@@ -4,7 +4,9 @@ interfaces:
         shutdown: true
         vrf: Mgmt-vrf
     GigabitEthernet1/0/1:
-        source_template: TEMPLATE_TRUNK_WIFI_AP
+        description: test
+        switchport_mode: access
+        switchport_access_vlan: 8
     GigabitEthernet1/0/10:
         source_template: TEMPLATE_TRUNK_WIFI_AP
     GigabitEthernet1/0/11:
