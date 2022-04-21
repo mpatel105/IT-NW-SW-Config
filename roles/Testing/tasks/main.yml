@@ -167,7 +167,8 @@
     lines:
       - "{% if item.value.description is defined %}description {{ item.value.description }}{% endif %}"
       - "{% if item.value.shutdown is defined and item.value.shutdown %}shutdown{% endif %}"
-      - "{% if item.value.shutdown is defined and  not item.value.shutdown %}no shutdown{% endif %}"      
+      - "{% if item.value.shutdown is defined and  not item.value.shutdown %}no shutdown{% endif %}"
+      - "{% if item.value.ipv4 is defined and item.value.ipv4.ip is defined and item.value.ipv4.netmask is defined %}ip address {{ item.value.ipv4.ip }} {{ item.value.ipv4.netmask }}{% endif %}"
     parents: interface {{ item.key }}
   loop: "{{ interfaces | default({}) | dict2items }}"
   when:
