@@ -131,6 +131,7 @@
     - ansible_network_os == 'ios' and item.value.source_template is defined
   tags:
     - writeTEMPLATE
+    - write
 
 - name: IOS - Configure Port-Channel
   ios_config:
@@ -149,6 +150,7 @@
     - ansible_network_os == 'ios' and 'Port-channel' in item.key
   tags:
     - writeTRUNK
+    - write
 
 - name: IOS - Configure interface channel-group
   ios_config:
@@ -161,6 +163,7 @@
     - ansible_network_os == 'ios' and item.value.channel_group is defined
   tags:
     - writeCHANNEL
+    - write
 
 - name: IOS - Configure VLAN interface
   ios_config:
@@ -175,3 +178,22 @@
     - ansible_network_os == 'ios' and 'Vlan' in item.key
   tags:
     - writeVLAN
+    - write
+
+- name: IOS - Configure Interfaces from template
+  ios_config:
+    lines:
+      - description TEST OK
+    parents: interface {{ item.key }}
+    before: default interface {{ item.key }}
+    match: exact
+  loop: "{{ interfaces | default({}) | dict2items }}"
+  when:
+    - ansible_network_os == 'ios'
+    - item.value.source_template is not defined
+    - 'Port-channel' not in item.key
+    - item.value.channel_group is not defined
+    - 'Vlan' not in item.key
+  tags:
+    - writeOTHER
+    - write
