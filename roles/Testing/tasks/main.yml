@@ -121,8 +121,8 @@
   ios_config:
     lines:
       - source template {{ item.value.source_template }}
-      - {% if item.value.shutdown is defined and item.value.shutdown %}shutdown{% endif %}
-      - {% if item.value.shutdown is defined and  not item.value.shutdown %}no shutdown{% endif %}
+      - "{% if item.value.shutdown is defined and item.value.shutdown %}shutdown{% endif %}"
+      - "{% if item.value.shutdown is defined and  not item.value.shutdown %}no shutdown{% endif %}"
     parents: interface {{ item.key }}
     before: default interface {{ item.key }}
     match: exact
