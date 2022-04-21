@@ -185,7 +185,7 @@
     lines:
       - description TEST OK
     parents: interface {{ item.key }}
-    before: default interface {{ item.key }}
+#    before: default interface {{ item.key }}
     match: exact
   loop: "{{ interfaces | default({}) | dict2items }}"
   when:
