@@ -190,8 +190,8 @@
   loop: "{{ interfaces | default({}) | dict2items }}"
   when:
     - ansible_network_os == 'ios' and
-      'Ethernet0/0' not in item.key
-      item.value.source_template is not defined and 
+      'Ethernet0/0' not in item.key and
+      item.value.source_template is not defined and
       'Port-channel' not in item.key and
       item.value.channel_group is not defined
       and 'Vlan' not in item.key
