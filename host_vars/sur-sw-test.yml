@@ -7,6 +7,9 @@ interfaces:
         description: test
         switchport_mode: access
         switchport_access_vlan: 8
+        switchport_trunk_vlans: 8,24,40,48,169,240
+        switchport_trunk_native_vlan: 99
+        shutdown: true        
     GigabitEthernet1/0/10:
         source_template: TEMPLATE_TRUNK_WIFI_AP
     GigabitEthernet1/0/11:
