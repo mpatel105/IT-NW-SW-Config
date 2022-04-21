@@ -5,10 +5,8 @@ interfaces:
         vrf: Mgmt-vrf
     GigabitEthernet1/0/1:
         source_template: TEMPLATE_TRUNK_WIFI_AP
-        shutdown: true
     GigabitEthernet1/0/10:
         source_template: TEMPLATE_TRUNK_WIFI_AP
-        shutdown: false
     GigabitEthernet1/0/11:
         source_template: TEMPLATE_TRUNK_WIFI_AP
     GigabitEthernet1/0/12:
@@ -43,7 +41,7 @@ interfaces:
     GigabitEthernet1/0/26:
     GigabitEthernet1/0/27:
     GigabitEthernet1/0/28:
-    GigabitEthernet1/0/29: 
+    GigabitEthernet1/0/29:
     GigabitEthernet1/0/3:
         source_template: TEMPLATE_STANDARD_ENDPOINTS
     GigabitEthernet1/0/30: {}
