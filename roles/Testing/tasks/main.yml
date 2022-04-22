@@ -140,7 +140,7 @@
       - "{% if item.value.description is defined %}description {{ item.value.description }}{% endif %}"
       - "channel-group {{ item.value.channel_group.chg }} mode {{ item.value.channel_group.mode }}"
     parents: interface {{ item.key }}
-    replace: block    
+    replace: block
     before:
       - "{% if item.value.reset is defined and item.value.reset %}default interface {{ item.key }}{% endif %}"
   loop: "{{ interfaces | default({}) | dict2items }}"
@@ -179,6 +179,7 @@
       - "{% if item.value.shutdown is defined and item.value.shutdown %}shutdown{% endif %}"
       - "{% if item.value.shutdown is defined and  not item.value.shutdown %}no shutdown{% endif %}"
     parents: interface {{ item.key }}
+    replace: block
     before:
       - "{% if item.value.reset is defined and item.value.reset %}default interface {{ item.key }}{% endif %}"
   loop: "{{ interfaces | default({}) | dict2items }}"
