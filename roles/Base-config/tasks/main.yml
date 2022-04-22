@@ -1,6 +1,12 @@
 ---
-- include_tasks: ios_global.yml
-- include_tasks: ios_interfaces.yml
-- include_tasks: nxos_global.yml
+- import_tasks: ios_global.yml
+  when: ansible_network_os == 'ios'
+
+- import_tasks: ios_interfaces.yml
+  when: ansible_network_os == 'ios'
+
+- import_tasks: nxos_global.yml
+  when: ansible_network_os == 'nxos'
+
 #- include_tasks: ios_global_RADIUS.yml
 #- include_tasks: ios_global_NAC.yml
