@@ -120,6 +120,7 @@
 - name: IOS - Configure Interfaces from template
   ios_config:
     lines:
+      - "{% if item.value.device_tracking is defined and item.value.device_tracking.attach_policy is defined %}device-tracking attach-policy {{ item.value.device_tracking.attach_policy }}{% endif %}"
       - source template {{ item.value.source_template }}
       - "{% if item.value.shutdown is defined and item.value.shutdown %}shutdown{% endif %}"
       - "{% if item.value.shutdown is defined and  not item.value.shutdown %}no shutdown{% endif %}"
@@ -133,6 +134,21 @@
     - writeTEMPLATE
     - write
 
+- name: IOS - Configure interface channel-group
+  ios_config:
+    lines:
+      - "{% if item.value.description is defined %}description {{ item.value.description }}{% endif %}"
+      - "channel-group {{ item.value.channel_group.chg }} mode {{ item.value.channel_group.mode }}"
+    parents: interface {{ item.key }}
+    before:
+      - "{% if item.value.reset is defined and item.value.reset %}default interface {{ item.key }}{% endif %}"
+  loop: "{{ interfaces | default({}) | dict2items }}"
+  when:
+    - ansible_network_os == 'ios' and item.value.channel_group is defined
+  tags:
+    - writeCHANNEL
+    - write
+
 - name: IOS - Configure Port-Channel
   ios_config:
     lines:
@@ -140,29 +156,17 @@
       - "{% if item.value.switchport_mode is defined %}switchport mode {{ item.value.switchport_mode }}{% endif %}"
       - "{% if item.value.switchport_trunk_vlans is defined %}switchport trunk allowed vlan {{ item.value.switchport_trunk_vlans }}{% endif %}"
       - "{% if item.value.switchport_access_vlan is defined %}switchport access vlan {{ item.value.switchport_access_vlan }}{% endif %}"
-      - "{% if item.value.switchport_mode is defined %}switchport mode {{ item.value.switchport_mode }}{% endif %}"
       - "{% if item.value.switchport_trunk_native_vlan is defined %}switchport trunk native vlan {{ item.value.switchport_trunk_native_vlan }}{% endif %}"
       - "{% if item.value.shutdown is defined and item.value.shutdown %}shutdown{% endif %}"
       - "{% if item.value.shutdown is defined and  not item.value.shutdown %}no shutdown{% endif %}"
     parents: interface {{ item.key }}
+    before:
+      - "{% if item.value.reset is defined and item.value.reset %}default interface {{ item.key }}{% endif %}"
   loop: "{{ interfaces | default({}) | dict2items }}"
   when:
     - ansible_network_os == 'ios' and 'Port-channel' in item.key
   tags:
     - writeTRUNK
-    - write
-
-- name: IOS - Configure interface channel-group
-  ios_config:
-    lines:
-      - "{% if item.value.description is defined %}description {{ item.value.description }}{% endif %}"
-      - "channel-group {{ item.value.channel_group.chg }} mode {{ item.value.channel_group.mode }}"
-    parents: interface {{ item.key }}
-  loop: "{{ interfaces | default({}) | dict2items }}"
-  when:
-    - ansible_network_os == 'ios' and item.value.channel_group is defined
-  tags:
-    - writeCHANNEL
     - write
 
 - name: IOS - Configure VLAN interface
@@ -173,6 +177,8 @@
       - "{% if item.value.shutdown is defined and  not item.value.shutdown %}no shutdown{% endif %}"
       - "{% if item.value.ipv4 is defined and item.value.ipv4.ip is defined and item.value.ipv4.netmask is defined %}ip address {{ item.value.ipv4.ip }} {{ item.value.ipv4.netmask }}{% endif %}"
     parents: interface {{ item.key }}
+    before:
+      - "{% if item.value.reset is defined and item.value.reset %}default interface {{ item.key }}{% endif %}"  
   loop: "{{ interfaces | default({}) | dict2items }}"
   when:
     - ansible_network_os == 'ios' and 'Vlan' in item.key
