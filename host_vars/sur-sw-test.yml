@@ -187,7 +187,6 @@ interfaces:
         switchport_trunk_vlans: 8,24,40,48,169,240
         switchport_trunk_native_vlan: 99
         shutdown: false
-        reset: true
     Port-channel3:
         description: PO3 test2
         switchport_access_vlan: 169
@@ -199,7 +198,7 @@ interfaces:
             ip: 10.33.0.30
             netmask: 255.255.255.0
     Vlan190:
-        shutdown: true
+        shutdown: false
         reset: true
         ipv4:
             ip: 10.33.190.30
