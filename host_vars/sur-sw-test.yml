@@ -14,7 +14,7 @@ interfaces:
     GigabitEthernet1/0/10:
         device_tracking:
           attach_policy: ip_device_tracking_policy
-        source_template: TEMPLATE_TRUNK_WIFI_AP
+        source_template: TEMPLATE_STANDARD_ENDPOINTS
     GigabitEthernet1/0/11:
         source_template: TEMPLATE_TRUNK_WIFI_AP
     GigabitEthernet1/0/12:
