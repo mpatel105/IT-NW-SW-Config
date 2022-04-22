@@ -55,7 +55,7 @@
       - "{% if item.value.shutdown is defined and  not item.value.shutdown %}no shutdown{% endif %}"
     parents: interface {{ item.key }}
     replace: block
-    before: "{% if item.value.reset is defined and item.value.reset %}default interface {{ item.key }}{% else %}{% endif %}"
+    before: "{% if item.value.reset is defined and item.value.reset %}default interface {{ item.key }}{% else %}\n{% endif %}"
   loop: "{{ interfaces | default({}) | dict2items }}"
   when:
     - ansible_network_os == 'ios' and 'Port-channel' in item.key
