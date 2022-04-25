@@ -35,7 +35,7 @@
       - "channel-group {{ item.value.channel_group.chg }} mode {{ item.value.channel_group.mode }}"
     parents: interface {{ item.key }}
     replace: block
-#    match: exact
+    match: "{% if item.value.reset is defined and item.value.reset %}exact{% else %}line{% endif %}"
     before: "{% if item.value.reset is defined and item.value.reset %}default interface {{ item.key }}{% else %}do show int {{ item.key }}{% endif %}"
   loop: "{{ interfaces | default({}) | dict2items }}"
   when:
