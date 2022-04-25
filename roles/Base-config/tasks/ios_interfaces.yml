@@ -36,7 +36,7 @@
     parents: interface {{ item.key }}
     replace: block
     match: exact
-    before: '{% if item.value.reset is defined and item.value.reset %}default interface {{ item.key }}{% else %}\n{% endif %}'
+    before: '{% if item.value.reset is defined and item.value.reset %}default interface {{ item.key }}{% else %}""{% endif %}'
   loop: "{{ interfaces | default({}) | dict2items }}"
   when:
     - ansible_network_os == 'ios' and item.value.channel_group is defined
