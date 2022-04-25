@@ -35,7 +35,7 @@
       - "channel-group {{ item.value.channel_group.chg }} mode {{ item.value.channel_group.mode }}"
     parents: interface {{ item.key }}
     replace: block
-    before: '{% if item.value.reset is defined and item.value.reset %}default interface {{ item.key }}{% else %}do show int {{ item.key }}{% endif %}'
+    before: '{% if item.value.reset is defined and item.value.reset %}default interface {{ item.key }}{% else %}\n{% endif %}'
   loop: "{{ interfaces | default({}) | dict2items }}"
   when:
     - ansible_network_os == 'ios' and item.value.channel_group is defined
