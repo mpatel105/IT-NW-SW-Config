@@ -36,7 +36,7 @@
     parents: interface {{ item.key }}
     replace: block
     match: exact
-#    before: "{% if item.value.reset is defined and item.value.reset %}default interface {{ item.key }}{% else %}{% endif %}"
+    before: "{% if item.value.reset is defined and item.value.reset %}default interface {{ item.key }}{% else %}do show int {{ item.key }}{% endif %}"
     before: ""
   loop: "{{ interfaces | default({}) | dict2items }}"
   when:
