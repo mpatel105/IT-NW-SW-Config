@@ -168,7 +168,6 @@ interfaces:
     GigabitEthernet2/0/9:
         source_template: TEMPLATE_TRUNK_WIFI_AP
     GigabitEthernet2/1/1:
-      description: channel2
       channel_group:
         chg: 2
         mode: active
