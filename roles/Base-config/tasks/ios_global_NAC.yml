@@ -1,1 +1,990 @@
 ---
+---
+# tasks file for test
+#
+# TAG list :
+# - For already dot1x switch with IBNS1.0 run following tags:
+#      - ConvertNAC1 (prepare global parameters and convert interfaces to template without NAC)
+#      - reload the switch to reset old dot1x parameter
+#      - ConvertNAC2 (apply IBNS2.0 & all global config)
+#      - ConverNAC3: only if the phones or ops devices don't take NAc config, shut / no shut these interfaces
+#
+# - For new NAC configuration, run following tag:
+#      - NACglobal
+#
+#
+
+- name: IOS - get facts
+  ios_facts:
+    gather_network_resources:
+      - 'l2_interfaces'
+  when: ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - NACinterfaces
+    - convertNAC1
+    - convertNAC2
+    - convertNAC3
+    - convertNACops
+    - radius
+
+
+- name: napalm get_facts
+  napalm.napalm.get_facts:
+    filter: facts,interfaces,lldp_neighbors_detail,vlans
+  register: napalmfacts
+  when: ansible_network_os == 'ios'
+  tags:
+    - convertNAC1
+    - convertNAC2
+    - convertNAC3
+    - NACglobal
+    - NACinterfaces
+    - napalm
+
+- name: Read in parse_genie role
+  include_role:
+    name: clay584.parse_genie
+  when: ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - NACinterfaces
+    - convertNAC1
+    - convertNACops
+
+- name: IOS show interfaces status
+  ios_command:
+    commands: show interfaces status
+  register: intstatusresult
+  vars:
+    ansible_command_timeout: 300
+  when: ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - NACinterfaces
+    - convertNAC1
+    - convertNACops
+
+- name: Debug Genie Filter
+  set_fact:
+    int: "{{ intstatusresult['stdout'][0] | parse_genie(command='show interfaces status', os='ios') }}"
+  delegate_to: localhost
+  when: ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - NACinterfaces
+    - convertNAC1
+    - convertNACops
+
+- name: IOS - Configure Blackhole vlan
+  ios_vlans:
+    config:
+      - name: "{{ vlan_blackhole_name }}"
+        vlan_id: "{{ vlan_blackhole_id }}"
+        state: active
+        shutdown: disabled
+    state: merged
+  when: ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC1
+    - convertNACops
+
+- name: IOS - Configure Quarantine vlan
+  ios_vlans:
+    config:
+      - name: "{{ vlan_quarantine_name }}"
+        vlan_id: "{{ vlan_quarantine_id }}"
+        state: active
+        shutdown: disabled
+    state: merged
+  when: ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+
+
+- debug:
+    msg: "{{ item }}"
+  loop: "{{ napalm_vlans['99']['interfaces'] }}"
+  ignore_errors: yes
+  tags:
+    - napalm
+
+- name: IOS - Configure NAC - new-model
+  ios_command:
+    commands:
+      - configure terminal
+      - aaa new-model
+      - exit
+  when: ansible_network_os == 'ios'
+  tags:
+    - radius
+    - NACglobal
+
+
+- name: IOS - Configure Portnox-Radius-SV2
+  ios_config:
+    lines:
+      - address ipv4 {{ talend_portnox_SV2 }} auth-port {{ talend_portnox_auth_port }} acct-port {{ talend_portnox_acct_port }}
+      - timeout 3
+      - key {{ talend_portnox_SV2_radius_key }}
+    parents: radius server {{ talend_portnox_SV2_name }}
+  when: ansible_network_os == 'ios'
+  tags:
+    - radius
+    - NACglobal
+
+
+- name: IOS - Configure Portnox-Radius-PA7
+  ios_config:
+    lines:
+      - address ipv4 {{ talend_portnox_PA7 }} auth-port {{ talend_portnox_auth_port }} acct-port {{ talend_portnox_acct_port }}
+      - timeout 3
+      - key {{ talend_portnox_PA7_radius_key }}
+    parents: radius server {{ talend_portnox_PA7_name }}
+  when: ansible_network_os == 'ios'
+  tags:
+    - radius
+    - NACglobal
+
+- name: IOS - Configure Portnox-Radius-US
+  ios_config:
+    lines:
+      - address ipv4 {{ talend_portnox_US }} auth-port {{ talend_portnox_US_auth_port }} acct-port {{ talend_portnox_US_acct_port }}
+      - timeout 3
+      - key {{ talend_portnox_US_radius_key }}
+    parents: radius server {{ talend_portnox_US_name }}
+  when: ansible_network_os == 'ios'
+  tags:
+    - radius
+    - NACglobal
+
+- name: IOS - Configure Portnox-Radius-EU
+  ios_config:
+    lines:
+      - address ipv4 {{ talend_portnox_EU }} auth-port {{ talend_portnox_EU_auth_port }} acct-port {{ talend_portnox_EU_acct_port }}
+      - timeout 3
+      - key {{ talend_portnox_EU_radius_key }}
+    parents: radius server {{ talend_portnox_EU_name }}
+  when: ansible_network_os == 'ios'
+  tags:
+    - radius
+    - NACglobal
+
+- name: IOS - Configure NAC group Portnox-RADIUS-Group
+  ios_config:
+    lines:
+      - server name {{ talend_portnox_1_name }}
+      - server name {{ talend_portnox_2_name }}
+      - server name {{ talend_portnox_3_name }}
+      - server name {{ talend_portnox_4_name }}
+      - deadtime 5
+    parents: aaa group server radius Portnox-RADIUS-Group
+    before: no aaa group server radius Portnox-RADIUS-Group
+    match: exact
+  when: ansible_network_os == 'ios'
+  tags:
+    - radius
+    - NACglobal
+
+
+- name: IOS - Configure NAC server radius dynamic-author
+  ios_config:
+    lines:
+      - client {{ talend_portnox_1 }} server-key {{ talend_portnox_1_radius_key }}
+      - client {{ talend_portnox_2 }} server-key {{ talend_portnox_2_radius_key }}
+      - client {{ talend_portnox_3 }} server-key {{ talend_portnox_3_radius_key }}
+      - client {{ talend_portnox_4 }} server-key {{ talend_portnox_4_radius_key }}
+    parents: aaa server radius dynamic-author
+    before: no aaa server radius dynamic-author
+    match: exact
+  when: ansible_network_os == 'ios'
+  tags:
+    - radius
+    - NACglobal
+
+- name: IOS - Configure NAC - global config
+  ios_command:
+    commands:
+      - configure terminal
+      - aaa authentication dot1x default group Portnox-RADIUS-Group
+      - aaa authorization network default group Portnox-RADIUS-Group
+      - aaa accounting update newinfo periodic 2880
+      - aaa accounting dot1x default start-stop group Portnox-RADIUS-Group
+      - ip radius source-interface Vlan999
+      - radius-server vsa send authentication
+      - radius-server vsa send accounting
+      - radius-server dead-criteria time 10 tries 3
+      - radius-server deadtime 5
+      - dot1x system-auth-control
+      - exit
+  when: ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+
+- name: IOS - Configure template TEMPLATE_NAC_ENDPOINTS
+  ios_config:
+    lines:
+      - spanning-tree portfast
+      - switchport access vlan {{ vlan_blackhole_id }}
+      - switchport mode access
+      - description NAC Endpoints
+    parents: template TEMPLATE_NAC_ENDPOINTS
+    replace: block
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - convertNAC1
+    - NACglobal
+    - convertNACops
+
+- name: IOS - Configure template TEMPLATE_STANDARD_ENDPOINTS
+  ios_config:
+    lines:
+      - spanning-tree portfast
+      - switchport access vlan 8
+      - switchport mode access
+      - description Standard Endpoints (NO NAC)
+    parents: template TEMPLATE_STANDARD_ENDPOINTS
+    replace: block
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - convertNAC1
+    - NACglobal
+    - convertNACops
+
+- name: IOS - Configure template TEMPLATE_TRUNK_WIFI_AP
+  ios_config:
+    lines:
+      - switchport trunk allowed vlan 16,24,240,999
+      - switch trunk native vlan 999
+      - switchport mode trunk
+      - description Wifi AP
+    parents: template TEMPLATE_TRUNK_WIFI_AP
+    replace: block
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - convertNAC1
+    - NACglobal
+    - convertNACops
+
+# - name: IOS - Configure template TEMPLATE_TRUNK_ACCESS_SWITCH
+#   ios_config:
+#     lines:
+#       - switchport trunk allowed vlan 8,16,24,40,169,240,999
+#       - switch trunk native vlan 999
+#       - switchport mode trunk
+#       - description Uplink To Switch
+#     parents: template TEMPLATE_TRUNK_ACCESS_SWITCH
+#     replace: block
+#   when:
+#     - ansible_network_os == 'ios'
+#   tags:
+#     - convertNAC1
+#     - NACglobal
+#     - convertNACops
+
+# - name: IOS - Configure template TEMPLATE_TRUNK_ALL
+#   ios_config:
+#     lines:
+#       - switch trunk native vlan 999
+#       - switchport mode trunk
+#       - description Uplink To Core Switch / Firewalls
+#     parents: template TEMPLATE_TRUNK_ALL
+#     replace: block
+#   when:
+#     - ansible_network_os == 'ios'
+#   tags:
+#     - convertNAC1
+#     - NACglobal
+#     - convertNACops
+
+- name: IOS - Configure template TEMPLATE_CSW
+  ios_config:
+    lines:
+      - switchport mode access
+      - switchport access vlan 995
+      - description Link to Opengear Console Switch
+    parents: template TEMPLATE_CSW
+    replace: block
+  when:
+    - ansible_network_os == 'ios' and 'CORE' in group_names
+  tags:
+    - convertNAC1
+    - NACglobal
+    - convertNACops
+
+- name: IOS - Configure template TEMPLATE_PANFW_MGMT
+  ios_config:
+    lines:
+      - switchport mode access
+      - switchport access vlan 998
+      - description Link to PAN FW MGMT
+    parents: template TEMPLATE_PANFW_MGMT
+    replace: block
+  when:
+    - ansible_network_os == 'ios' and 'CORE' in group_names
+  tags:
+    - convertNAC1
+    - NACglobal
+    - convertNACops
+
+- name: IOS 3650/3850/9x00 - Configure NAC - global config device tracking
+  ios_command:
+    commands:
+      - configure terminal
+      - device-tracking policy ip_device_tracking_policy
+      - tracking enable
+      - exit
+  when: ansible_network_os == 'ios' and (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model) or ('9300' in ansible_net_model))
+  tags:
+    - convertNAC1
+    - NACglobal
+
+
+- name: IOS 2960X/3560CX - Configure NAC - global config device tracking
+  ios_command:
+    commands:
+      - configure terminal
+      - ip device tracking
+      - exit
+  when: ansible_network_os == 'ios' and ('2960' in ansible_net_model or '3560' in ansible_net_model)
+  tags:
+    - convertNAC1
+    - NACglobal
+    - convertNACops
+
+- name: IOS - Configure interface for Cisco Meraki
+  ios_config:
+    lines:
+      - source template TEMPLATE_TRUNK_WIFI_AP
+    parents: interface {{ item.key }}
+    before: default interface {{ item.key }}
+    match: exact
+  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
+  when:
+    - ansible_network_os == "ios" and (item.value[0].platform is defined and "Meraki" in item.value[0].platform)
+  tags:
+    - convertNAC1
+    - NACinterfaces
+
+# - debug:
+#     msg: "{{ item }}"
+#     #msg: "{{ item.key }}"
+#   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
+#   when:
+#     - ansible_network_os == 'ios' and item.value[0].platform is defined and "Cisco" in item.value[0].platform|lower
+#   tags:
+#     - NACglobal
+#     - convertNAC1
+
+# - name: IOS - Configure interface for Cisco access switch Trunk ports
+#  ios_config:
+#    lines:
+#      - source template TEMPLATE_TRUNK_ACCESS_SWITCH
+#    parents: interface {{ item.key }}
+#    match: exact
+#    after:
+#      - no switchport trunk native vlan
+#      - no switchport trunk allowed vlan
+#      - no switchport mode trunk
+#      - no description
+#  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
+#  when:
+#    - ansible_network_os == 'ios' and item.value[0].platform is defined and "cisco" in  item.value[0].platform|lower
+#  tags:
+#    - convertNAC1
+#    - NACglobal
+
+- name: IOS-XE - Configure Interfaces for NAC
+  ios_config:
+    lines:
+      - device-tracking attach-policy ip_device_tracking_policy
+      - source template TEMPLATE_NAC_ENDPOINTS
+    parents: interface {{ item.name }}
+    before: default interface {{ item.name }}
+    replace: block
+    match: exact
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS-XE' and ((item.access.vlan is defined and
+      (item.access.vlan == 99 or item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)) or
+      napalm_interfaces[item.name]['description'] == 'NAC Endpoints')
+  tags:
+    - convertNAC1
+    - NACinterfaces
+
+- name: IOS - Configure Interfaces for NAC
+  ios_config:
+    lines:
+      - source template TEMPLATE_NAC_ENDPOINTS
+    parents: interface {{ item.name }}
+    before: default interface {{ item.name }}
+    match: exact
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS' and ((item.access.vlan is defined and
+      (item.access.vlan == 99 or item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)) or
+      napalm_interfaces[item.name]['description'] == 'NAC Endpoints')
+  tags:
+    - convertNAC1
+    - NACinterfaces
+
+- name: IOS-XE - Configure Interfaces for NAC - Ops Device
+  ios_config:
+    lines:
+      - device-tracking attach-policy ip_device_tracking_policy
+      - source template TEMPLATE_NAC_ENDPOINTS
+    parents: interface {{ item.key }}
+    before: default interface {{ item.key }}
+    replace: block
+    match: exact
+  loop: "{{ int['interfaces'] | dict2items }}"
+  when: ansible_network_os == 'ios' and ansible_net_iostype == 'IOS-XE' and (item.value['vlan'] == '24' or item.value['vlan'] == '40' or item.value['vlan'] == '48')
+  tags:
+    - convertNAC1
+    - convertNACops
+    - NACinterfaces
+
+- name: IOS - Configure Interfaces for NAC - Ops Device
+  ios_config:
+    lines:
+      - source template TEMPLATE_NAC_ENDPOINTS
+    parents: interface {{ item.key }}
+    before: default interface {{ item.key }}
+    match: exact
+  loop: "{{ int['interfaces'] | dict2items }}"
+  when: ansible_network_os == 'ios' and ansible_net_iostype == 'IOS' and (item.value['vlan'] == '24' or item.value['vlan'] == '40' or item.value['vlan'] == '48')
+  tags:
+    - convertNAC1
+    - convertNACops
+    - NACinterfaces
+
+
+- name: IOS - Enable new-style authentication
+  cli_command:
+    command: '{{ item }}'
+    prompt:
+      - 'Do you wish to continue'
+    answer:
+      - 'yes'
+  loop:
+    - 'conf t'
+    - 'authentication convert-to new-style'
+    - 'exit'
+  ignore_errors: yes
+  when: ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure service-template CRITICAL_AUTH_VLAN
+  ios_config:
+    lines:
+      - vlan 8
+    parents: service-template CRITICAL_AUTH_VLAN
+    before: no service-template CRITICAL_AUTH_VLAN
+    match: exact
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure class-map IN_CRITICAL_VLAN
+  ios_config:
+    lines:
+      - match activated-service-template CRITICAL_AUTH_VLAN
+    parents: class-map type control subscriber match-any IN_CRITICAL_VLAN
+    before: no class-map type control subscriber match-any IN_CRITICAL_VLAN
+    match: exact
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure class-map NOT_IN_CRITICAL_VLAN
+  ios_config:
+    lines:
+      - match activated-service-template CRITICAL_AUTH_VLAN
+    parents: class-map type control subscriber match-none NOT_IN_CRITICAL_VLAN
+    before: no class-map type control subscriber match-none NOT_IN_CRITICAL_VLAN
+    match: exact
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure class-map AAA_SVR_DOWN_AUTHD_HOST
+  ios_config:
+    lines:
+      - match result-type aaa-timeout
+      - match authorization-status authorized
+    parents: class-map type control subscriber match-all AAA_SVR_DOWN_AUTHD_HOST
+    before: no class-map type control subscriber match-all AAA_SVR_DOWN_AUTHD_HOST
+    match: exact
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure class-map AAA_SVR_DOWN_UNAUTHD_HOST
+  ios_config:
+    lines:
+      - match result-type aaa-timeout
+      - match authorization-status unauthorized
+    parents: class-map type control subscriber match-all AAA_SVR_DOWN_UNAUTHD_HOST
+    before: no class-map type control subscriber match-all AAA_SVR_DOWN_UNAUTHD_HOST
+    match: exact
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure class-map DOT1X
+  ios_config:
+    lines:
+      - match method dot1x
+    parents: class-map type control subscriber match-all DOT1X
+    before: no class-map type control subscriber match-all DOT1X
+    match: exact
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure class-map DOT1X_FAILED
+  ios_config:
+    lines:
+      - match method dot1x
+      - match result-type method dot1x authoritative
+    parents: class-map type control subscriber match-all DOT1X_FAILED
+    before: no class-map type control subscriber match-all DOT1X_FAILED
+    match: exact
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure class-map DOT1X_MEDIUM_PRIO
+  ios_config:
+    lines:
+      - match authorizing-method-priority gt 20
+    parents: class-map type control subscriber match-all DOT1X_MEDIUM_PRIO
+    before: no class-map type control subscriber match-all DOT1X_MEDIUM_PRIO
+    match: exact
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure class-map DOT1X_NO_RESP
+  ios_config:
+    lines:
+      - match method dot1x
+      - match result-type method dot1x agent-not-found
+    parents: class-map type control subscriber match-all DOT1X_NO_RESP
+    before: no class-map type control subscriber match-all DOT1X_NO_RESP
+    match: exact
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure class-map DOT1X_TIMEOUT
+  ios_config:
+    lines:
+      - match method dot1x
+      - match result-type method dot1x method-timeout
+    parents: class-map type control subscriber match-all DOT1X_TIMEOUT
+    before: no class-map type control subscriber match-all DOT1X_TIMEOUT
+    match: exact
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure class-map MAB
+  ios_config:
+    lines:
+      - match method mab
+    parents: class-map type control subscriber match-all MAB
+    before: no class-map type control subscriber match-all MAB
+    match: exact
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure class-map MAB_FAILED
+  ios_config:
+    lines:
+      - match method mab
+      - match result-type method mab authoritative
+    parents: class-map type control subscriber match-all MAB_FAILED
+    before: no class-map type control subscriber match-all MAB_FAILED
+    match: exact
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure class-map SESSION_UNAUTH
+  ios_config:
+    lines:
+      - match authorization-status unauthorized
+    parents: class-map type control subscriber match-all SESSION_UNAUTH
+    before: no class-map type control subscriber match-all SESSION_UNAUTH
+    match: exact
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+
+- name: IOS - Configure policy-map NAC_POLICY event session-started 1/13
+  ios_config:
+    lines:
+      - 10 authenticate using dot1x retries 2 retry-time 0 priority 10
+      - 20 authenticate using mab priority 20
+    parents:
+      - policy-map type control subscriber NAC_POLICY
+      - event session-started match-all
+      - 10 class always do-until-failure
+    match: exact
+    before:
+      - policy-map type control subscriber NAC_POLICY
+      - event session-started match-all
+      - 10 class always do-until-failure
+      - no 10
+      - no 20
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure policy-map NAC_POLICY authentication-failure 2/13
+  ios_config:
+    lines:
+      - 10 terminate dot1x
+      - 20 authenticate using mab priority 20
+    parents:
+      - policy-map type control subscriber NAC_POLICY
+      - event authentication-failure match-first
+      - 5 class DOT1X_FAILED do-until-failure
+    match: exact
+    before:
+      - policy-map type control subscriber NAC_POLICY
+      - event authentication-failure match-first
+      - no 5
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure policy-map NAC_POLICY authentication-failure 3/13
+  ios_config:
+    lines:
+      - 10 clear-authenticated-data-hosts-on-port
+      - 20 activate service-template CRITICAL_AUTH_VLAN
+      - 30 authorize
+      - 40 pause reauthentication
+    parents:
+      - policy-map type control subscriber NAC_POLICY
+      - event authentication-failure match-first
+      - 10 class AAA_SVR_DOWN_UNAUTHD_HOST do-until-failure
+    match: exact
+    before:
+      - policy-map type control subscriber NAC_POLICY
+      - event authentication-failure match-first
+      - no 10
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure policy-map NAC_POLICY authentication-failure 4/13
+  ios_config:
+    lines:
+      - 10 pause reauthentication
+      - 20 authorize
+    parents:
+      - policy-map type control subscriber NAC_POLICY
+      - event authentication-failure match-first
+      - 20 class AAA_SVR_DOWN_AUTHD_HOST do-until-failure
+    match: exact
+    before:
+      - policy-map type control subscriber NAC_POLICY
+      - event authentication-failure match-first
+      - no 20
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure policy-map NAC_POLICY authentication-failure 5/13
+  ios_config:
+    lines:
+      - 10 terminate dot1x
+      - 20 authenticate using mab priority 20
+    parents:
+      - policy-map type control subscriber NAC_POLICY
+      - event authentication-failure match-first
+      - 30 class DOT1X_NO_RESP do-until-failure
+    match: exact
+    before:
+      - policy-map type control subscriber NAC_POLICY
+      - event authentication-failure match-first
+      - no 30
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure policy-map NAC_POLICY authentication-failure 6/13
+  ios_config:
+    lines:
+      - 10 terminate mab
+      - 20 authentication-restart 60
+    parents:
+      - policy-map type control subscriber NAC_POLICY
+      - event authentication-failure match-first
+      - 40 class MAB_FAILED do-until-failure
+    match: exact
+    before:
+      - policy-map type control subscriber NAC_POLICY
+      - event authentication-failure match-first
+      - no 40
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure policy-map NAC_POLICY authentication-failure 7/13
+  ios_config:
+    lines:
+      - 10 terminate dot1x
+      - 20 terminate mab
+      - 30 authentication-restart 60
+    parents:
+      - policy-map type control subscriber NAC_POLICY
+      - event authentication-failure match-first
+      - 60 class always do-until-failure
+    match: exact
+    before:
+      - policy-map type control subscriber NAC_POLICY
+      - event authentication-failure match-first
+      - no 60
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure policy-map NAC_POLICY agent-found 8/13
+  ios_config:
+    lines:
+      - 10 terminate mab
+      - 20 authenticate using dot1x retries 2 retry-time 0 priority 10
+    parents:
+      - policy-map type control subscriber NAC_POLICY
+      - event agent-found match-all
+      - 10 class always do-until-failure
+    match: exact
+    before:
+      - policy-map type control subscriber NAC_POLICY
+      - event agent-found match-all
+      - no 10
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure policy-map NAC_POLICY aaa-available 9/13
+  ios_config:
+    lines:
+      - 10 clear-session
+    parents:
+      - policy-map type control subscriber NAC_POLICY
+      - event aaa-available match-all
+      - 10 class IN_CRITICAL_VLAN do-until-failure
+    match: exact
+    before:
+      - policy-map type control subscriber NAC_POLICY
+      - event aaa-available match-all
+      - no 10
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure policy-map NAC_POLICY aaa-available 10/13
+  ios_config:
+    lines:
+      - 10 resume reauthentication
+    parents:
+      - policy-map type control subscriber NAC_POLICY
+      - event aaa-available match-all
+      - 20 class NOT_IN_CRITICAL_VLAN do-until-failure
+    match: exact
+    before:
+      - policy-map type control subscriber NAC_POLICY
+      - event aaa-available match-all
+      - no 20
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure policy-map NAC_POLICY inactivity-timeout 11/13
+  ios_config:
+    lines:
+      - 10 clear-session
+    parents:
+      - policy-map type control subscriber NAC_POLICY
+      - event inactivity-timeout match-all
+      - 10 class always do-until-failure
+    match: exact
+    before:
+      - policy-map type control subscriber NAC_POLICY
+      - event inactivity-timeout match-all
+      - no 10
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure policy-map NAC_POLICY authentication-success 12/13
+  ios_config:
+    lines:
+      - 10 activate service-template DEFAULT_LINKSEC_POLICY_SHOULD_SECURE
+    parents:
+      - policy-map type control subscriber NAC_POLICY
+      - event authentication-success match-all
+      - 10 class always do-until-failure
+    match: exact
+    before:
+      - policy-map type control subscriber NAC_POLICY
+      - event authentication-success match-all
+      - no 10
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure policy-map NAC_POLICY violation 13/13
+  ios_config:
+    lines:
+      - 10 restrict
+    parents:
+      - policy-map type control subscriber NAC_POLICY
+      - event violation match-all
+      - 10 class always do-until-failure
+    match: exact
+    before:
+      - policy-map type control subscriber NAC_POLICY
+      - event violation match-all
+      - no 10
+  when:
+    - ansible_network_os == 'ios'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - Configure template TEMPLATE_NAC_ENDPOINTS
+  ios_config:
+    lines:
+      - dot1x pae authenticator
+      - dot1x timeout tx-period 10
+      - spanning-tree portfast
+      - switchport access vlan {{ vlan_blackhole_id }}
+      - switchport mode access
+      - mab
+      - access-session control-direction in
+      - access-session closed
+      - access-session port-control auto
+      - authentication periodic
+      - authentication timer reauthenticate server
+      - service-policy type control subscriber NAC_POLICY
+      - description NAC Endpoints
+    parents: template TEMPLATE_NAC_ENDPOINTS
+    replace: block
+  when:
+    - ansible_network_os == 'ios' and ansible_net_model != 'IOSv'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOSv - Configure template TEMPLATE_NAC_ENDPOINTS
+  ios_config:
+    lines:
+      - dot1x pae authenticator
+      - spanning-tree portfast
+      - switchport access vlan {{ vlan_blackhole_id }}
+      - switchport mode access
+      - mab
+      - access-session control-direction in
+      - access-session closed
+      - access-session port-control auto
+      - authentication periodic
+      - authentication timer reauthenticate server
+      - service-policy type control subscriber NAC_POLICY
+      - description NAC Endpoints
+    parents: template TEMPLATE_NAC_ENDPOINTS
+    replace: block
+  when:
+    - ansible_network_os == 'ios' and ansible_net_model == 'IOSv'
+  tags:
+    - NACglobal
+    - convertNAC2
+
+- name: IOS - shut vlan 24 40 48 connected interfaces
+  ios_interfaces:
+    config:
+      - name: "{{ item.key }}"
+        enabled: false
+  loop: "{{ int['interfaces'] | dict2items }}"
+  when:
+    - ansible_network_os == 'ios' and (item.value['vlan'] == '24' or item.value['vlan'] == '40' or item.value['vlan'] == '48')
+  tags:
+    - convertNAC3
+    - convertNACops
+    - NACinterfaces
+
+- name: IOS - no shut vlan 24 40 48 connected interfaces
+  ios_interfaces:
+    config:
+      - name: "{{ item.key }}"
+        enabled: true
+  loop: "{{ int['interfaces'] | dict2items }}"
+  when:
+    - ansible_network_os == 'ios' and (item.value['vlan'] == '24' or item.value['vlan'] == '40' or item.value['vlan'] == '48')
+  tags:
+    - convertNAC3
+    - convertNACops
+    - NACinterfaces

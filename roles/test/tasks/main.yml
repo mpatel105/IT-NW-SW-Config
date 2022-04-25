@@ -212,6 +212,7 @@
 - name: IOS - Configure template TEMPLATE_NAC_ENDPOINTS
   ios_config:
     lines:
+      - spanning-tree portfast
       - switchport access vlan {{ vlan_blackhole_id }}
       - switchport mode access
       - description NAC Endpoints
@@ -227,6 +228,7 @@
 - name: IOS - Configure template TEMPLATE_STANDARD_ENDPOINTS
   ios_config:
     lines:
+      - spanning-tree portfast
       - switchport access vlan 8
       - switchport mode access
       - description Standard Endpoints (NO NAC)
