@@ -55,9 +55,9 @@
       - "{% if item.value.shutdown is defined and item.value.shutdown %}shutdown{% endif %}"
       - "{% if item.value.shutdown is defined and  not item.value.shutdown %}no shutdown{% endif %}"
     parents: interface {{ item.key }}
-#    replace: block
-    match: exact
-    before: "{% if item.value.reset is defined and item.value.reset %}default interface {{ item.key }}{% endif %}"
+    replace: block
+    match: "{% if item.value.reset is defined and item.value.reset %}exact{% else %}line{% endif %}"
+    before: "{% if item.value.reset is defined and item.value.reset %}default interface {{ item.key }}{% else %}do show int {{ item.key }}{% endif %}"
   loop: "{{ interfaces | default({}) | dict2items }}"
   when:
     - ansible_network_os == 'ios' and 'Port-channel' in item.key
@@ -74,7 +74,8 @@
       - "{% if item.value.shutdown is defined and  not item.value.shutdown %}no shutdown{% endif %}"
     parents: interface {{ item.key }}
     replace: block
-    before: "{% if item.value.reset is defined and item.value.reset %}default interface {{ item.key }}{% else %}{% endif %}"
+    match: "{% if item.value.reset is defined and item.value.reset %}exact{% else %}line{% endif %}"
+    before: "{% if item.value.reset is defined and item.value.reset %}default interface {{ item.key }}{% else %}do show int {{ item.key }}{% endif %}"
   loop: "{{ interfaces | default({}) | dict2items }}"
   when:
     - ansible_network_os == 'ios' and 'Vlan' in item.key
