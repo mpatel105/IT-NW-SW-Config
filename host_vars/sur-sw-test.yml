@@ -1,3 +1,5 @@
+hostname: sur-sw-test
+
 interfaces:
     GigabitEthernet0/0:
         negotiation_auto: true
