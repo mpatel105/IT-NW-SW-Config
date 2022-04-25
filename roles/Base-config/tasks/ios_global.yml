@@ -68,7 +68,7 @@
 
 - name: IOS - configure dns
   ios_system:
-    hostname: "{{ hostname | default({{inventory_hostname}})}}"
+    hostname: "{{ hostname | default(inventory_hostname) }}"
     domain_name: "{{ talend_domain_name }}"
     lookup_source: vlan999
     lookup_enabled: yes
