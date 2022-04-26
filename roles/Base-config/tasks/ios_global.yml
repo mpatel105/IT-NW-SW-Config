@@ -76,7 +76,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - global
-    - nom
+  
 
 - name: IOS - configure NTP servers
   cisco.ios.ios_ntp_global:
