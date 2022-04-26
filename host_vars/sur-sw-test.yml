@@ -170,7 +170,7 @@ interfaces:
     GigabitEthernet2/0/9:
         source_template: TEMPLATE_TRUNK_WIFI_AP
     GigabitEthernet2/1/1:
-      reset: true
+      description: uplink to something
       channel_group:
         chg: 2
         mode: active
