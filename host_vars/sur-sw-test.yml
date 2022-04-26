@@ -11,6 +11,7 @@ interfaces:
         switchport_access_vlan: 8
         switchport_trunk_vlans: 8,24,40,48,169,240
         switchport_trunk_native_vlan: 99
+        spanning_tree_portfast: false
         shutdown: true
         reset: true
     GigabitEthernet1/0/10:
