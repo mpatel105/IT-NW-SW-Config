@@ -202,7 +202,7 @@ interfaces:
             ip: 10.33.0.30
             netmask: 255.255.255.0
     Vlan190:
-      description: vlan190
+      description:  
       ipv4:
         ip: 10.33.190.40
         netmask: 255.255.255.0
