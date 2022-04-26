@@ -41,10 +41,9 @@ interfaces:
         source_template: TEMPLATE_STANDARD_ENDPOINTS
     GigabitEthernet1/0/24:
         source_template: TEMPLATE_NAC_ENDPOINTS
-        shutdown: true
+        shutdown: false
     GigabitEthernet1/0/25:
       source_template: TEMPLATE_NAC_ENDPOINTS
-      shutdown: true
     GigabitEthernet1/0/26:
     GigabitEthernet1/0/27:
     GigabitEthernet1/0/28:
