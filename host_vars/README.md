@@ -1,86 +1,92 @@
-# IT-Network-switch-base-config
+# host_var directory
 
-### Existing roles:
-* Exiting roles:
-    * Base-config: deploy base configuration on switches
-    * NAC-config: deploy NAC configuration on switches
-    * Inventory: Create a inventory.csv file on GIT Repo IT-Network-Scripts
-    * Copy-image: Used to deploy NXOS & IOS images to the switches using scp
+## naming convention:
+* The file should be named [hostname].yml
+* Example:
+sur-sw-test.yml
 
-### Available tag for individual task:
+## Syntax:
 * Available tag for individual task:
     * Base-config:
         * config: deploy base configuration
         * banner: deploy banner configuration
-        * configadminuser: configure local admin user & enable password with level 9 (scrypt) algorythm
-        * configenable: configure enable password with level 9 (scrypt) algorythm
-        * configvlan: deploy vlan configuration
-        * configswitchports8: configure interface for vlan 8
-        * configswitchports2448: configure interface for vlan 24 & 48
-        * configswitchports24: configure interface description only for vlan 24 (add a tag 'VLAN24' on the interface description)
-        * configswitchports48: configure interface description only for vlan 48 (add a tag 'VLAN48' on the interface description)
-        * configswitchportswifi: configure interface for WIFI Access Point
-        * configusers: configure credential on the switch
-        * clock: deploy clock configuration
-        * disableaux: disable Line AUX
-        * dns: deploy dns configuration
-        * intdescr: configure interface description from CDP (need newer Ansible version platform is not present from neighbors with current version)
-        * logs: deploy logs configuration
-        * ntp: deploy ntp configuration
-        * radius: configure Radius on the switch
-        * removecredentials: Remove all credentials like ssh pubkey-chain, ftp, enable password
-        * removelocalusers: Remove all local users except admin
-        * saveconfig: save configuration to NVRAM
-        * services: enable/disable standard IOS services
-        * snmp: configure SNMP details
-        * ssh: deploy SSH configuration
-        * STPaccess: deploy Spanning-Tree configuration for ACCESS Switches only
-        * STPcore: deploy Spanning-Tree configuration for CORE Switches only
-    * NAC-config:
-        * NACconfig: deploy NAC configuration
-        * NACglobal: deploy NAC global configuration only
-        * NACint: deploy NAC interface configuration only
-    * Inventory:
-        * inventory: Create the inventory.csv file on GIT repo IT-Network-Scripts
 
-## How to run from AWX
+* hostname: [name of device to configure]
+  * This value will be the future name of the device when running 'global' tag to reconfigure the device.
+  * If this value is not defined, then the inventory_hostname will be used as default
 
-* Go to Templates:
-
-![awx-templates][awx-templates1]
-
-* Click on the template you want to run, for example IT-Network-SW-Config-Inventory:
-
-![awx-templates][awx-templates2]
-
-* Modify the job at your liking:
-
-![awx-templates][awx-templates3]
-
-* change the task tags you want to run:
-
-![awx-templates][awx-templates4]
-
-* change the devices in yaml format:
-
-![awx-templates][awx-templates5]
-
-## How to run from CLI
-
-This playbook is meant to be run from AWX only. Some AWX variables are defined.
-To run the playbook from local repo :
-
-* git clone:
-
-git clone https://github.com/TalendIT/IT-Network-SW-Config.git
-
-* example to run for devices RWC_TEST_SWITCH and task "banner":
-
-ansible-playbook playbook.yml -i hosts.ini --extra-vars "devices=RWC_TEST_SWITCH" --tags=banner
+* interfaces:
+  * This is the list of all the interfaces as defined on the devices
+  * The configuration of each interface can be defined as below:
+    * source_template: will be used to configure a template on the interface.
+The interface will be defaulted if the configuration on the switch is not the good one.
+    * device_tracking:
+      * attach_policy: [name of policy to attach]
+The device tracking to be configured for IOS-XE devices
+    * shutdown: [True/False] or not defined
+This will run CLI command 'shutdown' or 'no shutdown' under this interface
+    * description:
+This will configure a 'description' under this interface
+    * switchport_mode: [access] or [trunk]
+This will configure the interface either as access or trunk interface
+    * switchport_access_vlan: [vlanID]
+This will configure the access vlan to be use for mode access
+    * switchport_trunk_vlans: [list of vlans to be allowed on trunk]
+This is the list of allowed vlans to be used on the trunk interface. *** TO BE TESTED for long list of vlans ***
+    * switchport_trunk_native_vlan: [vlanID]
+This is the native vlan to be used for the trunk interface
+    * channel_group:
+Configuration of channel_group to apply on interface
+    * ipv4:
+configuration of IP address. This is currently supported only on 'Vlan' interface
+    * reset: [True/False] or not defined
+This command will force the interface to be defaulted if set to [True]
 
 
-[awx-templates1]: images/Templates1.png "AWX Template1"
-[awx-templates2]: images/Templates2.png "AWX Template2"
-[awx-templates3]: images/Templates3.png "AWX Template3"
-[awx-templates4]: images/Templates4.png "AWX Template4"
-[awx-templates5]: images/Templates5.png "AWX Template5"
+## Example:
+
+interfaces:
+  GigabitEthernet1/0/1:
+    description: test
+    switchport_mode: access
+    switchport_access_vlan: 8
+    switchport_trunk_vlans: 8,24,40,48,169,240
+    switchport_trunk_native_vlan: 99
+    shutdown: true
+    reset: true
+
+  GigabitEthernet1/0/2:
+    device_tracking:
+      attach_policy: ip_device_tracking_policy
+    source_template: TEMPLATE_STANDARD_ENDPOINTS
+
+  GigabitEthernet1/0/3:
+    source_template: TEMPLATE_TRUNK_WIFI_AP
+
+  GigabitEthernet1/0/4:
+    source_template: TEMPLATE_STANDARD_ENDPOINTS
+
+  GigabitEthernet1/0/48:
+    channel_group:
+      chg: 1
+      mode: active
+
+  Port-channel1:
+    description: PO1 test
+    switchport_mode: trunk
+    switchport_trunk_vlans: 8,24,40,48,169,240
+    switchport_trunk_native_vlan: 99  
+
+  Port-channel2:
+    description: PO2 test
+    switchport_access_vlan: 8
+    switchport_mode: access
+    reset: true
+
+  Vlan1:
+    shutdown: true
+
+  Vlan999:
+    ipv4:
+      ip: 10.33.0.30
+      netmask: 255.255.255.0
