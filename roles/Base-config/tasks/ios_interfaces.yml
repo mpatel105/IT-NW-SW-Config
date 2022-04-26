@@ -68,7 +68,7 @@
   when:
     - ansible_network_os == 'ios' and 'Port-channel' in item.key
   tags:
-    - confINT_TRUNK
+    - confINT_PO
     - confINT
 
 - name: IOS - Configure VLAN interface
@@ -90,7 +90,7 @@
     - confINT_VLAN
     - confINT
 
-- name: IOS - Configure Interfaces
+- name: IOS - Configure all other interfaces
   ios_config:
     lines:
       - "{% if item.value.description is defined and item.value.description != None %}description {{ item.value.description }}{% endif %}"
