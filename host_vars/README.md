@@ -56,7 +56,7 @@ interfaces:
 
 * interface configuration defaulted with mode trunk :
 ```bash
-interfaces:
+
   GigabitEthernet1/0/1:
     description: test
     switchport_mode: trunk
@@ -117,4 +117,127 @@ interfaces:
     ipv4:
       ip: 10.33.0.30
       netmask: 255.255.255.0
+```
+
+## Full Example:
+
+```bash
+hostname: sur-sw-test2
+
+interfaces:
+    GigabitEthernet0/0:
+        negotiation_auto: true
+        shutdown: true
+        vrf: Mgmt-vrf
+    GigabitEthernet1/0/1:
+        description: test
+        switchport_mode: access
+        switchport_access_vlan: 8
+        spanning_tree_portfast: false
+        shutdown: true
+        reset: true
+    GigabitEthernet1/0/10:
+        device_tracking:
+          attach_policy: ip_device_tracking_policy
+        source_template: TEMPLATE_STANDARD_ENDPOINTS
+    GigabitEthernet1/0/11:
+        source_template: TEMPLATE_TRUNK_WIFI_AP
+    GigabitEthernet1/0/12:
+        source_template: TEMPLATE_STANDARD_ENDPOINTS
+    GigabitEthernet1/0/13:
+        source_template: TEMPLATE_STANDARD_ENDPOINTS
+    GigabitEthernet1/0/14:
+        source_template: TEMPLATE_STANDARD_ENDPOINTS
+    GigabitEthernet1/0/15:
+        source_template: TEMPLATE_TRUNK_WIFI_AP
+    GigabitEthernet1/0/16:
+        source_template: TEMPLATE_STANDARD_ENDPOINTS
+    GigabitEthernet1/0/17:
+        source_template: TEMPLATE_STANDARD_ENDPOINTS
+    GigabitEthernet1/0/18:
+        source_template: TEMPLATE_STANDARD_ENDPOINTS
+    GigabitEthernet1/0/19:
+        source_template: TEMPLATE_STANDARD_ENDPOINTS
+    GigabitEthernet1/0/2:
+        source_template: TEMPLATE_STANDARD_ENDPOINTS
+    GigabitEthernet1/0/20:
+        source_template: TEMPLATE_STANDARD_ENDPOINTS
+    GigabitEthernet1/0/21:
+        source_template: TEMPLATE_STANDARD_ENDPOINTS
+    GigabitEthernet1/0/22:
+        source_template: TEMPLATE_STANDARD_ENDPOINTS
+    GigabitEthernet1/0/23:
+        source_template: TEMPLATE_STANDARD_ENDPOINTS
+    GigabitEthernet1/0/24:
+        source_template: TEMPLATE_STANDARD_ENDPOINTS
+    GigabitEthernet1/0/25:
+    GigabitEthernet1/0/26:
+    GigabitEthernet1/0/27:
+    GigabitEthernet1/0/28:
+    GigabitEthernet1/0/29:
+    GigabitEthernet1/0/3:
+        source_template: TEMPLATE_STANDARD_ENDPOINTS
+    GigabitEthernet1/0/30:
+    GigabitEthernet1/0/31:
+    GigabitEthernet1/0/32:
+    GigabitEthernet1/0/33:
+    GigabitEthernet1/0/34:
+    GigabitEthernet1/0/35:
+    GigabitEthernet1/0/36:
+    GigabitEthernet1/0/37:
+    GigabitEthernet1/0/38:
+    GigabitEthernet1/0/39:
+    GigabitEthernet1/0/4:
+        source_template: TEMPLATE_STANDARD_ENDPOINTS
+    GigabitEthernet1/0/40:
+    GigabitEthernet1/0/41:
+    GigabitEthernet1/0/42:
+    GigabitEthernet1/0/43:
+    GigabitEthernet1/0/44:
+    GigabitEthernet1/0/45:
+    GigabitEthernet1/0/46:
+    GigabitEthernet1/0/47:
+    GigabitEthernet1/0/48:
+        channel_group:
+            chg: 1
+            mode: active
+        switchport_mode: trunk
+    GigabitEthernet1/0/5:
+        source_template: TEMPLATE_STANDARD_ENDPOINTS
+    GigabitEthernet1/0/6:
+        source_template: TEMPLATE_STANDARD_ENDPOINTS
+    GigabitEthernet1/0/7:
+        source_template: TEMPLATE_STANDARD_ENDPOINTS
+    GigabitEthernet1/0/8:
+        source_template: TEMPLATE_STANDARD_ENDPOINTS
+    GigabitEthernet1/0/9:
+        source_template: TEMPLATE_STANDARD_ENDPOINTS
+    GigabitEthernet1/1/1:
+    GigabitEthernet1/1/2:
+    GigabitEthernet1/1/3:
+    GigabitEthernet1/1/4:
+    Port-channel1:
+        switchport_mode: trunk
+    Port-channel2:
+        description: po2 test2
+        switchport_mode: trunk
+        switchport_trunk_vlans: 8,24,40,48,169,240
+        switchport_trunk_native_vlan: 99
+    Port-channel3:
+        description: PO3 test3
+        switchport_access_vlan: 8
+        switchport_mode: access
+    Vlan1:
+        shutdown: true
+    Vlan999:
+        ipv4:
+            ip: 10.33.0.30
+            netmask: 255.255.255.0
+    Vlan190:
+        shutdown: false
+        reset: true
+        ipv4:
+            ip: 10.33.190.30
+            netmask: 255.255.255.0
+
 ```
