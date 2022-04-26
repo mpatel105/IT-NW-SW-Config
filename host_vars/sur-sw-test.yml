@@ -12,8 +12,7 @@ interfaces:
         switchport_trunk_vlans: 8,24,40,48,169,240
         switchport_trunk_native_vlan: 99
         spanning_tree_portfast: false
-        shutdown: true
-        reset: true
+        shutdown: false
     GigabitEthernet1/0/10:
         device_tracking:
           attach_policy: ip_device_tracking_policy
