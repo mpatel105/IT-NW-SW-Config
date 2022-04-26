@@ -3,7 +3,9 @@
 ## naming convention:
 * The file should be named [hostname].yml
 * Example:
+```bash
 sur-sw-test.yml
+```
 
 ## Syntax:
 * hostname: [name of device to configure]
