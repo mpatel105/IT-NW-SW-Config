@@ -6,13 +6,7 @@ interfaces:
         shutdown: true
         vrf: Mgmt-vrf
     GigabitEthernet1/0/1:
-        description: test
-        switchport_mode: access
-        switchport_access_vlan: 8
-        switchport_trunk_vlans: 8,24,40,48,169,240
-        switchport_trunk_native_vlan: 99
-        spanning_tree_portfast: false
-        shutdown: false
+      source_template: TEMPLATE_STANDARD_ENDPOINTS
     GigabitEthernet1/0/10:
         device_tracking:
           attach_policy: ip_device_tracking_policy
