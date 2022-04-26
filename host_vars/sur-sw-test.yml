@@ -180,6 +180,9 @@ interfaces:
         chg: 3
         mode: active
     GigabitEthernet2/1/3:
+      channel_group:
+        chg: 2
+        mode: active
     GigabitEthernet2/1/4:
     Port-channel1:
         switchport_mode: trunk
