@@ -185,7 +185,7 @@ interfaces:
     Port-channel2:
         description: po2 test2
         switchport_mode: trunk
-        switchport_trunk_vlans: 8,24,40,48,169,240
+        switchport_trunk_vlans: 8,24,40,48,169
         switchport_trunk_native_vlan: 99
     Port-channel3:
         description: PO3 test3
