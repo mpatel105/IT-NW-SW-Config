@@ -14,7 +14,7 @@ interfaces:
     GigabitEthernet1/0/11:
         source_template: TEMPLATE_TRUNK_WIFI_AP
     GigabitEthernet1/0/12:
-        source_template: TEMPLATE_STANDARD_ENDPOINTS
+        source_template: TEMPLATE_TRUNK_WIFI_AP
     GigabitEthernet1/0/13:
         source_template: TEMPLATE_STANDARD_ENDPOINTS
     GigabitEthernet1/0/14:
