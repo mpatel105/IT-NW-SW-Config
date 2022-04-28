@@ -40,8 +40,10 @@ interfaces:
     GigabitEthernet1/0/23:
         source_template: TEMPLATE_STANDARD_ENDPOINTS
     GigabitEthernet1/0/24:
-        source_template: TEMPLATE_STANDARD_ENDPOINTS
+        source_template: TEMPLATE_NAC_ENDPOINTS
+        shutdown: false
     GigabitEthernet1/0/25:
+      source_template: TEMPLATE_NAC_ENDPOINTS
     GigabitEthernet1/0/26:
     GigabitEthernet1/0/27:
     GigabitEthernet1/0/28:
@@ -183,7 +185,7 @@ interfaces:
     Port-channel2:
         description: po2 test2
         switchport_mode: trunk
-        switchport_trunk_vlans: 8,24,40,48,169,240
+        switchport_trunk_vlans: 8,24,40,48,169
         switchport_trunk_native_vlan: 99
     Port-channel3:
         description: PO3 test3
@@ -196,7 +198,7 @@ interfaces:
             ip: 10.33.0.30
             netmask: 255.255.255.0
     Vlan190:
-      description:
+      reset: true
       ipv4:
-        ip: 10.33.190.40
+        ip: 10.33.190.41
         netmask: 255.255.255.0
