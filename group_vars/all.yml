@@ -35,6 +35,7 @@ vlan_list_core:
   Firewall.Management: 998
   Server.Management: 997
   Infra.Management: 996
+  OOB.Management: 995
   Users.Wired: 8
   Users.Wireless: 16
   OPs.Devices.Network: 24
@@ -43,6 +44,19 @@ vlan_list_core:
   Audio.Video: 48
   SSL.VPN.Network: 224
   Users.Guest: 240
+  Quarantine: 169
+  Blackhole: 99
+
+vlan_list_access:
+  Network.Management: 999
+  Users.Wired: 8
+  Users.Wireless: 16
+  OPs.Devices.Network: 24
+  Phones: 40
+  Audio.Video: 48
+  Users.Guest: 240
+  Quarantine: 169
+  Blackhole: 99
 
 vlan_list_access_remove:
   - 900

@@ -2,6 +2,12 @@
 - import_tasks: ios_global.yml
   when: ansible_network_os == 'ios'
 
+- import_tasks: ios_global_interfaces_deprecated.yml
+  when: ansible_network_os == 'ios'
+
+- import_tasks: ios_global_RADIUS.yml
+  when: ansible_network_os == 'ios'
+
 - import_tasks: ios_global_NAC.yml
   when: ansible_network_os == 'ios'
 
