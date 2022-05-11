@@ -359,7 +359,7 @@
     - NACinterfaces
 
 - debug:
-    msg: "{{ ansible_net_neighbors }}"
+    msg: "{{ ansible_net_interfaces  }}"
   when:
     - ansible_network_os == "ios"
   tags:
