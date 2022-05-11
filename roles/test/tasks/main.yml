@@ -3,8 +3,9 @@
 
 - name: IOS - get facts
   ios_facts:
-    gather_network_resources:
-      - 'l2_interfaces'
+    gather_subset: all
+#    gather_network_resources:
+#      - 'l2_interfaces'
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
