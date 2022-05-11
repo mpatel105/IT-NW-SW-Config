@@ -358,21 +358,15 @@
   tags:
     - convertNAC1
     - NACinterfaces
-
-- debug:
-    msg: "{{ ansible_net_interfaces  }}"
-  when:
-    - ansible_network_os == "ios"
-  tags:
     - NACtest
 
-- debug:
-    msg: "{{ item.key }}"
-  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
-  when:
-    - ansible_network_os == "ios" and (item.value[0].platform is defined and "Meraki" in item.value[0].platform)
-  tags:
-    - NACtest
+# - debug:
+#     msg: "{{ item.key }}"
+#   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
+#   when:
+#     - ansible_network_os == "ios" and (item.value[0].platform is defined and "Meraki" in item.value[0].platform)
+#   tags:
+#     - NACtest
 
 
 # - name: IOS - Configure interface for Cisco access switch Trunk ports
