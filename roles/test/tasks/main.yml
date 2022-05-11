@@ -14,6 +14,7 @@
     - convertNAC3
     - convertNACops
     - radius
+    - NACtest
 
 
 - name: napalm get_facts
@@ -357,15 +358,21 @@
     - convertNAC1
     - NACinterfaces
 
-# - debug:
-#     msg: "{{ item }}"
-#     #msg: "{{ item.key }}"
-#   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
-#   when:
-#     - ansible_network_os == 'ios' and item.value[0].platform is defined and "Cisco" in item.value[0].platform|lower
-#   tags:
-#     - NACglobal
-#     - convertNAC1
+- debug:
+    msg: "{{ ansible_net_neighbors }}"
+  when:
+    - ansible_network_os == "ios"
+  tags:
+    - NACtest
+
+- debug:
+    msg: "{{ item.key }}"
+  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
+  when:
+    - ansible_network_os == "ios" and (item.value[0].platform is defined and "Meraki" in item.value[0].platform)
+  tags:
+    - NACtest
+
 
 # - name: IOS - Configure interface for Cisco access switch Trunk ports
 #  ios_config:
