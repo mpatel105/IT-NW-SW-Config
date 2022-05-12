@@ -7,7 +7,6 @@
   when: ansible_network_os == 'ios'
   tags:
     - global
-    - interfaces
 
 - name: IOS - set fact for portfast
   set_fact:
@@ -16,7 +15,6 @@
   when: ansible_network_os == 'ios'
   tags:
     - global
-    - interfaces
 
 # - debug:
 #     #msg: "host is {{ item.value[0].host }} and platform is {{ item.value[0].platform }}"
@@ -255,11 +253,3 @@
   when: ansible_network_os == 'ios'
   tags:
     - global
-
-- name: IOS - Save config
-  ios_config:
-    save_when: always
-  when: ansible_network_os == 'ios'
-  tags:
-    - global
-    - interfaces

@@ -28,7 +28,8 @@
     - ansible_network_os == 'ios' and item.value.source_template is defined
   tags:
     - confINT_TEMPLATE
-    - confINT
+    - interfaces
+
 
 - name: IOS - Configure interface channel-group
   ios_config:
@@ -45,7 +46,7 @@
     - ansible_network_os == 'ios' and item.value.channel_group is defined
   tags:
     - confINT_CHANNEL
-    - confINT
+    - interfaces
 
 - name: IOS - Configure Port-Channel
   ios_config:
@@ -69,7 +70,7 @@
     - ansible_network_os == 'ios' and 'Port-channel' in item.key
   tags:
     - confINT_PO
-    - confINT
+    - interfaces
 
 - name: IOS - Configure VLAN interface
   ios_config:
@@ -88,7 +89,7 @@
     - ansible_network_os == 'ios' and 'Vlan' in item.key
   tags:
     - confINT_VLAN
-    - confINT
+    - interfaces
 
 - name: IOS - Configure all other interfaces
   ios_config:
@@ -116,4 +117,4 @@
       and 'Vlan' not in item.key
   tags:
     - confINT_OTHER
-    - confINT
+    - interfaces

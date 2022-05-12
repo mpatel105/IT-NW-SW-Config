@@ -24,7 +24,7 @@
     - NACglobal
     - NACinterfaces
     - convertNAC
-    - radius
+    - NACradius
     - facts
 
 
@@ -112,7 +112,7 @@
       - exit
   when: ansible_network_os == 'ios'
   tags:
-    - radius
+    - NACradius
     - NACglobal
     - convertNAC
 
@@ -126,7 +126,7 @@
     parents: radius server {{ talend_portnox_SV2_name }}
   when: ansible_network_os == 'ios'
   tags:
-    - radius
+    - NACradius
     - NACglobal
     - convertNAC
 
@@ -140,7 +140,7 @@
     parents: radius server {{ talend_portnox_PA7_name }}
   when: ansible_network_os == 'ios'
   tags:
-    - radius
+    - NACradius
     - NACglobal
     - convertNAC
 
@@ -153,7 +153,7 @@
     parents: radius server {{ talend_portnox_US_name }}
   when: ansible_network_os == 'ios'
   tags:
-    - radius
+    - NACradius
     - NACglobal
     - convertNAC
 
@@ -166,7 +166,7 @@
     parents: radius server {{ talend_portnox_EU_name }}
   when: ansible_network_os == 'ios'
   tags:
-    - radius
+    - NACradius
     - NACglobal
     - convertNAC
 
@@ -183,7 +183,7 @@
     match: exact
   when: ansible_network_os == 'ios'
   tags:
-    - radius
+    - NACradius
     - NACglobal
     - convertNAC
 
@@ -200,7 +200,7 @@
     match: exact
   when: ansible_network_os == 'ios'
   tags:
-    - radius
+    - NACradius
     - NACglobal
     - convertNAC
 
