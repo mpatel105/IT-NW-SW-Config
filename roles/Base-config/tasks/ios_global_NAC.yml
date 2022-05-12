@@ -15,16 +15,12 @@
 
 - name: IOS - get facts
   ios_facts:
-    gather_network_resources:
-      - 'l2_interfaces'
+    gather_subset: all
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
     - NACinterfaces
-    - convertNAC1
-    - convertNAC2
-    - convertNAC3
-    - convertNACops
+    - convertNAC
     - radius
 
 
@@ -34,11 +30,9 @@
   register: napalmfacts
   when: ansible_network_os == 'ios'
   tags:
-    - convertNAC1
-    - convertNAC2
-    - convertNAC3
     - NACglobal
     - NACinterfaces
+    - convertNAC
     - napalm
 
 - name: Read in parse_genie role
@@ -48,8 +42,7 @@
   tags:
     - NACglobal
     - NACinterfaces
-    - convertNAC1
-    - convertNACops
+    - convertNAC
 
 - name: IOS show interfaces status
   ios_command:
@@ -61,8 +54,7 @@
   tags:
     - NACglobal
     - NACinterfaces
-    - convertNAC1
-    - convertNACops
+    - convertNAC
 
 - name: Debug Genie Filter
   set_fact:
@@ -72,8 +64,7 @@
   tags:
     - NACglobal
     - NACinterfaces
-    - convertNAC1
-    - convertNACops
+    - convertNAC
 
 - name: IOS - Configure Blackhole vlan
   ios_vlans:
@@ -86,8 +77,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC1
-    - convertNACops
+    - convertNAC
 
 - name: IOS - Configure Quarantine vlan
   ios_vlans:
@@ -100,14 +90,15 @@
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
+    - convertNAC
 
 
-- debug:
-    msg: "{{ item }}"
-  loop: "{{ napalm_vlans['99']['interfaces'] }}"
-  ignore_errors: yes
-  tags:
-    - napalm
+# - debug:
+#     msg: "{{ item }}"
+#   loop: "{{ napalm_vlans['99']['interfaces'] }}"
+#   ignore_errors: yes
+#   tags:
+#     - napalm
 
 - name: IOS - Configure NAC - new-model
   ios_command:
@@ -119,6 +110,7 @@
   tags:
     - radius
     - NACglobal
+    - convertNAC
 
 
 - name: IOS - Configure Portnox-Radius-SV2
@@ -132,6 +124,7 @@
   tags:
     - radius
     - NACglobal
+    - convertNAC
 
 
 - name: IOS - Configure Portnox-Radius-PA7
@@ -145,6 +138,7 @@
   tags:
     - radius
     - NACglobal
+    - convertNAC
 
 - name: IOS - Configure Portnox-Radius-US
   ios_config:
@@ -157,6 +151,7 @@
   tags:
     - radius
     - NACglobal
+    - convertNAC
 
 - name: IOS - Configure Portnox-Radius-EU
   ios_config:
@@ -169,6 +164,7 @@
   tags:
     - radius
     - NACglobal
+    - convertNAC
 
 - name: IOS - Configure NAC group Portnox-RADIUS-Group
   ios_config:
@@ -185,6 +181,7 @@
   tags:
     - radius
     - NACglobal
+    - convertNAC
 
 
 - name: IOS - Configure NAC server radius dynamic-author
@@ -201,6 +198,7 @@
   tags:
     - radius
     - NACglobal
+    - convertNAC
 
 - name: IOS - Configure NAC - global config
   ios_command:
@@ -220,6 +218,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
+    - convertNAC
 
 - name: IOS - Configure template TEMPLATE_NAC_ENDPOINTS
   ios_config:
@@ -233,9 +232,8 @@
   when:
     - ansible_network_os == 'ios'
   tags:
-    - convertNAC1
     - NACglobal
-    - convertNACops
+    - convertNAC
 
 - name: IOS - Configure template TEMPLATE_STANDARD_ENDPOINTS
   ios_config:
@@ -249,9 +247,8 @@
   when:
     - ansible_network_os == 'ios'
   tags:
-    - convertNAC1
     - NACglobal
-    - convertNACops
+    - convertNAC
 
 - name: IOS - Configure template TEMPLATE_TRUNK_WIFI_AP
   ios_config:
@@ -265,9 +262,8 @@
   when:
     - ansible_network_os == 'ios'
   tags:
-    - convertNAC1
     - NACglobal
-    - convertNACops
+    - convertNAC
 
 # - name: IOS - Configure template TEMPLATE_TRUNK_ACCESS_SWITCH
 #   ios_config:
@@ -311,9 +307,8 @@
   when:
     - ansible_network_os == 'ios' and 'CORE' in group_names
   tags:
-    - convertNAC1
     - NACglobal
-    - convertNACops
+    - convertNAC
 
 - name: IOS - Configure template TEMPLATE_PANFW_MGMT
   ios_config:
@@ -326,9 +321,8 @@
   when:
     - ansible_network_os == 'ios' and 'CORE' in group_names
   tags:
-    - convertNAC1
     - NACglobal
-    - convertNACops
+    - convertNAC
 
 - name: IOS 3650/3850/9x00 - Configure NAC - global config device tracking
   ios_command:
@@ -339,8 +333,8 @@
       - exit
   when: ansible_network_os == 'ios' and (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model) or ('9300' in ansible_net_model))
   tags:
-    - convertNAC1
     - NACglobal
+    - convertNAC
 
 
 - name: IOS 2960X/3560CX - Configure NAC - global config device tracking
@@ -351,9 +345,8 @@
       - exit
   when: ansible_network_os == 'ios' and ('2960' in ansible_net_model or '3560' in ansible_net_model)
   tags:
-    - convertNAC1
     - NACglobal
-    - convertNACops
+    - convertNAC
 
 - name: IOS - Configure interface for Cisco Meraki
   ios_config:
@@ -366,8 +359,8 @@
   when:
     - ansible_network_os == "ios" and (item.value[0].platform is defined and "Meraki" in item.value[0].platform)
   tags:
-    - convertNAC1
     - NACinterfaces
+    - convertNAC
 
 # - debug:
 #     msg: "{{ item }}"
@@ -412,8 +405,8 @@
       (item.access.vlan == 99 or item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)) or
       napalm_interfaces[item.name]['description'] == 'NAC Endpoints')
   tags:
-    - convertNAC1
     - NACinterfaces
+    - convertNAC
 
 - name: IOS - Configure Interfaces for NAC
   ios_config:
@@ -428,38 +421,39 @@
       (item.access.vlan == 99 or item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)) or
       napalm_interfaces[item.name]['description'] == 'NAC Endpoints')
   tags:
-    - convertNAC1
     - NACinterfaces
+    - convertNAC
 
-- name: IOS-XE - Configure Interfaces for NAC - Ops Device
-  ios_config:
-    lines:
-      - device-tracking attach-policy ip_device_tracking_policy
-      - source template TEMPLATE_NAC_ENDPOINTS
-    parents: interface {{ item.key }}
-    before: default interface {{ item.key }}
-    replace: block
-    match: exact
-  loop: "{{ int['interfaces'] | dict2items }}"
-  when: ansible_network_os == 'ios' and ansible_net_iostype == 'IOS-XE' and (item.value['vlan'] == '24' or item.value['vlan'] == '40' or item.value['vlan'] == '48')
-  tags:
-    - convertNAC1
-    - convertNACops
-    - NACinterfaces
-
-- name: IOS - Configure Interfaces for NAC - Ops Device
-  ios_config:
-    lines:
-      - source template TEMPLATE_NAC_ENDPOINTS
-    parents: interface {{ item.key }}
-    before: default interface {{ item.key }}
-    match: exact
-  loop: "{{ int['interfaces'] | dict2items }}"
-  when: ansible_network_os == 'ios' and ansible_net_iostype == 'IOS' and (item.value['vlan'] == '24' or item.value['vlan'] == '40' or item.value['vlan'] == '48')
-  tags:
-    - convertNAC1
-    - convertNACops
-    - NACinterfaces
+#########################
+#
+# Was needed when converting from old NAC IBNS 1.0
+#
+#########################
+# - name: IOS-XE - Configure Interfaces for NAC - Ops Device
+#   ios_config:
+#     lines:
+#       - device-tracking attach-policy ip_device_tracking_policy
+#       - source template TEMPLATE_NAC_ENDPOINTS
+#     parents: interface {{ item.key }}
+#     before: default interface {{ item.key }}
+#     replace: block
+#     match: exact
+#   loop: "{{ int['interfaces'] | dict2items }}"
+#   when: ansible_network_os == 'ios' and ansible_net_iostype == 'IOS-XE' and (item.value['vlan'] == '24' or item.value['vlan'] == '40' or item.value['vlan'] == '48')
+#   tags:
+#     - NACinterfaces
+#
+# - name: IOS - Configure Interfaces for NAC - Ops Device
+#   ios_config:
+#     lines:
+#       - source template TEMPLATE_NAC_ENDPOINTS
+#     parents: interface {{ item.key }}
+#     before: default interface {{ item.key }}
+#     match: exact
+#   loop: "{{ int['interfaces'] | dict2items }}"
+#   when: ansible_network_os == 'ios' and ansible_net_iostype == 'IOS' and (item.value['vlan'] == '24' or item.value['vlan'] == '40' or item.value['vlan'] == '48')
+#   tags:
+#     - NACinterfaces
 
 
 - name: IOS - Enable new-style authentication
@@ -477,7 +471,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure service-template CRITICAL_AUTH_VLAN
   ios_config:
@@ -490,7 +484,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure class-map IN_CRITICAL_VLAN
   ios_config:
@@ -503,7 +497,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure class-map NOT_IN_CRITICAL_VLAN
   ios_config:
@@ -516,7 +510,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure class-map AAA_SVR_DOWN_AUTHD_HOST
   ios_config:
@@ -530,7 +524,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure class-map AAA_SVR_DOWN_UNAUTHD_HOST
   ios_config:
@@ -544,7 +538,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure class-map DOT1X
   ios_config:
@@ -557,7 +551,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure class-map DOT1X_FAILED
   ios_config:
@@ -571,7 +565,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure class-map DOT1X_MEDIUM_PRIO
   ios_config:
@@ -584,7 +578,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure class-map DOT1X_NO_RESP
   ios_config:
@@ -598,7 +592,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure class-map DOT1X_TIMEOUT
   ios_config:
@@ -612,7 +606,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure class-map MAB
   ios_config:
@@ -625,7 +619,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure class-map MAB_FAILED
   ios_config:
@@ -639,7 +633,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure class-map SESSION_UNAUTH
   ios_config:
@@ -652,7 +646,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 
 - name: IOS - Configure policy-map NAC_POLICY event session-started 1/13
@@ -675,7 +669,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure policy-map NAC_POLICY authentication-failure 2/13
   ios_config:
@@ -695,7 +689,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure policy-map NAC_POLICY authentication-failure 3/13
   ios_config:
@@ -717,7 +711,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure policy-map NAC_POLICY authentication-failure 4/13
   ios_config:
@@ -737,7 +731,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure policy-map NAC_POLICY authentication-failure 5/13
   ios_config:
@@ -757,7 +751,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure policy-map NAC_POLICY authentication-failure 6/13
   ios_config:
@@ -777,7 +771,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure policy-map NAC_POLICY authentication-failure 7/13
   ios_config:
@@ -798,7 +792,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure policy-map NAC_POLICY agent-found 8/13
   ios_config:
@@ -818,7 +812,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure policy-map NAC_POLICY aaa-available 9/13
   ios_config:
@@ -837,7 +831,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure policy-map NAC_POLICY aaa-available 10/13
   ios_config:
@@ -856,7 +850,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure policy-map NAC_POLICY inactivity-timeout 11/13
   ios_config:
@@ -875,7 +869,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure policy-map NAC_POLICY authentication-success 12/13
   ios_config:
@@ -894,7 +888,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure policy-map NAC_POLICY violation 13/13
   ios_config:
@@ -913,7 +907,7 @@
     - ansible_network_os == 'ios'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOS - Configure template TEMPLATE_NAC_ENDPOINTS
   ios_config:
@@ -937,7 +931,7 @@
     - ansible_network_os == 'ios' and ansible_net_model != 'IOSv'
   tags:
     - NACglobal
-    - convertNAC2
+    - convertNAC
 
 - name: IOSv - Configure template TEMPLATE_NAC_ENDPOINTS
   ios_config:
@@ -960,30 +954,4 @@
     - ansible_network_os == 'ios' and ansible_net_model == 'IOSv'
   tags:
     - NACglobal
-    - convertNAC2
-
-- name: IOS - shut vlan 24 40 48 connected interfaces
-  ios_interfaces:
-    config:
-      - name: "{{ item.key }}"
-        enabled: false
-  loop: "{{ int['interfaces'] | dict2items }}"
-  when:
-    - ansible_network_os == 'ios' and (item.value['vlan'] == '24' or item.value['vlan'] == '40' or item.value['vlan'] == '48')
-  tags:
-    - convertNAC3
-    - convertNACops
-    - NACinterfaces
-
-- name: IOS - no shut vlan 24 40 48 connected interfaces
-  ios_interfaces:
-    config:
-      - name: "{{ item.key }}"
-        enabled: true
-  loop: "{{ int['interfaces'] | dict2items }}"
-  when:
-    - ansible_network_os == 'ios' and (item.value['vlan'] == '24' or item.value['vlan'] == '40' or item.value['vlan'] == '48')
-  tags:
-    - convertNAC3
-    - convertNACops
-    - NACinterfaces
+    - convertNAC
