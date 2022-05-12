@@ -15,7 +15,8 @@
 
 - name: IOS - get facts
   ios_facts:
-    gather_subset: all
+    gather_subset:
+      - '!config'
     gather_network_resources:
       - 'l2_interfaces'
   when: ansible_network_os == 'ios'
