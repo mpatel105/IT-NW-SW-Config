@@ -16,12 +16,15 @@
 - name: IOS - get facts
   ios_facts:
     gather_subset: all
+    gather_network_resources:
+      - 'l2_interfaces'
   when: ansible_network_os == 'ios'
   tags:
     - NACglobal
     - NACinterfaces
     - convertNAC
     - radius
+    - facts
 
 
 - name: napalm get_facts
