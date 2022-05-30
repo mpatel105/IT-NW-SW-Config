@@ -29,22 +29,20 @@
 #     - global
 #     - interfaces
 
-#- name: Configure standard Vlan for CORE Switches
-#  ios_vlans:
-#    config:
-#      - name: "{{ item.key }}"
-#        vlan_id: "{{ item.value }}"
-#        state: active
-#        shutdown: disabled
-#    state: merged
-#  loop: "{{ vlan_list_core | dict2items }}"
-#  #when: ansible_network_os == 'ios' and 'CORE' in group_names
-#  when: ansible_network_os == 'ios'
-#  tags:
-#      - config
-#      - configvlan
+- name: Configure standard Vlan for ACCESS Switches
+ ios_vlans:
+   config:
+     - name: "{{ item.key }}"
+       vlan_id: "{{ item.value }}"
+       state: active
+       shutdown: disabled
+   state: merged
+ loop: "{{ vlan_list_access | dict2items }}"
+ when: ansible_network_os == 'ios' and 'ACCESS' in group_names
+ tags:
+     - configvlan
 
-#- name: Remove Infra Vlan from ACCESS Switches
+# - name: Remove Infra Vlan from ACCESS Switches
 #  ios_vlans:
 #    config:
 #      - vlan_id: "{{ item }}"
