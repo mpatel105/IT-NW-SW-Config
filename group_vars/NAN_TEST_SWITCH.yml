@@ -1,0 +1,7 @@
+ansible_user: admin
+ansible_password: cisco
+ansible_become: yes
+ansible_become_method: enable
+#ansible_become_password: cisco
+ansible_network_os: ios
+#ANSIBLE_HOST_KEY_CHECKING: false
