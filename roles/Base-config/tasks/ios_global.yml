@@ -30,17 +30,17 @@
 #     - interfaces
 
 - name: Configure standard Vlan for ACCESS Switches
- ios_vlans:
-   config:
-     - name: "{{ item.key }}"
-       vlan_id: "{{ item.value }}"
-       state: active
-       shutdown: disabled
-   state: merged
- loop: "{{ vlan_list_access | dict2items }}"
- when: ansible_network_os == 'ios' and 'ACCESS' in group_names
- tags:
-     - configvlan
+  ios_vlans:
+    config:
+    - name: "{{ item.key }}"
+      vlan_id: "{{ item.value }}"
+      state: active
+      shutdown: disabled
+    state: merged
+  loop: "{{ vlan_list_access | dict2items }}"
+  when: ansible_network_os == 'ios' and 'ACCESS' in group_names
+  tags:
+    - configvlan
 
 # - name: Remove Infra Vlan from ACCESS Switches
 #  ios_vlans:
