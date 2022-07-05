@@ -26,6 +26,7 @@
     - convertNAC
     - NACradius
     - facts
+    - meraki
 
 
 - name: napalm get_facts
@@ -365,6 +366,7 @@
   tags:
     - NACinterfaces
     - convertNAC
+    - meraki
 
 # - debug:
 #     msg: "{{ item }}"
