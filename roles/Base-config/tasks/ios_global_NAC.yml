@@ -393,7 +393,7 @@
   loop: "{{ ansible_network_resources['l2_interfaces']  }}"
   when:
     - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS-XE' and ((item.access.vlan is defined and
-      (item.access.vlan == 99 or item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)) or
+      (item.access.vlan == 99 or item.access.vlan == 169 or item.access.vlan == 8 or item.access.vlan == 16 or item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)) or
       napalm_interfaces[item.name]['description'] == 'NAC Endpoints')
   tags:
     - NACinterfaces
