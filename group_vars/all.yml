@@ -24,6 +24,7 @@ banner: |
   *  law. Please disconnect immediately.                                     *
   ****************************************************************************
 
+hostname: "{{ inventory_hostname }}"
 
 vlan_list_core:
   ISP1.WAN: 900
@@ -34,6 +35,7 @@ vlan_list_core:
   Firewall.Management: 998
   Server.Management: 997
   Infra.Management: 996
+  OOB.Management: 995
   Users.Wired: 8
   Users.Wireless: 16
   OPs.Devices.Network: 24
@@ -42,6 +44,19 @@ vlan_list_core:
   Audio.Video: 48
   SSL.VPN.Network: 224
   Users.Guest: 240
+  Quarantine: 169
+  Blackhole: 99
+
+vlan_list_access:
+  Network.Management: 999
+  Users.Wired: 8
+  Users.Wireless: 16
+  OPs.Devices.Network: 24
+  Phones: 40
+  Audio.Video: 48
+  Users.Guest: 240
+  Quarantine: 169
+  Blackhole: 99
 
 vlan_list_access_remove:
   - 900
@@ -70,6 +85,28 @@ scp_emea_server: pa7-nwsrv-001.talend.com
 scp_noram_server: sv2-nwsrv-001.talend.com
 #scp_emea_server: 10.50.17.11
 #scp_noram_server: 10.10.17.6
+
+talend_portnox_PA7_name: PA7-Portnox
+talend_portnox_SV2_name: SV2-Portnox
+talend_portnox_US_name: US-Portnox
+talend_portnox_EU_name: EU-Portnox
+talend_portnox_SV2: 10.1.32.19
+talend_portnox_PA7: 10.44.32.19
+talend_portnox_US: 13.90.229.234
+talend_portnox_EU: 52.232.122.157
+talend_portnox_auth_port: 1812
+talend_portnox_acct_port: 1813
+talend_portnox_EU_auth_port: 10356
+talend_portnox_EU_acct_port: 10357
+talend_portnox_US_auth_port: 10444
+talend_portnox_US_acct_port: 10445
+
+talend_radius_PA7_name: PA7-Radius
+talend_radius_SV2_name: SV2-Radius
+talend_radius_PA7: 10.42.20.105
+talend_radius_SV2: 192.168.15.210
+talend_radius_auth_port: 1812
+talend_radius_acct_port: 1813
 
 macro_dot1x_name: Corp_switchport
 macro_dot1x_corp:

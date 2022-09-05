@@ -1,0 +1,253 @@
+---
+- name: IOS - get facts
+  ios_facts:
+    gather_network_resources:
+      - 'l2_interfaces'
+  register: output
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+
+- name: IOS - set fact for portfast
+  set_fact:
+    edge: "{% if item in ansible_net_model %}edge{% else %}{% endif %}"
+  loop: "{{ model_stp_edge }}"
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+
+# - debug:
+#     #msg: "host is {{ item.value[0].host }} and platform is {{ item.value[0].platform }}"
+#     # msg: "host is {{ item.value[0] }} "
+#     # msg: "{{ output.ansible_facts.ansible_net_neighbors | type_debug }}"
+#     # msg: "{{ group_names }}"
+#     # msg: "{{ output.ansible_facts.ansible_net_interfaces }}"
+#   loop: "{{ output.ansible_facts.ansible_net_neighbors | dict2items }}"
+#   when:
+#     - ansible_network_os == "ios"
+#   tags:
+#     - global
+#     - interfaces
+
+- name: Configure standard Vlan for ACCESS Switches
+  ios_vlans:
+    config:
+    - name: "{{ item.key }}"
+      vlan_id: "{{ item.value }}"
+      state: active
+      shutdown: disabled
+    state: merged
+  loop: "{{ vlan_list_access | dict2items }}"
+  when: ansible_network_os == 'ios' and 'ACCESS' in group_names
+  tags:
+    - configvlan
+
+# - name: Remove Infra Vlan from ACCESS Switches
+#  ios_vlans:
+#    config:
+#      - vlan_id: "{{ item }}"
+#    state: deleted
+#  loop: "{{ vlan_list_access_remove if vlan_list_access_remove is iterable else [] }}"
+#  when: ansible_network_os == 'ios' and 'ACCESS' in group_names
+#  #when: ansible_network_os == 'ios'
+#  tags:
+#      - config
+#      - removevlan
+
+- name: IOS - configure dns
+  ios_system:
+    hostname: "{{ hostname | default(inventory_hostname) }}"
+    domain_name: "{{ talend_domain_name }}"
+    lookup_source: vlan999
+    lookup_enabled: yes
+    name_servers: "{{ talend_dns }}"
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+
+- name: IOS - configure NTP servers
+  cisco.ios.ios_ntp_global:
+    config:
+      servers:
+        - server: "{{ talend_ntp_server }}"
+          use_ipv4: True
+      source: vlan999
+    state: overridden
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+
+- name: IOS - UTC Timezone
+  ios_command:
+    commands:
+      - configure terminal
+      - "clock timezone UTC 0 0"
+      - "no clock summer-time"
+      - exit
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+
+- name: IOS - STP Global configuration for Access switches
+  ios_command:
+    commands:
+      - configure terminal
+      - spanning-tree mode Rapid-pvst
+      - spanning-tree extend system-id
+      - spanning-tree portfast {{ edge }} bpduguard default
+      - spanning-tree vlan 1-4094 priority 32768
+      - exit
+  when: ansible_network_os == 'ios' and 'ACCESS' in group_names
+  tags:
+    - global
+
+- name: IOS - STP Global configuration for Core switches
+  ios_command:
+    commands:
+      - configure terminal
+      - spanning-tree mode Rapid-pvst
+      - spanning-tree extend system-id
+      - spanning-tree portfast {{ edge }} bpduguard default
+      - spanning-tree vlan 1-4094 root primary
+      - exit
+  when: ansible_network_os == 'ios' and 'CORE' in group_names
+  tags:
+    - global
+
+- name: IOS - configure some service / disable unused service
+  ios_config:
+    lines:
+      - no ip http server
+      - no ip http secure-server
+      - service timestamps log datetime msec show-timezone
+      - service timestamps debug datetime msec show-timezone
+      - service password-encryption
+      - vtp mode off
+      - errdisable recovery cause bpduguard
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+
+- name: IOS - configure SNMP
+  ios_command:
+    commands:
+      - configure terminal
+      - access-list 98 permit any
+      - snmp-server community {{ talend_snmp_community }} RO 98
+      - snmp-server location {{ inventory_hostname[:3]|upper }}
+      - exit
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+
+- name: IOS - configure logging
+  cisco.ios.ios_logging_global:
+    config:
+      buffered:
+        size: 16384
+        xml: False
+        severity: notifications
+      console:
+        severity: critical
+      hosts:
+        - hostname: "{{ talend_logs }}"
+      logging_on: enable
+      source_interface:
+        - interface: Vlan999
+    state: overridden
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+
+- name: IOS - SSH configuration
+  ios_command:
+    commands:
+      - configure terminal
+      - crypto key generate rsa usage-keys label talend modulus 2048
+      - ip ssh rsa keypair-name talend
+      - ip ssh dh min size 2048
+      - ip ssh version 2
+      - exit
+  vars:
+    ansible_command_timeout: 120
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+
+- name: IOS - Login banner
+  ios_banner:
+    banner: login
+    text: "{{ banner }}"
+    state: present
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+
+- name: IOS - Disable AUX login
+  ios_command:
+    commands:
+      - configure terminal
+      - line aux 0
+      - transport input none
+      - transport output none
+      - no exec
+      - exec-timeout 0 1
+      - no password
+      - exit
+  ignore_errors: yes
+  when: ansible_network_os == 'ios' and '9200' in ansible_net_model
+  tags:
+    - global
+
+- name: IOS - remove all users except admin
+  no_log: true
+  ios_user:
+    purge: yes
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+
+- name: IOS - remove all legacy credentials
+  ios_command:
+    commands:
+      - configure terminal
+      - no ip ssh pubkey-chain
+      - no ip ftp username
+      - no enable password
+      - exit
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+
+- name: IOS - Add admin user with  hashed password
+  no_log: true
+  ios_user:
+    name: "{{ adminlocal_username }}"
+    hashed_password:
+      type: 9
+      value: "{{ admin_hash_password }}"
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+
+- name: IOS - set admin user to privilege level 15
+  no_log: true
+  ios_user:
+    aggregate:
+      - name: "{{ adminlocal_username }}"
+    privilege: 15
+    state: present
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+
+- name: IOS - enable secret scrypt
+  no_log: true
+  ios_command:
+    commands:
+      - configure terminal
+      - enable secret 9 {{ admin_hash_password }}
+      - exit
+  when: ansible_network_os == 'ios'
+  tags:
+    - global

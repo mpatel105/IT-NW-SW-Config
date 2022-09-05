@@ -1,0 +1,116 @@
+---
+########################################################
+## These tasks we used for legacy configuration.
+## Not needed anymore for NAC deployment
+########################################################
+
+- name: napalm get_facts
+  napalm.napalm.get_facts:
+    filter: facts,lldp_neighbors_detail
+  register: napalmfacts
+  when: ansible_network_os == 'ios'
+  tags:
+    - interfaces
+
+- name: IOS - Set IOS Interface Description from CDP
+  ios_config:
+    lines:
+      - description Connected to {{ item.value[0].host }} int {{ item.value[0].port }}
+    parents: interface {{ item.key }}
+  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
+  when:
+    - ansible_network_os == 'ios'
+    - item.value[0].platform is defined
+    - ("cisco" in item.value[0].platform)
+  tags:
+    - interfaces
+
+- name: IOS - Configure interface in vlan 8 - End Users
+  ios_config:
+    lines:
+      - description Wired Users VLAN
+      - switchport mode access
+      - spanning-tree portfast {{ edge }}
+    parents: interface {{ item.name }}
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - (item.mode is defined and item.mode == 'access' and item.access.vlan is defined and item.access.vlan == 8) or
+      (item.mode is not defined and item.access.vlan is defined and item.access.vlan == 8)
+  tags:
+    - interfaces
+
+- name: IOS - Configure interface in vlan 24/40/48 - Ops devices & A/V
+  ios_config:
+    lines:
+      - switchport mode access
+      - spanning-tree portfast {{ edge }}
+    parents: interface {{ item.name }}
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - (item.mode is defined and item.mode == 'access' and item.access.vlan is defined and (item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48)) or
+      (item.mode is not defined and item.access.vlan is defined and (item.access.vlan == 24 or item.access.vlan == 40 or item.access.vlan == 48))
+  tags:
+    - interfaces
+
+- name: IOS - Configure description tags in vlan 24 - Ops devices
+  ios_config:
+    lines:
+      - description VLAN24 - {{ output.ansible_facts.ansible_net_interfaces[item.name].description }}
+    parents: interface {{ item.name }}
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - ((item.mode is defined and item.mode == 'access' and item.access.vlan is defined and item.access.vlan == 24) or
+      (item.mode is not defined and item.access.vlan is defined and item.access.vlan == 24)) and
+      ( ( output.ansible_facts.ansible_net_interfaces[item.name].description is defined and
+      output.ansible_facts.ansible_net_interfaces[item.name].description == None) or
+      (output.ansible_facts.ansible_net_interfaces[item.name].description is defined and
+      not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith('VLAN24 -')) )
+  tags:
+    - interfaces
+
+- name: IOS - Configure description tags in vlan 40 - Phones
+  ios_config:
+    lines:
+      - description VLAN40 - {{ output.ansible_facts.ansible_net_interfaces[item.name].description }}
+    parents: interface {{ item.name }}
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - ((item.mode is defined and item.mode == 'access' and item.access.vlan is defined and item.access.vlan == 40) or
+      (item.mode is not defined and item.access.vlan is defined and item.access.vlan == 40)) and
+      ( ( output.ansible_facts.ansible_net_interfaces[item.name].description is defined and
+      output.ansible_facts.ansible_net_interfaces[item.name].description == None) or
+      (output.ansible_facts.ansible_net_interfaces[item.name].description is defined and
+      not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith('VLAN40 -')) )
+  tags:
+    - interfaces
+
+- name: IOS - Configure description tags in vlan 48 - Audio/Video
+  ios_config:
+    lines:
+      - description VLAN48 - {{ output.ansible_facts.ansible_net_interfaces[item.name].description }}
+    parents: interface {{ item.name }}
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - ((item.mode is defined and item.mode == 'access' and item.access.vlan is defined and item.access.vlan == 48) or
+      (item.mode is not defined and item.access.vlan is defined and item.access.vlan == 48)) and
+      ( ( output.ansible_facts.ansible_net_interfaces[item.name].description is defined and
+      output.ansible_facts.ansible_net_interfaces[item.name].description == None) or
+      (output.ansible_facts.ansible_net_interfaces[item.name].description is defined and
+      not output.ansible_facts.ansible_net_interfaces[item.name].description.startswith('VLAN48 -')) )
+  tags:
+    - interfaces
+
+- name: IOS - Configure interface for Cisco Meraki
+  ios_config:
+    lines:
+      - description Wifi AP {{ napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key][0]['remote_system_name'] }}
+      - switchport trunk native vlan 999
+      - switchport trunk allowed vlan 16,24,240,999
+      - switchport mode trunk
+    parents: interface {{ item.key }}
+  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
+  when:
+    - ansible_network_os == "ios" and
+      (item.value[0].platform is defined and "Meraki" in item.value[0].platform)
+  tags:
+    - interfaces
