@@ -27,6 +27,7 @@
     - NACradius
     - facts
     - meraki
+    - NAC_NAN
 
 
 - name: napalm get_facts
@@ -380,6 +381,35 @@
 #  tags:
 #    - convertNAC1
 #    - NACglobal
+
+- name: IOS-XE - Configure Interfaces for NAC
+  ios_config:
+    lines:
+      - device-tracking attach-policy ip_device_tracking_policy
+      - source template TEMPLATE_NAC_ENDPOINTS
+    parents: interface {{ item.name }}
+    before: default interface {{ item.name }}
+    replace: block
+    match: exact
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS-XE' and (item.access.vlan is defined and item.access.vlan == 163 )
+  tags:
+    - NAC_NAN
+
+- name: IOS - Configure Interfaces for NAC
+  ios_config:
+    lines:
+      - source template TEMPLATE_NAC_ENDPOINTS
+    parents: interface {{ item.name }}
+    before: default interface {{ item.name }}
+    match: exact
+  loop: "{{ ansible_network_resources['l2_interfaces']  }}"
+  when:
+    - ansible_network_os == 'ios' and ansible_net_iostype == 'IOS' and (item.access.vlan is defined and item.access.vlan == 163 )
+  tags:
+    - NAC_NAN
+
 
 - name: IOS-XE - Configure Interfaces for NAC
   ios_config:
