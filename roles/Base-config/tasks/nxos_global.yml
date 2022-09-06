@@ -6,6 +6,7 @@
   tags:
     - global
     - interfaces
+    - syslog
 
 - name: NXOS - configure dns
   nxos_system:
@@ -142,6 +143,7 @@
   when: ansible_network_os == 'nxos'
   tags:
     - global
+    - syslog
 
 - name: NXOS - SSH configuration
   nxos_command:
