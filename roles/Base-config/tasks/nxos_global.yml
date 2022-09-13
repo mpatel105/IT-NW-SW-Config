@@ -26,7 +26,7 @@
         - server: "{{ talend_ntp }}"
           use_vrf: default
           prefer: yes
-      source_interface: Vlan999
+      source_interface: "{% if hostname in mgmt0 %}mgmt0{% else %}Vlan999{% endif %}"
     state: replaced
   when: ansible_network_os == 'nxos'
   tags:
@@ -136,32 +136,12 @@
       logfile:
         name: logs
         severity: notification
-#      source_interface: Vlan999
       source_interface: "{% if hostname in mgmt0 %}mgmt0{% else %}Vlan999{% endif %}"
     state: replaced
   when: ansible_network_os == 'nxos'
   tags:
     - global
     - syslog
-
-- name: NXOS - configure logging for mgmt0 source interface
-  cisco.nxos.nxos_logging_global:
-    config:
-      monitor:
-        severity: alert
-      hosts:
-        - host: "{{ talend_logs }}"
-          severity: warning
-          use_vrf: default
-      logfile:
-        name: logs
-        severity: notification
-      source_interface: mgmt0
-    state: replaced
-  when: ansible_network_os == 'nxos' and hostname in mgmt0
-  tags:
-    - global
-    - syslogmgmt
 
 - name: NXOS - SSH configuration
   nxos_command:
@@ -228,6 +208,7 @@
   when: ansible_network_os == 'nxos'
   tags:
     - global
+    - radius
 
 - name: NXOS - Save config
   nxos_config:
