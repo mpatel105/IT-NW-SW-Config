@@ -138,7 +138,7 @@
         severity: notification
       source_interface: Vlan999
     state: replaced
-  when: ansible_network_os == 'nxos'
+  when: ansible_network_os == 'nxos' and hostname not in mgmt0
   tags:
     - global
     - syslog
@@ -160,7 +160,7 @@
   when: ansible_network_os == 'nxos' and hostname in mgmt0
   tags:
     - global
-    - syslogmgmt
+    - syslog
 
 - name: NXOS - SSH configuration
   nxos_command:
