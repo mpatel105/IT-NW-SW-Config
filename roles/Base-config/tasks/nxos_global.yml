@@ -127,8 +127,6 @@
 - name: NXOS - configure logging
   cisco.nxos.nxos_logging_global:
     config:
-      console:
-        severity: error
       monitor:
         severity: alert
       hosts:
