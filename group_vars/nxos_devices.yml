@@ -1,1 +1,9 @@
 ansible_network_os: nxos
+
+mgmt0:
+  - bei-sw-002
+  - bei-sw-003
+  - bei-sw-009
+  - bei-sw-010
+  - sv2-sw-002
+  - sv2-sw-003
