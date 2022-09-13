@@ -136,7 +136,8 @@
       logfile:
         name: logs
         severity: notification
-      source_interface: Vlan999
+#      source_interface: Vlan999
+      source_interface: "{% if hostname in mgmt0 %}mgmt0{% else %}Vlan999{% endif %}"
     state: replaced
   when: ansible_network_os == 'nxos' and hostname not in mgmt0
   tags:
@@ -160,7 +161,7 @@
   when: ansible_network_os == 'nxos' and hostname in mgmt0
   tags:
     - global
-    - syslog
+    - syslogmgmt
 
 - name: NXOS - SSH configuration
   nxos_command:
