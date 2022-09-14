@@ -275,7 +275,6 @@
 
 - debug:
     msg:
-#      - "{{ resultdir.stdout_lines[0][-2].split(' ')[1] }}"
       - "{{ resultdir.stdout_lines[0][-2].split(' ')[0] }}"
   when: ansible_network_os == 'nxos'
   tags:
@@ -287,14 +286,14 @@
       vars:
         msg: |-
           Task end for Device : {{ inventory_hostname }}
-          Not enough space : {{ resultdir.stdout_lines[0][-2].split(' ')[1] }}
+          Not enough space : {{ resultdir.stdout_lines[0][-2].split(' ')[0] }}
           Space needed: {{ nxos_space }}
           Stopping playbook for the device {{ inventory_hostname }}
       debug:
         msg: "{{ msg.split('\n') }}"
-      failed_when: ( resultdir.stdout_lines[0][-2].split(' ')[1] | int ) < ( nxos_space | int )
+      failed_when: ( resultdir.stdout_lines[0][-2].split(' ')[0] | int ) < ( nxos_space | int )
     - meta: end_host
-  when: ansible_network_os == 'nxos' and ( resultdir.stdout_lines[0][-2].split(' ')[1] | int ) < ( nxos_space | int )
+  when: ansible_network_os == 'nxos' and ( resultdir.stdout_lines[0][-2].split(' ')[0] | int ) < ( nxos_space | int )
   tags:
     - copy-test
     - copy
