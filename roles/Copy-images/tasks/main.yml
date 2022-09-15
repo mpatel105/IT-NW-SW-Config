@@ -347,6 +347,7 @@
     remote_scp_server_password: "{{scp_server_password}}"
     vrf: management
     file_pull_timeout: 3600
+    file_pull_kstack: True
   vars:
     ansible_command_timeout: 3600
   when: ansible_network_os == 'nxos'

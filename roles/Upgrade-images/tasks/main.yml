@@ -291,7 +291,7 @@
 
 - block:
   - debug:
-      msg: "file {{ new_nxos_image }} already exists on device. Stopping playbook for the device {{ inventory_hostname }}"
+      msg: "file {{ new_nxos_image }} not available. Stopping playbook for the device {{ inventory_hostname }}"
   - meta: end_host
   when: ansible_network_os == 'nxos' and new_nxos_image|string not in resultdir.stdout[0]
   tags:
@@ -315,7 +315,7 @@
         msg: |-
           Task end for Device : {{ inventory_hostname }}
           OS to install : {{ new_nxos_image }}
-          MD5 error after copy !
+          MD5 error !
       debug:
         msg: "{{ msg.split('\n') }}"
       failed_when: new_nxos_md5_value != nxos_md5_result.stdout[0]
