@@ -336,7 +336,7 @@
   check_mode: no
   nxos_install_os:
     system_image_file: "{{new_nxos_image}}"
-    issu: desired
+#    issu: desired
   # vars:
   #   ansible_connect_timeout: 900
   #   ansible_command_timeout: 900
