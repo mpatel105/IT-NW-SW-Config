@@ -315,29 +315,7 @@
   tags:
     - copy
 
-# - name: NXOS Copy image using SCP
-#   cli_command:
-#     command: "copy scp: bootflash: vrf management use-kstack"
-#     check_all: True
-#     prompt:
-#       - 'Enter source filename:'
-#       - 'Enter hostname for the scp server:'
-#       - 'Enter username:'
-#       - 'Are you sure you want to continue connecting'
-#       - 'password'
-#     answer:
-#       - 'images/{{new_nxos_image}}'
-#       - '{{scp_region_server}}'
-#       - '{{scp_server_username}}'
-#       - 'yes'
-#       - '{{scp_server_password}}'
-#   vars:
-#     ansible_command_timeout: 21600
-#   when: ansible_network_os == 'nxos'
-#   tags:
-#     - copy
-
-- name: NXOS Copy image using SCP using module copy
+- name: NXOS Copy image
   nxos_file_copy:
     file_pull: true
     local_file: "{{new_nxos_image}}"
