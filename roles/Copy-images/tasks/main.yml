@@ -346,6 +346,8 @@
     remote_scp_server_user: "{{scp_server_username}}"
     remote_scp_server_password: "{{scp_server_password}}"
     vrf: management
+ vars:
+   ansible_command_timeout: 21600
   when: ansible_network_os == 'nxos'
   tags:
     - copy
