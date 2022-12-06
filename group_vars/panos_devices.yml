@@ -1,2 +1,7 @@
 ansible_network_os: panos
 ansible_connection: local
+
+device:
+  ip_address: '{{ inventory_hostname }}'
+  username: '{{ ansible_user | default(omit) }}'
+  password: '{{ ansible_password | default(omit) }}'
