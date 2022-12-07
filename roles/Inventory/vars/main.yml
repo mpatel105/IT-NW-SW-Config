@@ -1,9 +1,5 @@
 ---
 # vars file for Inventory
-inventory_file: inventory.csv
+inventory_file: Switches_inventory.csv
 dest_folder: /tmp/SW-Config
-
-device:
-  ip_address: '{{ devices }}'
-  username: '{{ ansible_user | default(omit) }}'
-  password: '{{ ansible_password | default(omit) }}'
+repo: github.com/TalendIT/IT-Network-Scripts.git
