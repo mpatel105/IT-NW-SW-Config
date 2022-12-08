@@ -168,7 +168,7 @@ interfaces:
     GigabitEthernet2/0/4:
         source_template: TEMPLATE_NAC_ENDPOINTS
     GigabitEthernet2/0/40:
-        source_template: TEMPLATE_STANDARD_ENDPOINTS
+        source_template: TEMPLATE_NAC_ENDPOINTS
     GigabitEthernet2/0/41:
         source_template: TEMPLATE_NAC_ENDPOINTS
     GigabitEthernet2/0/42:
