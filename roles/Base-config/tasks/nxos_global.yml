@@ -8,6 +8,7 @@
     - interfaces
     - syslog
     - radius
+    - ntp
 
 - name: NXOS - configure dns
   nxos_system:
@@ -32,6 +33,7 @@
   when: ansible_network_os == 'nxos'
   tags:
     - global
+    - ntp
 
 - name: NXOS - UTC Timezone
   nxos_command:

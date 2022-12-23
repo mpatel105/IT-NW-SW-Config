@@ -8,6 +8,7 @@
   tags:
     - global
     - syslog
+    - ntp
 
 - name: IOS - set fact for portfast
   set_fact:
@@ -77,6 +78,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - global
+    - ntp
 
 - name: IOS - UTC Timezone
   ios_command:
