@@ -13,10 +13,10 @@
 
 - name: define image to install
   set_fact:
-    new_ios_image: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_image }}{% elif '2960' in ansible_net_model %}{{ cat2960_image }}{% elif '9200' in ansible_net_model %}{{ cat9200_image }}{% elif '3560' in ansible_net_model %}{{ cat3560_image }}{% else %}unknown{% endif %}"
-    ios_md5_value: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_md5_value }}{% elif '2960' in ansible_net_model %}{{ cat2960_md5_value }}{% elif '9200' in ansible_net_model %}{{ cat9200_md5_value }}{% elif '3560' in ansible_net_model %}{{ cat3560_md5_value }}{% else %}{% endif %}"
-    space_needed:  "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_space }}{% elif '2960' in ansible_net_model %}{{ cat2960_space }}{% elif '9200' in ansible_net_model %}{{ cat9200_space }}{% elif '3560' in ansible_net_model %}{{ cat3560_space }}{% else %}{% endif %}"
-    new_ios_version: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_version }}{% elif '2960' in ansible_net_model %}{{ cat2960_version }}{% elif '9200' in ansible_net_model %}{{ cat9200_version }}{% elif '3560' in ansible_net_model %}{{ cat3560_version }}{% else %}{% endif %}"
+    new_ios_image: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_image }}{% elif '2960' in ansible_net_model %}{{ cat2960_image }}{% elif '9300' in ansible_net_model %}{{ cat9300_image }}{% elif '9200' in ansible_net_model %}{{ cat9200_image }}{% elif '3560' in ansible_net_model %}{{ cat3560_image }}{% else %}unknown{% endif %}"
+    ios_md5_value: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_md5_value }}{% elif '2960' in ansible_net_model %}{{ cat2960_md5_value }}{% elif '9300' in ansible_net_model %}{{ cat9300_md5_value }}{% elif '9200' in ansible_net_model %}{{ cat9200_md5_value }}{% elif '3560' in ansible_net_model %}{{ cat3560_md5_value }}{% else %}{% endif %}"
+    space_needed:  "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_space }}{% elif '2960' in ansible_net_model %}{{ cat2960_space }}{% elif '9300' in ansible_net_model %}{{ cat9300_space }}{% elif '9200' in ansible_net_model %}{{ cat9200_space }}{% elif '3560' in ansible_net_model %}{{ cat3560_space }}{% else %}{% endif %}"
+    new_ios_version: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_version }}{% elif '2960' in ansible_net_model %}{{ cat2960_version }}{% elif '9300' in ansible_net_model %}{{ cat9300_version }}{% elif '9200' in ansible_net_model %}{{ cat9200_version }}{% elif '3560' in ansible_net_model %}{{ cat3560_version }}{% else %}{% endif %}"
   when: ansible_network_os == 'ios'
   tags:
     - copy-test
@@ -44,7 +44,7 @@
           Task end for Device : {{ inventory_hostname }}
           Model: {{ ansible_net_model }}
           Hardware not supported !
-          Supported models : C3650, C3850, C2960X, C3560, C9200
+          Supported models : C3650, C3850, C2960X, C3560, C9200, C9300
           Stopping playbook for the device {{ inventory_hostname }}
       debug:
         msg: "{{ msg.split('\n') }}"
@@ -111,7 +111,19 @@
       - ip ssh window-size 65536
     save_when: modified
   ignore_errors: yes
-  when: ansible_network_os == 'ios'
+  when: ansible_network_os == 'ios' and ('9300' not in ansible_net_model)
+  tags:
+    - copy-window
+    - copy-test
+    - copy
+
+- name: add ip ssh bulk mode for C9300
+  ios_config:
+    lines:
+      - ip ssh bulk-mode
+    save_when: modified
+  ignore_errors: yes
+  when: ansible_network_os == 'ios' and '9300' in ansible_net_model
   tags:
     - copy-window
     - copy-test
@@ -132,7 +144,7 @@
     - copy-test
     - copy
 
-- name: cleanup switch flash for C9200
+- name: cleanup switch flash for C9200/C9300
   cli_command:
     command: "install remove inactive"
     prompt:
@@ -141,7 +153,7 @@
       - 'y'
   vars:
     ansible_command_timeout: 120
-  when: ansible_network_os == 'ios' and '9200' in ansible_net_model
+  when: ansible_network_os == 'ios' and ('9200' in ansible_net_model or '9300' in ansible_net_model)
   tags:
     - copy-clean
     - copy-test
