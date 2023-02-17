@@ -14,10 +14,10 @@
 
 - name: define image to install
   set_fact:
-    new_ios_image: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_image }}{% elif '2960' in ansible_net_model %}{{ cat2960_image }}{% elif '9200' in ansible_net_model %}{{ cat9200_image }}{% elif '3560' in ansible_net_model %}{{ cat3560_image }}{% else %}unknown{% endif %}"
-    ios_md5_value: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_md5_value }}{% elif '2960' in ansible_net_model %}{{ cat2960_md5_value }}{% elif '9200' in ansible_net_model %}{{ cat9200_md5_value }}{% elif '3560' in ansible_net_model %}{{ cat3560_md5_value }}{% else %}{% endif %}"
-    space_needed:  "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_space }}{% elif '2960' in ansible_net_model %}{{ cat2960_space }}{% elif '9200' in ansible_net_model %}{{ cat9200_space }}{% elif '3560' in ansible_net_model %}{{ cat3560_space }}{% else %}{% endif %}"
-    new_ios_version: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_version }}{% elif '2960' in ansible_net_model %}{{ cat2960_version }}{% elif '9200' in ansible_net_model %}{{ cat9200_version }}{% elif '3560' in ansible_net_model %}{{ cat3560_version }}{% else %}{% endif %}"
+    new_ios_image: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_image }}{% elif '2960' in ansible_net_model %}{{ cat2960_image }}{% elif '9300' in ansible_net_model %}{{ cat9300_image }}{% elif '9200' in ansible_net_model %}{{ cat9200_image }}{% elif '3560' in ansible_net_model %}{{ cat3560_image }}{% else %}unknown{% endif %}"
+    ios_md5_value: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_md5_value }}{% elif '2960' in ansible_net_model %}{{ cat2960_md5_value }}{% elif '9300' in ansible_net_model %}{{ cat9300_md5_value }}{% elif '9200' in ansible_net_model %}{{ cat9200_md5_value }}{% elif '3560' in ansible_net_model %}{{ cat3560_md5_value }}{% else %}{% endif %}"
+    space_needed:  "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_space }}{% elif '2960' in ansible_net_model %}{{ cat2960_space }}{% elif '9300' in ansible_net_model %}{{ cat9300_space }}{% elif '9200' in ansible_net_model %}{{ cat9200_space }}{% elif '3560' in ansible_net_model %}{{ cat3560_space }}{% else %}{% endif %}"
+    new_ios_version: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_version }}{% elif '2960' in ansible_net_model %}{{ cat2960_version }}{% elif '9300' in ansible_net_model %}{{ cat9300_version }}{% elif '9200' in ansible_net_model %}{{ cat9200_version }}{% elif '3560' in ansible_net_model %}{{ cat3560_version }}{% else %}{% endif %}"
   when: ansible_network_os == 'ios'
   tags:
     - upgrade-test
@@ -187,7 +187,7 @@
     - upgrade
     - upgrade9200
 
-- name: IOS 9200 - install the new image
+- name: IOS 9200/9300 - install the new image
   cli_command:
     command: install add file flash:{{new_ios_image}} activate commit
     check_all: True
@@ -197,7 +197,7 @@
       - 'y'
   vars:
     ansible_command_timeout: 5000
-  when: (ansible_network_os == 'ios') and ('9200' in ansible_net_model)
+  when: (ansible_network_os == 'ios') and ('9200' in ansible_net_model or '9300' in ansible_net_model)
   tags:
     - upgrade
     - upgrade9200
@@ -209,7 +209,7 @@
       - confirm
     answer:
       - 'y'
-  when: ansible_network_os == 'ios' and ('9200' not in ansible_net_model)
+  when: ansible_network_os == 'ios' and ('9200' not in ansible_net_model or '9300' not in ansible_net_model)
   tags:
     - upgrade
 

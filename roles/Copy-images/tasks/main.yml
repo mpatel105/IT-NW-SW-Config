@@ -111,24 +111,23 @@
       - ip ssh window-size 65536
     save_when: modified
   ignore_errors: yes
-  when: ansible_network_os == 'ios'
-#  when: ansible_network_os == 'ios' and ('9300' not in ansible_net_model)
+  when: ansible_network_os == 'ios' and ('9300' not in ansible_net_model)
   tags:
     - copy-window
     - copy-test
     - copy
 
-# - name: add ip ssh bulk mode for C9300
-#   ios_config:
-#     lines:
-#       - ip ssh bulk-mode
-#     save_when: modified
-#   ignore_errors: yes
-#   when: ansible_network_os == 'ios' and '9300' in ansible_net_model
-#   tags:
-#     - copy-window
-#     - copy-test
-#     - copy
+- name: add ip ssh bulk mode for C9300
+  ios_config:
+    lines:
+      - ip ssh bulk-mode
+    save_when: modified
+  ignore_errors: yes
+  when: ansible_network_os == 'ios' and '9300' in ansible_net_model
+  tags:
+    - copy-window
+    - copy-test
+    - copy
 
 - name: cleanup switch flash for C3650/C3850
   cli_command:
