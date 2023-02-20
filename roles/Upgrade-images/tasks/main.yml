@@ -47,7 +47,7 @@
           Task end for Device : {{ inventory_hostname }}
           Model: {{ ansible_net_model }}
           Hardware not supported !
-          Supported models : C3650, C3850, C2960X, C3560, C9200
+          Supported models : C3650, C3850, C2960X, C3560, C9200, C9300
           Stopping playbook for the device {{ inventory_hostname }}
       debug:
         msg: "{{ msg.split('\n') }}"
@@ -149,7 +149,7 @@
   tags:
     - upgrade
 
-- name: IOS-XE & C9200 - set boot system on device
+- name: C3x50 & C9x00 - set boot system on device
   ios_config:
     lines:
     - boot system switch all flash:packages.conf
@@ -157,7 +157,7 @@
     before:
       - no boot system
     save_when: always
-  when: ansible_network_os == 'ios' and (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model))
+  when: ansible_network_os == 'ios' and (('3850' in ansible_net_model) or ('3650' in ansible_net_model) or ('9200' in ansible_net_model) or ('9300' in ansible_net_model))
   tags:
     - upgrade
     - upgrade9200
