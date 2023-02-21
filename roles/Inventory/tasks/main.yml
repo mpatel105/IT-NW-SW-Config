@@ -23,21 +23,12 @@
   register: res
   tags:
     - pan
-    - pantest
   when: ansible_network_os == 'panos'
 
 - debug:
     msg: '{{ (res.stdout | from_json).response.result.system }}'
   tags:
     - pan
-    - pantest
-  when: ansible_network_os == 'panos'
-
-- debug:
-    msg: '{{ (res.stdout | from_json).response.result.system.hostname }}'
-  tags:
-    - pan
-    - pantest
   when: ansible_network_os == 'panos'
 
 - name: define OS Version
@@ -58,7 +49,6 @@
   tags:
     - inventory
     - pan
-    - pantest
 
 - name: deleting inventory file
   run_once: true
@@ -75,7 +65,6 @@
     path: "{{ dest_folder }}/{{ panos_inventory_file }}"
   tags:
     - pan
-    - pantest
 
 - name: create new inventory file
   run_once: true
@@ -92,7 +81,6 @@
     path: "{{ dest_folder }}/panostemp.csv"
   tags:
     - pan
-    - pantest
 
 - name: writing to file
   ansible.builtin.lineinfile:
@@ -125,7 +113,7 @@
            "
     create: yes
   tags:
-    - pantest
+    - pan
   when: ansible_network_os == 'panos'
 
 - name: sort inventory file
@@ -144,7 +132,7 @@
   args:
     chdir: "{{ dest_folder }}"
   tags:
-    - pantest
+    - pan
 
 - name: add header
   run_once: true
@@ -162,7 +150,7 @@
     line: Site,Hostname,Model,Serial_Number,OS_Version
     insertbefore: BOF
   tags:
-    - inventory
+    - pan
 
 - name: push to git
   run_once: true
@@ -178,7 +166,7 @@
     chdir: "{{ dest_folder }}"
   tags:
     - inventory
-    - pantest
+    - pan
 
 - name: remove temp folder
   run_once: true
@@ -187,11 +175,11 @@
     path: "{{ dest_folder}}"
   tags:
     - inventory
-    - pantest
+    - pan
 
 - debug:
     msg: "Inventory done"
   run_once: true
   tags:
     - inventory
-    - pantest
+    - pan
