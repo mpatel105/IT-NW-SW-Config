@@ -23,12 +23,14 @@
   register: res
   tags:
     - pan
+    - pantest
   when: ansible_network_os == 'panos'
 
 - debug:
     msg: '{{ res.stdout }}'
   tags:
     - pan
+    - pantest
   when: ansible_network_os == 'panos'
 
 
@@ -38,6 +40,7 @@
   tags:
     - inventory
     - inventory_test
+  when: ansible_network_os == 'ios' or ansible_network_os == 'nxos'
 
 - name: clone repository
   run_once: true
@@ -48,6 +51,7 @@
     version: master
   tags:
     - inventory
+    - pan
 
 - name: deleting inventory file
   run_once: true
@@ -57,6 +61,14 @@
   tags:
     - inventory
 
+- name: PANOS deleting inventory file
+  run_once: true
+  file:
+    state: absent
+    path: "{{ dest_folder }}/{{ panos_inventory_file }}"
+  tags:
+    - pan
+
 - name: create new inventory file
   run_once: true
   file:
@@ -64,6 +76,14 @@
     path: "{{ dest_folder }}/temp.csv"
   tags:
     - inventory
+
+- name: PANOS create new panos inventory file
+  run_once: true
+  file:
+    state: touch
+    path: "{{ dest_folder }}/panostemp.csv"
+  tags:
+    - pan
 
 - name: writing to file
   ansible.builtin.lineinfile:
@@ -81,12 +101,13 @@
   loop_control:
     extended: yes
   throttle: 1
+  when: ansible_network_os == 'ios' or ansible_network_os == 'nxos'
   tags:
     - inventory
 
 - name: PANOS writing to file
   ansible.builtin.lineinfile:
-    path: "{{ dest_folder}}/temp.csv"
+    path: "{{ dest_folder}}/panostemp.csv"
     line: "{{ ansible_net_hostname[:3]|upper }},
            {{ ansible_net_hostname }}{% if ansible_net_stacked_models is defined and (ansible_net_stacked_models | length) > 1  %}_{{ansible_loop.index}}{% else %}{% endif %},
            {{ item }},
@@ -128,6 +149,7 @@
     git config --global user.email "networks@talend.com"
     git config --global user.name "sa-netgit"
     git add {{ inventory_file }}
+    git add {{ panos_inventory_file }}
     git commit -m "inventory: $(date +"%Y-%m-%d %H:%M:%S")"
     git push origin master
     exit 0
@@ -135,6 +157,7 @@
     chdir: "{{ dest_folder }}"
   tags:
     - inventory
+    - pan
 
 - name: remove temp folder
   run_once: true
@@ -143,9 +166,11 @@
     path: "{{ dest_folder}}"
   tags:
     - inventory
+    - pan
 
 - debug:
     msg: "Inventory done"
   run_once: true
   tags:
     - inventory
+    - pan
