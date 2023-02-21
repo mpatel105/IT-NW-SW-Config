@@ -34,7 +34,7 @@
   when: ansible_network_os == 'panos'
 
 - debug:
-    msg: '{{ res.response }}'
+    msg: '{{ (res.stdout | from_json).response.result }}'
   tags:
     - pan
     - pantest
