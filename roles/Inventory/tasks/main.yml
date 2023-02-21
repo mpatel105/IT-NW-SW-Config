@@ -33,12 +33,12 @@
     - pantest
   when: ansible_network_os == 'panos'
 
-# - debug:
-#     msg: '{{ res.system }}'
-#   tags:
-#     - pan
-#     - pantest
-#   when: ansible_network_os == 'panos'
+- debug:
+    msg: '{{ res.result }}'
+  tags:
+    - pan
+    - pantest
+  when: ansible_network_os == 'panos'
 
 - name: define OS Version
   set_fact:
