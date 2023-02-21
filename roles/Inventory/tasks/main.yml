@@ -33,6 +33,12 @@
     - pantest
   when: ansible_network_os == 'panos'
 
+- debug:
+    msg: '{{ res.system }}'
+  tags:
+    - pan
+    - pantest
+  when: ansible_network_os == 'panos'
 
 - name: define OS Version
   set_fact:
@@ -52,6 +58,7 @@
   tags:
     - inventory
     - pan
+    - pantest
 
 - name: deleting inventory file
   run_once: true
@@ -68,6 +75,7 @@
     path: "{{ dest_folder }}/{{ panos_inventory_file }}"
   tags:
     - pan
+    - pantest
 
 - name: create new inventory file
   run_once: true
@@ -84,6 +92,7 @@
     path: "{{ dest_folder }}/panostemp.csv"
   tags:
     - pan
+    - pantest
 
 - name: writing to file
   ansible.builtin.lineinfile:
@@ -108,19 +117,9 @@
 - name: PANOS writing to file
   ansible.builtin.lineinfile:
     path: "{{ dest_folder}}/panostemp.csv"
-    line: "{{ ansible_net_hostname[:3]|upper }},
-           {{ ansible_net_hostname }}{% if ansible_net_stacked_models is defined and (ansible_net_stacked_models | length) > 1  %}_{{ansible_loop.index}}{% else %}{% endif %},
-           {{ item }},
-           {{ ansible_net_stacked_serialnums[ansible_loop.index0] | default(ansible_net_serialnum) }},
-           {{ ansible_net_stacked_serialnums[ansible_loop.index0][3:5] | default(ansible_net_serialnum[3:5]) | int + 1996 }},
-           {{ ansible_net_iostype | default('NXOS') }},
-           {{ ansible_net_version }},
-           {% if ansible_net_version == os_version %}-{% else %}Yes{% endif %}"
+    line: "'{{ res.system }}'
+           "
     create: yes
-  loop: "{{ ansible_net_stacked_models | default ([ansible_net_model]) }}"
-  loop_control:
-    extended: yes
-  throttle: 1
   tags:
     - pan
   when: ansible_network_os == 'panos'
