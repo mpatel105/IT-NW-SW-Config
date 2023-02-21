@@ -27,7 +27,7 @@
   when: ansible_network_os == 'panos'
 
 - debug:
-    msg: '{{ res.stdout }}'
+    msg: '{{ (res.stdout | from_json).response.result.system }}'
   tags:
     - pan
     - pantest
@@ -114,15 +114,19 @@
   tags:
     - inventory
 
-# - name: PANOS writing to file
-#   ansible.builtin.lineinfile:
-#     path: "{{ dest_folder}}/panostemp.csv"
-#     line: "'{{ res.system }}'
-#            "
-#     create: yes
-#   tags:
-#     - pan
-#   when: ansible_network_os == 'panos'
+- name: PANOS writing to file
+  ansible.builtin.lineinfile:
+    path: "{{ dest_folder}}/panostemp.csv"
+    line: "{{ (res.stdout | from_json).response.result.system.hostname[:3]|upper }},
+           {{ (res.stdout | from_json).response.result.system.hostname }},
+           {{ (res.stdout | from_json).response.result.system.model }},
+           {{ (res.stdout | from_json).response.result.system.serial }},
+           {{ (res.stdout | from_json).response.result.system.sw-version }}
+           "
+    create: yes
+  tags:
+    - pantest
+  when: ansible_network_os == 'panos'
 
 - name: sort inventory file
   run_once: true
@@ -133,11 +137,29 @@
   tags:
     - inventory
 
+- name: PANOS sort inventory file
+  run_once: true
+  shell:
+    cmd: "sort -t, -k1n panostemp.csv >> {{ panos_inventory_file }}"
+  args:
+    chdir: "{{ dest_folder }}"
+  tags:
+    - pantest
+
 - name: add header
   run_once: true
   lineinfile:
     path: "{{ dest_folder }}/{{ inventory_file }}"
     line: Site,Hostname,Model,Serial_Number,Year,OS_Type,OS_Version,Upgrade_Needed
+    insertbefore: BOF
+  tags:
+    - inventory
+
+- name: PANOS add header
+  run_once: true
+  lineinfile:
+    path: "{{ dest_folder }}/{{ panos_inventory_file }}"
+    line: Site,Hostname,Model,Serial_Number,OS_Version
     insertbefore: BOF
   tags:
     - inventory
@@ -156,7 +178,7 @@
     chdir: "{{ dest_folder }}"
   tags:
     - inventory
-    - pan
+    - pantest
 
 - name: remove temp folder
   run_once: true
@@ -165,11 +187,11 @@
     path: "{{ dest_folder}}"
   tags:
     - inventory
-    - pan
+    - pantest
 
 - debug:
     msg: "Inventory done"
   run_once: true
   tags:
     - inventory
-    - pan
+    - pantest
