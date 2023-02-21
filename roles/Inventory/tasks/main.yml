@@ -5,7 +5,6 @@
     gather_subset: hardware
   tags:
     - inventory
-    - inventory_test
   when: ansible_network_os == 'ios'
 
 - name: NXOS get fact
@@ -13,7 +12,6 @@
     gather_subset: hardware
   tags:
     - inventory
-    - inventory_test
   when: ansible_network_os == 'nxos'
 
 - name: PANOS get fact
@@ -23,6 +21,7 @@
   register: res
   tags:
     - pan
+    - inventory
   when: ansible_network_os == 'panos'
 
 - debug:
@@ -36,7 +35,6 @@
     os_version: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_version }}{% elif '2960' in ansible_net_model %}{{ cat2960_version }}{% elif '9200' in ansible_net_model %}{{ cat9200_version }}{% elif '9300' in ansible_net_model %}{{ cat9300_version }}{% elif '3560' in ansible_net_model %}{{ cat3560_version }}{% elif 'Nexus' in ansible_net_model %}{{ nxos_version }}{% else %}{% endif %}"
   tags:
     - inventory
-    - inventory_test
   when: ansible_network_os == 'ios' or ansible_network_os == 'nxos'
 
 - name: clone repository
@@ -65,6 +63,7 @@
     path: "{{ dest_folder }}/{{ panos_inventory_file }}"
   tags:
     - pan
+    - inventory
 
 - name: create new inventory file
   run_once: true
@@ -81,6 +80,7 @@
     path: "{{ dest_folder }}/panostemp.csv"
   tags:
     - pan
+    - inventory
 
 - name: writing to file
   ansible.builtin.lineinfile:
@@ -116,9 +116,9 @@
            {{ (res.stdout | from_json).response.result.system['wildfire-version'] }}
            "
     create: yes
+  when: ansible_network_os == 'panos'
   tags:
     - pan
-  when: ansible_network_os == 'panos'
 
 - name: sort inventory file
   run_once: true
@@ -126,6 +126,7 @@
     cmd: "sort -t, -k1n temp.csv >> {{ inventory_file }}"
   args:
     chdir: "{{ dest_folder }}"
+  when: ansible_network_os == 'ios' or ansible_network_os == 'nxos'
   tags:
     - inventory
 
@@ -135,6 +136,7 @@
     cmd: "sort -t, -k1n panostemp.csv >> {{ panos_inventory_file }}"
   args:
     chdir: "{{ dest_folder }}"
+  when: ansible_network_os == 'panos'
   tags:
     - pan
 
@@ -144,6 +146,7 @@
     path: "{{ dest_folder }}/{{ inventory_file }}"
     line: Site,Hostname,Model,Serial_Number,Year,OS_Type,OS_Version,Upgrade_Needed
     insertbefore: BOF
+  when: ansible_network_os == 'ios' or ansible_network_os == 'nxos'
   tags:
     - inventory
 
@@ -153,8 +156,10 @@
     path: "{{ dest_folder }}/{{ panos_inventory_file }}"
     line: Site,Hostname,Model,Serial_Number,OS_Version,APP_Version,AV_Version,Threat_Version,WildFire_Version
     insertbefore: BOF
+  when: ansible_network_os == 'panos'
   tags:
     - pan
+    - inventory
 
 - name: push to git
   run_once: true
