@@ -109,7 +109,11 @@
            {{ (res.stdout | from_json).response.result.system.hostname }},
            {{ (res.stdout | from_json).response.result.system.model }},
            {{ (res.stdout | from_json).response.result.system.serial }},
-           {{ (res.stdout | from_json).response.result.system['sw-version'] }}
+           {{ (res.stdout | from_json).response.result.system['sw-version'] }},
+           {{ (res.stdout | from_json).response.result.system['app-version'] }},
+           {{ (res.stdout | from_json).response.result.system['av-version'] }},
+           {{ (res.stdout | from_json).response.result.system['threat-version'] }},
+           {{ (res.stdout | from_json).response.result.system['wildfire-version'] }}
            "
     create: yes
   tags:
@@ -147,7 +151,7 @@
   run_once: true
   lineinfile:
     path: "{{ dest_folder }}/{{ panos_inventory_file }}"
-    line: Site,Hostname,Model,Serial_Number,OS_Version
+    line: Site,Hostname,Model,Serial_Number,OS_Version,APP_Version,AV_Version,Threat_Version,WildFire_Version
     insertbefore: BOF
   tags:
     - pan
