@@ -109,7 +109,7 @@
            {{ (res.stdout | from_json).response.result.system.hostname }},
            {{ (res.stdout | from_json).response.result.system.model }},
            {{ (res.stdout | from_json).response.result.system.serial }},
-           '{{ (res.stdout | from_json).response.result.system.serial }}'
+           '{{ (res.stdout | from_json).response.result.system.sw-version }}'
            "
     create: yes
   tags:
