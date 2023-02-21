@@ -33,12 +33,12 @@
     - pantest
   when: ansible_network_os == 'panos'
 
-- debug:
-    msg: '{{ res.system }}'
-  tags:
-    - pan
-    - pantest
-  when: ansible_network_os == 'panos'
+# - debug:
+#     msg: '{{ res.system }}'
+#   tags:
+#     - pan
+#     - pantest
+#   when: ansible_network_os == 'panos'
 
 - name: define OS Version
   set_fact:
@@ -114,15 +114,15 @@
   tags:
     - inventory
 
-- name: PANOS writing to file
-  ansible.builtin.lineinfile:
-    path: "{{ dest_folder}}/panostemp.csv"
-    line: "'{{ res.system }}'
-           "
-    create: yes
-  tags:
-    - pan
-  when: ansible_network_os == 'panos'
+# - name: PANOS writing to file
+#   ansible.builtin.lineinfile:
+#     path: "{{ dest_folder}}/panostemp.csv"
+#     line: "'{{ res.system }}'
+#            "
+#     create: yes
+#   tags:
+#     - pan
+#   when: ansible_network_os == 'panos'
 
 - name: sort inventory file
   run_once: true
