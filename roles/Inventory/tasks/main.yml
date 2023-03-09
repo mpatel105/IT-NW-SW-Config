@@ -3,26 +3,26 @@
 - name: IOS get fact
   ios_facts:
     gather_subset: hardware
+  when: ansible_network_os == 'ios'
   tags:
     - inventory
-  when: ansible_network_os == 'ios'
 
 - name: NXOS get fact
   nxos_facts:
     gather_subset: hardware
+  when: ansible_network_os == 'nxos'
   tags:
     - inventory
-  when: ansible_network_os == 'nxos'
 
 - name: PANOS get fact
   paloaltonetworks.panos.panos_op:
     provider: '{{ device }}'
     cmd: 'show system info'
   register: res
+  when: ansible_network_os == 'panos'
   tags:
     - pan
     - inventory
-  when: ansible_network_os == 'panos'
 
 - debug:
     msg: '{{ (res.stdout | from_json).response.result.system }}'
@@ -33,9 +33,9 @@
 - name: define OS Version
   set_fact:
     os_version: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_version }}{% elif '2960' in ansible_net_model %}{{ cat2960_version }}{% elif '9200' in ansible_net_model %}{{ cat9200_version }}{% elif '9300' in ansible_net_model %}{{ cat9300_version }}{% elif '3560' in ansible_net_model %}{{ cat3560_version }}{% elif 'Nexus' in ansible_net_model %}{{ nxos_version }}{% else %}{% endif %}"
+  when: ansible_network_os == 'ios' or ansible_network_os == 'nxos'
   tags:
     - inventory
-  when: ansible_network_os == 'ios' or ansible_network_os == 'nxos'
 
 - name: clone repository
   run_once: true
@@ -53,6 +53,7 @@
   file:
     state: absent
     path: "{{ dest_folder }}/{{ inventory_file }}"
+  when: ansible_network_os == 'ios' or ansible_network_os == 'nxos'
   tags:
     - inventory
 
@@ -61,6 +62,7 @@
   file:
     state: absent
     path: "{{ dest_folder }}/{{ panos_inventory_file }}"
+  when: ansible_network_os == 'panos'
   tags:
     - pan
     - inventory
@@ -70,6 +72,7 @@
   file:
     state: touch
     path: "{{ dest_folder }}/temp.csv"
+  when: ansible_network_os == 'ios' or ansible_network_os == 'nxos'
   tags:
     - inventory
 
@@ -78,6 +81,7 @@
   file:
     state: touch
     path: "{{ dest_folder }}/panostemp.csv"
+  when: ansible_network_os == 'panos'
   tags:
     - pan
     - inventory
