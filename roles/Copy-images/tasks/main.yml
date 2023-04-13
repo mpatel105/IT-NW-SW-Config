@@ -37,6 +37,14 @@
     - copy-test
     - copy
 
+
+  debug:
+    msg: "{{ msg.split('\n') }}"
+  when: ansible_network_os == 'ios'
+  tags:
+    - copy-test
+    - copy
+
 - block:
     - name: test if hardware model is supported
       vars:
@@ -111,19 +119,19 @@
       - ip ssh window-size 65536
     save_when: modified
   ignore_errors: yes
-  when: ansible_network_os == 'ios' and ('9300' not in ansible_net_model)
+  when: ansible_network_os == 'ios' and ('9300' not in ansible_net_model or '9200' not in ansible_net_model)
   tags:
     - copy-window
     - copy-test
     - copy
 
-- name: add ip ssh bulk mode for C9300
+- name: add ip ssh bulk mode for C9300 / C9200
   ios_config:
     lines:
       - ip ssh bulk-mode
     save_when: modified
   ignore_errors: yes
-  when: ansible_network_os == 'ios' and '9300' in ansible_net_model
+  when: ansible_network_os == 'ios' and ()'9300' in ansible_net_model or '9200' in ansible_net_model)
   tags:
     - copy-window
     - copy-test
