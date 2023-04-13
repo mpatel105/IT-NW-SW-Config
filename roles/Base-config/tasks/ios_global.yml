@@ -9,6 +9,7 @@
     - global
     - syslog
     - ntp
+    - lldp
 
 - name: IOS - set fact for portfast
   set_fact:
@@ -55,6 +56,15 @@
 #  tags:
 #      - config
 #      - removevlan
+
+- name: IOS - Enable LLDP
+  cisco.ios.ios_lldp_global:
+    config:
+      enabled: true
+    state: merged
+  tags:
+    - lldp
+    - global
 
 - name: IOS - configure dns
   ios_system:

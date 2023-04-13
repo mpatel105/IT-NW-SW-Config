@@ -119,7 +119,7 @@
       - ip ssh window-size 65536
     save_when: modified
   ignore_errors: yes
-  when: ansible_network_os == 'ios' and ('9300' not in ansible_net_model or '9200' not in ansible_net_model)
+  when: ansible_network_os == 'ios' and ('3650' in ansible_net_model or '3850' in ansible_net_model or '2960' in ansible_net_model or '3560' in ansible_net_model)
   tags:
     - copy-window
     - copy-test
