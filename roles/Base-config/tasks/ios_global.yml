@@ -45,6 +45,7 @@
   when: ansible_network_os == 'ios' and 'ACCESS' in group_names
   tags:
     - configvlan
+    - global
 
 # - name: Remove Infra Vlan from ACCESS Switches
 #  ios_vlans:
