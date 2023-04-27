@@ -1,7 +1,22 @@
 ---
 plugin: netbox.netbox.nb_inventory
-api_endpoint: "{{ lookup('env', 'NETBOX_API') }}"
-token: "{{ lookup('env', 'NETBOX_TOKEN') }}"
+#api_endpoint: "{{ lookup('env', 'NETBOX_API') }}"
+#token: "{{ lookup('env', 'NETBOX_TOKEN') }}"
+api_endpoint:
+    description: Endpoint of the NetBox API
+    required: True
+    env:
+        - name: NETBOX_API
+
+token:
+    required: False
+    description:
+      - NetBox API token to be able to read against NetBox.
+      - This may not be required depending on the NetBox setup.
+    env:
+      # in order of precedence
+      - name: NETBOX_TOKEN
+
 validate_certs: True
 compose:
   ansible_network_os: platform.slug
