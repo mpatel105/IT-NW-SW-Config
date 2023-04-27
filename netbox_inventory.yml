@@ -2,7 +2,7 @@
 plugin: netbox.netbox.nb_inventory
 api_endpoint: https://pa7-netbox-001.talend.com
 validate_certs: false
-token: "{{ NETBOX_TOKEN }}"
+token: "{{ lookup('env', 'NETBOX_TOKEN') }}"
 compose:
   ansible_network_os: platform.slug
 device_query_filters:
