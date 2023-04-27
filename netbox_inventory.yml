@@ -5,6 +5,10 @@ token: "{{ lookup('env', 'NETBOX_TOKEN') }}"
 validate_certs: True
 compose:
   ansible_network_os: platform.slug
+group_by:
+  - location
+  - device_roles
+  - platforms
 device_query_filters:
   - has_primary_ip: 'true'
   - status: 'active'
