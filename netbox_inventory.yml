@@ -10,5 +10,6 @@ group_by:
   - manufacturers
   - platforms
 device_query_filters:
-  - has_primary_ip: 'true'
   - status: 'offline'
+#  - has_primary_ip: 'true'
+  
