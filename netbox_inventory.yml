@@ -1,3 +1,4 @@
+---
 plugin: netbox.netbox.nb_inventory
 api_endpoint: "{{ NETBOX_API }}"
 token: "{{ NETBOX_TOKEN }}"
