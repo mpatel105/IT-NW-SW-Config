@@ -1,9 +1,10 @@
+---
 plugin: netbox.netbox.nb_inventory
-api_endpoint: "{{ NETBOX_API }}"
+api_endpoint: https://pa7-netbox-001.talend.com
+validate_certs: false
 token: "{{ NETBOX_TOKEN }}"
-validate_certs: True
 compose:
- ansible_network_os: platform.slug
+  ansible_network_os: platform.slug
 device_query_filters:
- - has_primary_ip: 'true'
- - status: 'active'
+  - has_primary_ip: 'true'
+  - status: 'active'
