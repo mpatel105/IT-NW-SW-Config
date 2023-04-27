@@ -1,8 +1,9 @@
 ---
 plugin: netbox.netbox.nb_inventory
-api_endpoint: https://pa7-netbox-001.talend.com
-token: "{{ lookup('env', 'NETBOX_TOKEN') }}"
+#api_endpoint: https://pa7-netbox-001.talend.com
+#token: "{{ lookup('env', 'NETBOX_TOKEN') }}"
 validate_certs: True
+config_context: false
 compose:
   ansible_network_os: platform.slug
 group_by:
