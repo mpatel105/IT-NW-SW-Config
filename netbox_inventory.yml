@@ -11,4 +11,4 @@ group_by:
   - platforms
 device_query_filters:
   - has_primary_ip: 'true'
-  - status: 'active'
+  - status: 'deprecated'
