@@ -7,7 +7,7 @@ compose:
   ansible_network_os: platform.slug
 group_by:
   - location
-  - regions
+  - region
   - device_roles
   - manufacturers
   - platforms
