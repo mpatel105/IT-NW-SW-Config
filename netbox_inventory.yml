@@ -7,7 +7,9 @@ compose:
   ansible_network_os: platform.slug
 group_by:
   - location
+  - regions
   - device_roles
+  - manufacturers
   - platforms
 device_query_filters:
   - has_primary_ip: 'true'
