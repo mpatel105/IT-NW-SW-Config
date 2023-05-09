@@ -7,8 +7,6 @@ compose:
 group_by:
   - region
   - device_roles
-  - manufacturers
-  - platforms
 device_query_filters:
   - status: 'active'
   - has_primary_ip: 'true'
