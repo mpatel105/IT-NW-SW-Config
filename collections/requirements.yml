@@ -1,14 +1,13 @@
 ---
 collections:
   - name: cisco.ios
-    version: 2.6.0
+#    version: 2.6.0
 
   - name: cisco.nxos
-    version: 2.8.2
+#    version: 2.8.2
 
   - name: cisco.meraki
-    version: 2.6.0
+#    version: 2.6.0
 
   - name: paloaltonetworks.panos
-    version: 2.9.0
-    
+#    version: 2.9.0
