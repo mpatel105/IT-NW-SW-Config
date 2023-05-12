@@ -1,14 +1,14 @@
 ---
 
 - name: IOS get fact
-  ios_facts:
+  cisco.ios.ios_facts:
     gather_subset: hardware
   when: ansible_network_os == 'ios'
   tags:
     - inventory
 
 - name: NXOS get fact
-  nxos_facts:
+  cisco.ios.nxos_facts:
     gather_subset: hardware
   when: ansible_network_os == 'nxos'
   tags:
