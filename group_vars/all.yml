@@ -85,6 +85,7 @@ model_stp_edge:
 
 scp_emea_server: pa7-nwsrv-001.talend.com
 scp_noram_server: sv2-nwsrv-001.talend.com
+scp_apac_server: bei-nwsrv-001.talend.com
 scp_image_dir: /home/sa-netcopy/images
 #scp_emea_server: 10.50.17.11
 #scp_noram_server: 10.10.17.6
