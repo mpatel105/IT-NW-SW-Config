@@ -3,8 +3,8 @@ plugin: netbox.netbox.nb_inventory
 validate_certs: True
 config_context: false
 compose:
-  ansible_network_os: platform.slug
-#  ansible_network_os: "{% if ('ios-xe' in platform.slug) %}ios{% else %}platform.slug{% endif %}"
+#  ansible_network_os: platform.slug
+  ansible_network_os: "{% if ('ios-xe' in platform.slug) %}ios{% else %}platform.slug{% endif %}"
 group_by:
   - region
   - device_roles
