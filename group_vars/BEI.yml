@@ -1,0 +1,5 @@
+talend_dns:
+  - 10.42.100.100
+  - 192.168.15.30
+
+scp_region_server: "{{ scp_apac_server }}"

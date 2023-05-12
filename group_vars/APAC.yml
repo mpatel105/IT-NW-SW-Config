@@ -20,4 +20,4 @@ talend_radius_2: "{{ talend_radius_SV2 }}"
 talend_radius_1_name: "{{ talend_radius_PA7_name }}"
 talend_radius_2_name: "{{ talend_radius_SV2_name }}"
 
-scp_region_server: "{{ scp_apac_server }}"
+scp_region_server: "{{ scp_emea_server }}"
