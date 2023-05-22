@@ -243,15 +243,6 @@
   assert:
     that:
      - new_ios_version == ansible_net_version
-  when: ansible_network_os == 'ios'
-  tags:
-    - upgrade-test
-    - upgrade
-
-- name: IOS - Assert that the IOS version is correct
-  assert:
-    that:
-     - new_ios_version == ansible_net_version
     fail_msg: "IOS Software not Updated !"
     success_msg: "IOS Software Upgrade has been completed"
   when: ansible_network_os == 'ios'
