@@ -8,6 +8,7 @@ group_by:
   - region
   - device_roles
   - platforms
+  - sites
 device_query_filters:
   - status: 'active'
   - has_primary_ip: 'true'
