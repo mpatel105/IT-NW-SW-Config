@@ -252,8 +252,8 @@
   assert:
     that:
      - new_ios_version == ansible_net_version
-    fail_msg: "IOS Software Upgrade has been completed"
-    success_msg: "IOS Software not Updated !"
+    fail_msg: "IOS Software not Updated !"
+    success_msg: "IOS Software Upgrade has been completed"
   when: ansible_network_os == 'ios'
   tags:
     - upgrade-test
@@ -374,8 +374,8 @@
   assert:
     that:
      - new_nxos_version == ansible_net_version
-    fail_msg: "NXOS Software Upgrade has been completed"
-    success_msg: "NXOS Software not Updated !"
+    fail_msg: "NXOS Software not Updated !"
+    success_msg: "NXOS Software Upgrade has been completed"
   when: ansible_network_os == 'nxos'
   tags:
     - upgrade-test
