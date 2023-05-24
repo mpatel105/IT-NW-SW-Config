@@ -9,6 +9,7 @@ group_by:
   - device_roles
   - platforms
   - sites
+  - site_group
 group_names_raw: True
 device_query_filters:
   - status: 'active'
