@@ -9,10 +9,10 @@
 
 - name: IOS - update custom field OS version
   netbox.netbox.netbox_device:
-    netbox_url: {{ NETBOX_API }}
-    netbox_token: {{ NETBOX_TOKEN }}
+    netbox_url: "{{ NETBOX_API }}"
+    netbox_token: "{{ NETBOX_TOKEN }}"
     data:
-      name: {{ inventory_hostname }}
+      name: "{{ inventory_hostname }}"
       # custom_fields:
       #   OS_Version: {{ ansible_net_version }}
     state: present
