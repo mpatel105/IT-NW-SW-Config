@@ -343,17 +343,28 @@
   tags:
     - upgrade
 
-- name: NXOS - Wait for nxos device to come back up with new image
-  wait_for:
-   port: 22
-   state: started
-   timeout: 900
-   delay: 60
-   host: '{{ inventory_hostname }}'
+- name: NXOS - wait for ios network device to come back up
+  wait_for_connection:
+    delay: 300
+    timeout: 1200
+    connect_timeout: 10
+    sleep: 30
   when: ansible_network_os == 'nxos'
   tags:
     - upgrade-test
     - upgrade
+
+# - name: NXOS - Wait for nxos device to come back up with new image
+#   wait_for:
+#    port: 22
+#    state: started
+#    timeout: 900
+#    delay: 60
+#    host: '{{ inventory_hostname }}'
+#   when: ansible_network_os == 'nxos'
+#   tags:
+#     - upgrade-test
+#     - upgrade
 
 - name: NXOS - Getting facts
   nxos_facts:
