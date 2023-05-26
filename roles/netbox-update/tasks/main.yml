@@ -13,8 +13,8 @@
     netbox_token: "{{ NETBOX_TOKEN }}"
     data:
       name: "{{ inventory_hostname }}"
-      # custom_fields:
-      #   OS_Version: {{ ansible_net_version }}
+      custom_fields:
+        OS_Version: {{ ansible_net_version }}
     state: present
   when: ansible_network_os == 'ios'
   tags:
