@@ -7,6 +7,13 @@
   tags:
     - OSupdate
 
+- name: NXOS get fact
+  cisco.nxos.nxos_facts:
+    gather_subset: hardware
+  when: ansible_network_os == 'nxos'
+  tags:
+    - inventory
+
 - name: IOS - update custom field OS version
   netbox.netbox.netbox_device:
     netbox_url: "{{ NETBOX_API }}"
