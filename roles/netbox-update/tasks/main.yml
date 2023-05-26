@@ -1,0 +1,21 @@
+---
+# tasks file for netbox-update
+- name: Getting IOS facts
+  ios_facts:
+    gather_subset: hardware
+  when: ansible_network_os == 'ios'
+  tags:
+    - netbox_update
+
+- name: IOS - update custom field OS version
+  netbox.netbox.netbox_device:
+    netbox_url: {{ NETBOX_API }}
+    netbox_token: {{ NETBOX_TOKEN }}
+    data:
+      name: {{ inventory_hostname }}
+      custom_fields:
+        OS_Version: {{ ansible_net_version }}
+
+  when: ansible_network_os == 'ios'
+  tags:
+    - netbox_update
