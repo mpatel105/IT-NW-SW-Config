@@ -15,7 +15,7 @@
       name: {{ inventory_hostname }}
       custom_fields:
         OS_Version: {{ ansible_net_version }}
-
+    state: present
   when: ansible_network_os == 'ios'
   tags:
     - netbox_update
