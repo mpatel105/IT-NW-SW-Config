@@ -259,6 +259,7 @@
   tags:
     - copy-test
     - copy
+    - md5
 
 - block:
     - name: NXOS test if current installed image is compliant
@@ -361,6 +362,7 @@
   when: ansible_network_os == 'nxos'
   tags:
     - copy
+    - md5
 
 - block:
     - name: NXOS stop playbook if MD5 is incorrect
@@ -376,9 +378,11 @@
   when: ansible_network_os == 'nxos' and nxos_md5_result is defined and nxos_md5_value != nxos_md5_result.stdout[0]
   tags:
     - copy
+    - md5
 
 - debug:
     msg: "MD5 check Verified successfully"
   when: ansible_network_os == 'nxos'
   tags:
     - copy
+    - md5
