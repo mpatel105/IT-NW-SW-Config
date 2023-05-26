@@ -12,10 +12,15 @@
     netbox_url: "{{ NETBOX_API }}"
     netbox_token: "{{ NETBOX_TOKEN }}"
     data:
-      name: "{{ inventory_hostname }}"
+#      name: "{{ inventory_hostname }}"
+      name: "{{ ansible_net_hostname }}{% if ansible_net_stacked_models is defined and (ansible_net_stacked_models | length) > 1  %}_{{ansible_loop.index}}{% else %}{% endif %}"
       custom_fields:
         OS_Version: "{{ ansible_net_version }}"
     state: present
+  loop: "{{ ansible_net_stacked_models | default ([ansible_net_model]) }}"
+  loop_control:
+    extended: yes
+  throttle: 1
   when: ansible_network_os == 'ios'
   tags:
     - OSupdate
