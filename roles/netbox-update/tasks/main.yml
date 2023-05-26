@@ -13,7 +13,7 @@
     netbox_token: "{{ NETBOX_TOKEN }}"
     data:
 #      name: "{{ inventory_hostname }}"
-      name: "{{ ansible_net_hostname }}{% if ansible_net_stacked_models is defined and (ansible_net_stacked_models | length) > 1  %}_{{ansible_loop.index}}{% else %}{% endif %}"
+      name: "{{ ansible_net_hostname }}{% if ansible_net_stacked_models is defined and (ansible_net_stacked_models | length) > 1 and ansible_loop.index > 1 %}_{{ansible_loop.index}}{% else %}{% endif %}"
       custom_fields:
         OS_Version: "{{ ansible_net_version }}"
     state: present
