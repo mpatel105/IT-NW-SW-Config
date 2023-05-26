@@ -21,6 +21,7 @@
     data:
 #      name: "{{ inventory_hostname }}"
       name: "{{ ansible_net_hostname }}{% if ansible_net_stacked_models is defined and (ansible_net_stacked_models | length) > 1 and ansible_loop.index > 1 %}_{{ansible_loop.index}}{% else %}{% endif %}"
+      serial: "{{ ansible_net_stacked_serialnums[ansible_loop.index0] | default(ansible_net_serialnum) }}"
       custom_fields:
         OS_Version: "{{ ansible_net_version }}"
     state: present
