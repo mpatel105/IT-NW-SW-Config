@@ -342,7 +342,7 @@
     remote_scp_server: "{{scp_region_server}}"
     remote_scp_server_user: "{{scp_server_username}}"
     remote_scp_server_password: "{{scp_server_password}}"
-    vrf: management
+    vrf: default
     file_pull_timeout: 3600
     file_pull_kstack: True
   vars:
