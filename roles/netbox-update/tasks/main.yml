@@ -27,7 +27,7 @@
   loop: "{{ ansible_net_stacked_models | default ([ansible_net_model]) }}"
   loop_control:
     extended: yes
-  throttle: 1
+#  throttle: 1
   when: ansible_network_os == 'ios' or ansible_network_os == 'nxos'
   tags:
     - OSupdate
