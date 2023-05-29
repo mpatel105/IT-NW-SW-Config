@@ -6,6 +6,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - OSupdate
+    - cabling
 
 - name: NXOS get fact
   cisco.nxos.nxos_facts:
@@ -13,6 +14,7 @@
   when: ansible_network_os == 'nxos'
   tags:
     - OSupdate
+    - cabling
 
 - name: IOS/NXOS - update custom field OS version
   netbox.netbox.netbox_device:
@@ -30,3 +32,22 @@
   when: ansible_network_os == 'ios' or ansible_network_os == 'nxos'
   tags:
     - OSupdate
+
+- name: Create cable within NetBox
+  netbox.netbox.netbox_cable:
+    netbox_url: "{{ NETBOX_API }}"
+    netbox_token: "{{ NETBOX_TOKEN }}"
+    data:
+      termination_a_type: dcim.interface
+      termination_a:
+        device: {{ ansible_net_hostname }}
+        name: {{ item.key }}
+      termination_b_type: dcim.interface
+      termination_b:
+        device: {{ item.value[0].host }}
+        name: {{ item.value[0].port }}
+    state: present
+  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
+  when: ansible_network_os == 'ios' or ansible_network_os == 'nxos'
+  tags:
+    - cabling
