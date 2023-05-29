@@ -43,8 +43,7 @@
 
 - debug:
     msg: >
-        "Device {{ item.value.display_name }} (ID: {{ item.key }}) was
-         manufactured by {{ item.value.device_type.manufacturer.name }}"
+        "Device {{ item }} with ID: {{ item.key }}"
   loop: "{{ query('netbox.netbox.nb_lookup', 'devices',
                     api_endpoint=NETBOX_API,
                     api_filter='role=core-switch') }}"
