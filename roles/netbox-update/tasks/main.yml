@@ -2,7 +2,8 @@
 # tasks file for netbox-update
 - name: Getting IOS facts
   ios_facts:
-    gather_subset: hardware
+    gather_network_resources:
+      - 'l2_interfaces'
   when: ansible_network_os == 'ios'
   tags:
     - OSupdate
