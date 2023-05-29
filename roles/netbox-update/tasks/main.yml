@@ -46,7 +46,7 @@
         "Device {{ item }} with ID: {{ item.key }}"
   loop: "{{ query('netbox.netbox.nb_lookup', 'devices',
                     api_endpoint=NETBOX_API,
-                    api_filter='name=ansible_net_hostname') }}"
+                    api_filter='name=sur-sw-test') }}"
 
   tags:
     - cabling
