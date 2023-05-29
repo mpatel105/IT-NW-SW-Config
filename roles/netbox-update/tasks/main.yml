@@ -64,7 +64,7 @@
         name: "{{ item.key }}"
       termination_b_type: dcim.interface
       termination_b:
-        device: "{{ item.value[0].host }}"
+        device: "{{ item.value[0].host.split('.')[0] }}"
         name: "{{ item.value[0].port }}"
     state: present
   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
