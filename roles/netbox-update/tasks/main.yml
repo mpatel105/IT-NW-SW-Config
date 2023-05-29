@@ -49,7 +49,8 @@
                     api_endpoint='{{ NETBOX_API }}',
                     api_filter='name={{ ansible_net_hostname }}'),
                     token='{{ NETBOX_TOKEN }}') }}"
-
+  tags:
+    - cabling
 
 - debug:
     msg: "local host {{ ansible_net_hostname }} connected between {{ item.key }} and remote host {{ item.value[0].host.split('.')[0] }} interface {{ item.value[0].port }}"
