@@ -65,6 +65,7 @@
       termination_b:
         device: "{{ item.value[0].host.split('.')[0] }}"
         name: "{{ item.value[0].port }}"
+      status: connected
     state: present
   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when: ansible_network_os == 'ios' or ansible_network_os == 'nxos'
