@@ -40,12 +40,12 @@
     data:
       termination_a_type: dcim.interface
       termination_a:
-        device: {{ ansible_net_hostname }}
-        name: {{ item.key }}
+        device: "{{ ansible_net_hostname }}"
+        name: "{{ item.key }}"
       termination_b_type: dcim.interface
       termination_b:
-        device: {{ item.value[0].host }}
-        name: {{ item.value[0].port }}
+        device: "{{ item.value[0].host }}"
+        name: "{{ item.value[0].port }}"
     state: present
   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when: ansible_network_os == 'ios' or ansible_network_os == 'nxos'
