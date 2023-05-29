@@ -46,7 +46,7 @@
         "Device {{ item }} with ID: {{ item.key }}"
   loop: "{{ query('netbox.netbox.nb_lookup', 'interfaces',
                     api_endpoint=NETBOX_API,
-                    api_filter='device='+ansible_net_hostname) }}"
+                    api_filter='device='+ansible_net_hostname) name=GigabitEthernet1/0/48}}"
 
   tags:
     - cabling
