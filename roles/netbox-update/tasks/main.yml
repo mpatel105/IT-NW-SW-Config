@@ -41,11 +41,11 @@
     - cabling
 
 
-debug:
-      msg: >
+- debug:
+    msg: >
         "Device {{ item.value.display_name }} (ID: {{ item.key }}) was
          manufactured by {{ item.value.device_type.manufacturer.name }}"
-    loop: "{{ query('netbox.netbox.nb_lookup', 'devices',
+  loop: "{{ query('netbox.netbox.nb_lookup', 'devices',
                     api_endpoint='{{ NETBOX_API }}',
                     api_filter='name={{ ansible_net_hostname }}'),
                     token='{{ NETBOX_TOKEN }}') }}"
