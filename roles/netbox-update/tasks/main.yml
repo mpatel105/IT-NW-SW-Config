@@ -2,7 +2,7 @@
 # tasks file for netbox-update
 - name: Getting IOS facts
   ios_facts:
-    gather_subset: all    
+    gather_subset: all
   when: ansible_network_os == 'ios'
   tags:
     - OSupdate
@@ -41,7 +41,7 @@
     - cabling
 
 - debug:
-    msg: "local host {{ ansible_net_hostname }} connected between {{ item.key }} and remote host {{ item.value[0].host }} interface {{ item.value[0].port }}"
+    msg: "local host {{ ansible_net_hostname }} connected between {{ item.key }} and remote host {{ item.value[0].host.split('.')[0] }} interface {{ item.value[0].port }}"
     # msg: "host is {{ item.value[0] }} "
     # msg: "{{ output.ansible_facts.ansible_net_neighbors | type_debug }}"
     # msg: "{{ group_names }}"
