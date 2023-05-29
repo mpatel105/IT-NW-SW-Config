@@ -40,6 +40,17 @@
   tags:
     - cabling
 
+
+debug:
+      msg: >
+        "Device {{ item.value.display_name }} (ID: {{ item.key }}) was
+         manufactured by {{ item.value.device_type.manufacturer.name }}"
+    loop: "{{ query('netbox.netbox.nb_lookup', 'devices',
+                    api_endpoint='{{ NETBOX_API }}',
+                    api_filter='name={{ ansible_net_hostname }}'),
+                    token='{{ NETBOX_TOKEN }}') }}"
+
+
 - debug:
     msg: "local host {{ ansible_net_hostname }} connected between {{ item.key }} and remote host {{ item.value[0].host.split('.')[0] }} interface {{ item.value[0].port }}"
     # msg: "host is {{ item.value[0] }} "
