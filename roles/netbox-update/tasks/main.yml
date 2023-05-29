@@ -44,7 +44,7 @@
 - debug:
     msg: >
         "Device {{ item }} with ID: {{ item.key }}"
-  loop: "{{ query('netbox.netbox.nb_lookup', 'devices',
+  loop: "{{ query('netbox.netbox.nb_lookup', 'interfaces',
                     api_endpoint=NETBOX_API,
                     api_filter='name='+ansible_net_hostname) }}"
 
