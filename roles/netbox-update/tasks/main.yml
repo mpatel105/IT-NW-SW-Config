@@ -10,7 +10,9 @@
 
 - name: NXOS get fact
   cisco.nxos.nxos_facts:
-    gather_subset: hardware
+    gather_subset:
+      - hardware
+      - interfaces
   when: ansible_network_os is defined and  ansible_network_os == 'nxos'
   tags:
     - OSupdate
