@@ -16,6 +16,14 @@
     - OSupdate
     - cabling
 
+- name: napalm get_facts
+  napalm.napalm.get_facts:
+    filter: facts,lldp_neighbors_detail
+  register: napalmfacts
+  when: ansible_network_os == 'ios'
+  tags:
+    - interfaces
+
 - name: IOS/NXOS - update custom field OS version
   netbox.netbox.netbox_device:
     netbox_url: "{{ NETBOX_API }}"
@@ -34,7 +42,8 @@
     - OSupdate
 
 - debug:
-    msg: "{{ansible_net_neighbors }}"
+    msg: "{{ {{ item.value[0].host.split('.')[0] }} }}"
+  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when:
     - ansible_network_os == "ios"
   tags:
