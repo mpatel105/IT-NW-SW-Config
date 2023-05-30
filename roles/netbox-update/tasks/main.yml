@@ -46,7 +46,8 @@
     #msg: "{% if item.value[0].platform is defined and 'Meraki' in item.value[0].platform %}Meraki{% else %}{{ item.value[0].host.split('.')[0] }}{% endif %}"
     msg: "test"
 #  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
-  loop: "{{ query(ansible_net_neighbors, 'all') | default({}) }}"
+  #loop: "{{ query(ansible_net_neighbors, 'all') | default({}) }}"
+  loop: "{{ query('ansible_net_neighbors', 'all') }}"
   when:
     - ansible_network_os == "ios"
   tags:
