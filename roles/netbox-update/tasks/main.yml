@@ -33,12 +33,12 @@
   tags:
     - OSupdate
 
-# - debug:
-#     msg: "{{ansible_net_neighbors }}"
-#   when:
-#     - ansible_network_os == "ios"
-#   tags:
-#     - cabling
+- debug:
+    msg: "{{ansible_net_neighbors }}"
+  when:
+    - ansible_network_os == "ios"
+  tags:
+    - cabling
 
 
 # - debug:
@@ -63,22 +63,22 @@
 #   tags:
 #     - cabling
 
-- name: Create cable within NetBox
-  netbox.netbox.netbox_cable:
-    netbox_url: "{{ NETBOX_API }}"
-    netbox_token: "{{ NETBOX_TOKEN }}"
-    data:
-      termination_a_type: dcim.interface
-      termination_a:
-        device: "{{ ansible_net_hostname }}"
-        name: "{{ item.key }}"
-      termination_b_type: dcim.interface
-      termination_b:
-        device: "{{ item.value[0].host.split('.')[0] }}"
-        name: "{{ item.value[0].port }}"
-      status: connected
-    state: present
-  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
-  when: ansible_network_os == 'ios' or ansible_network_os == 'nxos'
-  tags:
-    - cabling
+# - name: Create cable within NetBox
+#   netbox.netbox.netbox_cable:
+#     netbox_url: "{{ NETBOX_API }}"
+#     netbox_token: "{{ NETBOX_TOKEN }}"
+#     data:
+#       termination_a_type: dcim.interface
+#       termination_a:
+#         device: "{{ ansible_net_hostname }}"
+#         name: "{{ item.key }}"
+#       termination_b_type: dcim.interface
+#       termination_b:
+#         device: "{{ item.value[0].host.split('.')[0] }}"
+#         name: "{{ item.value[0].port }}"
+#       status: connected
+#     state: present
+#   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
+#   when: ansible_network_os == 'ios' or ansible_network_os == 'nxos'
+#   tags:
+#     - cabling
