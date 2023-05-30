@@ -22,7 +22,7 @@
   register: napalmfacts
   when: ansible_network_os == 'ios'
   tags:
-    - interfaces
+    - cabling
 
 - name: IOS/NXOS - update custom field OS version
   netbox.netbox.netbox_device:
