@@ -41,13 +41,24 @@
   tags:
     - OSupdate
 
+
 - debug:
-    msg: "{% if item.value[0].platform is defined and 'Meraki' in item.value[0].platform %}{{ napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key][0]['remote_system_name'] }}{% else %}{{ item.value[0].host.split('.')[0] }}{% endif %}"
-  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
+    #msg: "{% if item.value[0].platform is defined and 'Meraki' in item.value[0].platform %}Meraki{% else %}{{ item.value[0].host.split('.')[0] }}{% endif %}"
+    msg: "test"
+#  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
+  loop: "{{ query(ansible_net_neighbors, all) | default({}) }}"
   when:
     - ansible_network_os == "ios"
   tags:
     - cabling
+
+# - debug:
+#     msg: "{% if item.value[0].platform is defined and 'Meraki' in item.value[0].platform %}{{ napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key][0]['remote_system_name'] }}{% else %}{{ item.value[0].host.split('.')[0] }}{% endif %}"
+#   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
+#   when:
+#     - ansible_network_os == "ios"
+#   tags:
+#     - cabling
 
 
 # - debug:
