@@ -3,7 +3,7 @@ plugin: netbox.netbox.nb_inventory
 validate_certs: True
 config_context: false
 compose:
-  ansible_network_os: "{% if platform.slug is defined %}{{platform.slug}}{%else%}{%endif%}"
+  ansible_network_os: "{% if platform.slug is defined %}{{platform.slug}}{%else%}generic{%endif%}"
 group_by:
   - region
   - device_roles
