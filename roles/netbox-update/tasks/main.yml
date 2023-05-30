@@ -49,7 +49,7 @@
   #loop: "{{ query(ansible_net_neighbors, 'all') | default({}) }}"
   #loop: "{{ query('ansible_net_neighbors', 'all') }}"
   when:
-    - ansible_network_os == "ios" and item.value[0].platform is defined
+    - ansible_network_os == "ios" and item.value[0].platform is defined and ('cisco' in item.value[0].platform or 'meraki' in item.value[0].platform)
   tags:
     - cabling
 
