@@ -42,7 +42,7 @@
     - OSupdate
 
 - debug:
-    msg: "{{ {{ item.value[0].host.split('.')[0] }} }}"
+    msg: "{{ item.value[0].host.split('.')[0] }}"
   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when:
     - ansible_network_os == "ios"
