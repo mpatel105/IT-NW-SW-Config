@@ -42,7 +42,7 @@
     - OSupdate
 
 - debug:
-    msg: "{% if 'Meraki' in item.value[0].platform %}{{ napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key][0]['remote_system_name'] }}{% else %}{{ item.value[0].host.split('.')[0] }} {{ item.value[0].port }}{% endif %}"
+    msg: "{% if 'Meraki' in item.value[0].platform %}{{ napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key][0]['remote_system_name'] }}{% else %}{{ item.value[0].host.split('.')[0] }}{% endif %}"
   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when:
     - ansible_network_os == "ios"
@@ -59,7 +59,7 @@
 #
 #   tags:
 #     - cabling
-
+#
 # - debug:
 #     msg: "local host {{ ansible_net_hostname }} connected between {{ item.key }} and remote host {{ item.value[0].host.split('.')[0] }} interface {{ item.value[0].port }}"
 #     # msg: "host is {{ item.value[0] }} "
@@ -72,22 +72,23 @@
 #   tags:
 #     - cabling
 
-# - name: Create cable within NetBox
-#   netbox.netbox.netbox_cable:
-#     netbox_url: "{{ NETBOX_API }}"
-#     netbox_token: "{{ NETBOX_TOKEN }}"
-#     data:
-#       termination_a_type: dcim.interface
-#       termination_a:
-#         device: "{{ ansible_net_hostname }}"
-#         name: "{{ item.key }}"
-#       termination_b_type: dcim.interface
-#       termination_b:
-#         device: "{{ item.value[0].host.split('.')[0] }}"
-#         name: "{{ item.value[0].port }}"
-#       status: connected
-#     state: present
-#   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
-#   when: ansible_network_os == 'ios' or ansible_network_os == 'nxos'
-#   tags:
-#     - cabling
+- name: Create cable within NetBox
+  netbox.netbox.netbox_cable:
+    netbox_url: "{{ NETBOX_API }}"
+    netbox_token: "{{ NETBOX_TOKEN }}"
+    data:
+      termination_a_type: dcim.interface
+      termination_a:
+        device: "{{ ansible_net_hostname }}"
+        name: "{{ item.key }}"
+      termination_b_type: dcim.interface
+      termination_b:
+      #  device: "{{ item.value[0].host.split('.')[0] }}"
+        device: "{% if 'Meraki' in item.value[0].platform %}{{ napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key][0]['remote_system_name'] }}{% else %}{{ item.value[0].host.split('.')[0] }}{% endif %}"
+        name: "{% if 'Meraki' in item.value[0].platform %}main{% else %}{{ item.value[0].port }}{% endif %}"
+      status: connected
+    state: present
+  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
+  when: ansible_network_os == 'ios' or ansible_network_os == 'nxos'
+  tags:
+    - cabling
