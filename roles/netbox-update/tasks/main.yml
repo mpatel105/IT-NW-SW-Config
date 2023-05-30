@@ -2,7 +2,9 @@
 # tasks file for netbox-update
 - name: Getting IOS facts
   ios_facts:
-    gather_subset: all
+    gather_subset:
+      - hardware
+      - interfaces
   when: ansible_network_os is defined and ansible_network_os == 'ios'
   tags:
     - OSupdate
@@ -22,7 +24,7 @@
   napalm.napalm.get_facts:
     filter: facts,lldp_neighbors_detail
   register: napalmfacts
-  when: ansible_network_os is defined and ansible_network_os == 'ios'
+  when: ansible_network_os is defined and (ansible_network_os == 'ios' or ansible_network_os == 'nxos')
   tags:
     - cabling
 
