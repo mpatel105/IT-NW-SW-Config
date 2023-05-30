@@ -44,7 +44,7 @@
 
 - debug:
 #    msg: "{{ item.value[0].host.split('.')[0] }}"
-    msg: "{{ sites }}"
+    msg: "{{ sites[0] }}"
   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when:
     - ansible_network_os == "ios" and item.value[0].platform is defined and ('cisco' in item.value[0].platform|lower or 'meraki' in item.value[0].platform|lower)
