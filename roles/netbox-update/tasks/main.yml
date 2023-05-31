@@ -52,9 +52,11 @@
     msg: "Same Site"
   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when:
-    - ansible_network_os is defined and (ansible_network_os == "ios" or ansible_network_os == "nxos") and item.value[0].platform is defined and
-      (('cisco' in item.value[0].platform|lower and sites[0] == item.value[0].host.split('.')[0][:3]|lower))
+    - ansible_network_os is defined and (ansible_network_os == "ios" or ansible_network_os == "nxos") and
+#      item.value[0].platform is defined and (('cisco' in item.value[0].platform|lower and sites[0] == item.value[0].host.split('.')[0][:3]|lower))
 #       or 'meraki' in item.value[0].platform|lower)
+      item.value[0].host is defined and sites[0] == item.value[0].host.split('.')[0][:3]|lower) and
+      item.value[0].host.split('.')[0] in all
   tags:
     - cabling
 
