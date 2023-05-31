@@ -47,7 +47,7 @@
 
 
 - debug:
-    msg: "cabling OK"
+    msg: " ios cabling OK between {{ ansible_net_hostname}} intf {{ item.key }} and {% if 'meraki' in item.value[0].platform|lower %}{{ napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key][0]['remote_system_name'] }} intf main{% else %}{{ item.value[0].host.split('.')[0][:3]|lower }} intf {{ item.value[0].port }}{% endif %}"
   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when:
     - ansible_network_os is defined and ansible_network_os == "ios" and
@@ -57,11 +57,11 @@
     - cabling
 
 - debug:
-    msg: "cabling OK"
+    msg: " nxos cabling OK between {{ ansible_net_hostname}} intf {{ item.key }} and {{ item.value[0].host.split('.')[0][:3]|lower }} intf {{ item.value[0].port }}"
   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when:
     - ansible_network_os is defined and ansible_network_os == "nxos" and
-      ( item.value[0].host is defined and sites[0] == item.value[0].host.split('.')[0][:3]|lower and item.value[0].host.split('.')[0] in groups['all'] ) 
+      ( item.value[0].host is defined and sites[0] == item.value[0].host.split('.')[0][:3]|lower and item.value[0].host.split('.')[0] in groups['all'] )
   tags:
     - cabling
 
