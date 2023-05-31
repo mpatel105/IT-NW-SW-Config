@@ -49,7 +49,7 @@
 - debug:
 #    msg: "{{ item.value[0].host.split('.')[0] }}"
 #    msg: "{% if sites[0] == item.value[0].host.split('.')[0][:3]|lower %}Same Site{% else %}NOK{% endif %}"
-    msg: "{{ napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key][0] }}"
+    msg: "{{ napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key] }}"
   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   when:
     - ansible_network_os is defined and (ansible_network_os == "ios" or ansible_network_os == "nxos") and
