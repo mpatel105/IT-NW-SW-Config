@@ -120,7 +120,7 @@
   ignore_errors: yes
   when:
     - ansible_network_os is defined and (ansible_network_os == "ios" or ansible_network_os == "nxos") and
-      ( item.value[0].host is defined and sites[0] == item.value[0].host.split('.')[0][:3]|lower and item.value[0].host.split('.')[0] in groups['all'] or
+      ( item.value[0].host is defined and item.value[0].host is string and sites[0] == item.value[0].host.split('.')[0][:3]|lower and item.value[0].host.split('.')[0] in groups['all'] or
       ( napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key] is defined and 'Meraki' in napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key][0]['remote_system_description'] ))
   tags:
     - cabling
