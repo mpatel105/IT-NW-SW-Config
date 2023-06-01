@@ -45,6 +45,10 @@
   tags:
     - OSupdate
 
+- debug:
+    msg: "{{ groups['all'] }}"
+  tags:
+    - cabling
 
 - debug:
     msg: " ios cabling OK between {{ ansible_net_hostname}} intf {{ item.key }} and {% if 'meraki' in item.value[0].platform|lower %}{{ napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key][0]['remote_system_name'] }} intf main{% else %}{{ item.value[0].host.split('.')[0]|lower }} intf {{ item.value[0].port }}{% endif %}"
