@@ -51,7 +51,7 @@
   loop: "{{ ansible_net_stacked_models | default ([ansible_net_model]) }}"
   loop_control:
     extended: yes
-  when: ansible_network_os is defined and (ansible_network_os == 'ios' or ansible_network_os == 'nxos')
+  when: ansible_network_os is defined and ansible_net_model is defined and (ansible_network_os == 'ios' or ansible_network_os == 'nxos')
   tags:
     - OSupdate
 
