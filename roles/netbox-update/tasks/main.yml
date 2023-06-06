@@ -38,22 +38,41 @@
   tags:
     - cabling
 
-- name: IOS/NXOS - update custom field OS version
-  netbox.netbox.netbox_device:
-    netbox_url: "{{ NETBOX_API }}"
-    netbox_token: "{{ NETBOX_TOKEN }}"
-    data:
-      name: "{{ ansible_net_hostname }}{% if ansible_net_stacked_models is defined and (ansible_net_stacked_models | length) > 1 and ansible_loop.index > 1 %}_{{ansible_loop.index}}{% else %}{% endif %}"
-      serial: "{{ ansible_net_stacked_serialnums[ansible_loop.index0] | default(ansible_net_serialnum) }}"
-      custom_fields:
-        OS_Version: "{{ ansible_net_version }}"
-    state: present
-  loop: "{{ ansible_net_stacked_models | default ([ansible_net_model]) }}"
-  loop_control:
-    extended: yes
-  when: ansible_network_os is defined and ansible_net_model is defined and (ansible_network_os == 'ios' or ansible_network_os == 'nxos')
+
+- block:
+  - name: IOS/NXOS - update custom field OS version
+    netbox.netbox.netbox_device:
+      netbox_url: "{{ NETBOX_API }}"
+      netbox_token: "{{ NETBOX_TOKEN }}"
+      data:
+        name: "{{ ansible_net_hostname }}{% if ansible_net_stacked_models is defined and (ansible_net_stacked_models | length) > 1 and ansible_loop.index > 1 %}_{{ansible_loop.index}}{% else %}{% endif %}"
+        serial: "{{ ansible_net_stacked_serialnums[ansible_loop.index0] | default(ansible_net_serialnum) }}"
+        custom_fields:
+          OS_Version: "{{ ansible_net_version }}"
+      state: present
+    loop: "{{ ansible_net_stacked_models | default ([ansible_net_model]) }}"
+    loop_control:
+      extended: yes
+  when: ansible_network_os is defined and (ansible_network_os == 'ios' or ansible_network_os == 'nxos')
   tags:
     - OSupdate
+
+# - name: IOS/NXOS - update custom field OS version
+#   netbox.netbox.netbox_device:
+#     netbox_url: "{{ NETBOX_API }}"
+#     netbox_token: "{{ NETBOX_TOKEN }}"
+#     data:
+#       name: "{{ ansible_net_hostname }}{% if ansible_net_stacked_models is defined and (ansible_net_stacked_models | length) > 1 and ansible_loop.index > 1 %}_{{ansible_loop.index}}{% else %}{% endif %}"
+#       serial: "{{ ansible_net_stacked_serialnums[ansible_loop.index0] | default(ansible_net_serialnum) }}"
+#       custom_fields:
+#         OS_Version: "{{ ansible_net_version }}"
+#     state: present
+#   loop: "{{ ansible_net_stacked_models | default ([ansible_net_model]) }}"
+#   loop_control:
+#     extended: yes
+#   when: ansible_network_os is defined and ansible_net_model is defined and (ansible_network_os == 'ios' or ansible_network_os == 'nxos')
+#   tags:
+#     - OSupdate
 
 - name: PANOS - update custom field OS version
   netbox.netbox.netbox_device:
