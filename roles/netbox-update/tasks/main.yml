@@ -84,7 +84,7 @@
       custom_fields:
         OS_Version: "{{ (res.stdout | from_json).response.result.system['sw-version'] }}"
     state: present
-  when: ansible_network_os is defined and ansible_network_os == 'panos' and ansible_net_hostname not in is_virtual
+  when: ansible_network_os is defined and ansible_network_os == 'panos' and inventory_hostname not in groups['is_virtual']
   tags:
     - OSupdate
 
