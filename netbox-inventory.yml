@@ -10,6 +10,7 @@ group_by:
   - platforms
   - sites
   - site_group
+  - is_virtual
 group_names_raw: True
 device_query_filters:
   - status: 'active'
