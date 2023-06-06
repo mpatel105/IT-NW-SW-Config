@@ -40,6 +40,9 @@
 
 
 - block:
+    - name: Pause 1s
+      pause:
+        seconds: 1
     - name: IOS/NXOS - update custom field OS version
       netbox.netbox.netbox_device:
         netbox_url: "{{ NETBOX_API }}"
