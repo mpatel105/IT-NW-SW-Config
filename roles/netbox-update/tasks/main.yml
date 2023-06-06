@@ -49,7 +49,7 @@
       custom_fields:
         OS_Version: "{{ ansible_net_version }}"
     state: present
-  loop: "{{ ansible_net_stacked_models | default ([ansible_net_model]) | default () }}"
+  loop: "{{ ansible_net_stacked_models | default ([ansible_net_model]) | default ([]) }}"
   loop_control:
     extended: yes
   when: ansible_network_os is defined and ansible_net_model is defined and (ansible_network_os == 'ios' or ansible_network_os == 'nxos')
