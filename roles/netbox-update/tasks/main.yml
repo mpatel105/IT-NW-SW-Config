@@ -20,11 +20,11 @@
     - OSupdate
     - cabling
 
-- name: PANOS create new panos inventory file
-  run_once: true
-  file:
-    state: touch
-    path: "{{ dest_folder }}/panostemp.csv"
+- name: PANOS get fact
+  paloaltonetworks.panos.panos_op:
+    provider: '{{ device }}'
+    cmd: 'show system info'
+  register: res
   when: ansible_network_os == 'panos'
   tags:
     - pan
