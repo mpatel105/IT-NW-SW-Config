@@ -260,6 +260,16 @@
     - copy-test
     - copy
     - md5
+    - debug
+
+- debug:
+    msg:
+      - "{{ custom_fields.Nexus_VRF_mgmt }}"
+  when: ansible_network_os == 'nxos' and custom_fields is defined
+  tags:
+    - debug
+
+
 
 - block:
     - name: NXOS test if current installed image is compliant
