@@ -264,7 +264,7 @@
 
 - debug:
     msg:
-      - "{{ custom_fields.Nexus_VRF_mgmt }}"
+      - "VRF to use for management: {{ custom_fields.Nexus_VRF_mgmt }}"
   when: ansible_network_os == 'nxos' and custom_fields is defined
   tags:
     - debug
@@ -353,7 +353,7 @@
     remote_scp_server: "{{scp_region_server}}"
     remote_scp_server_user: "{{scp_server_username}}"
     remote_scp_server_password: "{{scp_server_password}}"
-    vrf: default
+    vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
     file_pull_timeout: 3600
     file_pull_kstack: True
   vars:
