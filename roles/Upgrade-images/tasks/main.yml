@@ -343,7 +343,7 @@
   tags:
     - upgrade
 
-- name: NXOS - wait for device to come back up
+- name: NXOS - wait 5min for device to come back up
   wait_for_connection:
     delay: 300
     timeout: 1200
