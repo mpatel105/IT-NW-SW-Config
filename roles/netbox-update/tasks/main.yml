@@ -19,6 +19,7 @@
   tags:
     - OSupdate
     - cabling
+    - customfield
 
 - name: PANOS get fact
   paloaltonetworks.panos.panos_op:
@@ -38,6 +39,18 @@
   tags:
     - cabling
 
+- name: IOS/NXOS - update custom field OS version
+  netbox.netbox.netbox_device:
+    netbox_url: "{{ NETBOX_API }}"
+    netbox_token: "{{ NETBOX_TOKEN }}"
+    data:
+      name: sur-sw-002
+      custom_fields:
+        Nexus_VRF_mgmt: management
+    state: present
+  when: ansible_network_os == 'nxos'
+  tags:
+    - customfield
 
 - name: IOS/NXOS - update custom field OS version
   netbox.netbox.netbox_device:
