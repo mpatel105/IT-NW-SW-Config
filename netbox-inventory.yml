@@ -7,6 +7,7 @@ compose:
 group_by:
   - region
   - device_roles
+  - device_types
   - platforms
   - sites
   - site_group
