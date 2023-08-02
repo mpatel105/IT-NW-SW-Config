@@ -26,9 +26,9 @@
       logging: True
       servers:
         - server: "{{ talend_ntp }}"
-          use_vrf: default
+          use_vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
           prefer: yes
-      source_interface: "{% if hostname in mgmt0 %}mgmt0{% else %}Vlan999{% endif %}"
+#      source_interface: "{% if hostname in mgmt0 %}mgmt0{% else %}Vlan999{% endif %}"
     state: replaced
   when: ansible_network_os == 'nxos'
   tags:
@@ -135,11 +135,11 @@
       hosts:
         - host: "{{ talend_logs }}"
           severity: warning
-          use_vrf: default
+          use_vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
       logfile:
         name: logs
         severity: notification
-      source_interface: "{% if hostname in mgmt0 %}mgmt0{% else %}Vlan999{% endif %}"
+#      source_interface: "{% if hostname in mgmt0 %}mgmt0{% else %}Vlan999{% endif %}"
     state: replaced
   when: ansible_network_os == 'nxos'
   tags:
