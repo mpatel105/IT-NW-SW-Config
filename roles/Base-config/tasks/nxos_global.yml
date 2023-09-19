@@ -133,9 +133,13 @@
       monitor:
         severity: alert
       hosts:
-        - host: "{{ talend_logs }}"
+        - host: "{{ talend_logs[0] }}"
           severity: warning
           use_vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
+        - host: "{{ talend_logs[1] }}"
+          severity: informational
+          use_vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
+          port: 1515
       logfile:
         name: logs
         severity: notification
