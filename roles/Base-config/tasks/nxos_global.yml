@@ -135,10 +135,10 @@
       hosts:
         - host: "{{ talend_logs[0] }}"
           severity: warning
-#          use_vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
+          use_vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
         - host: "{{ talend_logs[1] }}"
           severity: informational
-#          use_vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
+          use_vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
           port: 1515
       logfile:
         name: logs
