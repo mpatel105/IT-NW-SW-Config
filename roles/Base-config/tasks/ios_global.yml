@@ -161,12 +161,15 @@
       buffered:
         size: 16384
         xml: False
-        severity: notifications
+        severity: informational
       console:
         severity: critical
       hosts:
         - hostname: "{{ talend_logs[0] }}"
         - hostname: "{{ talend_logs[1] }}"
+          transport:
+            udp:
+              port: 1515
       logging_on: enable
       source_interface:
         - interface: Vlan999
