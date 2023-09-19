@@ -138,12 +138,12 @@
           use_vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
         - host: "{{ talend_logs[1] }}"
           severity: informational
-          use_vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
+#          use_vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
           port: 1515
       logfile:
         name: logs
         severity: notification
-#      source_interface: "{% if hostname in mgmt0 %}mgmt0{% else %}Vlan999{% endif %}"
+      source_interface: "{% if custom_fields.Nexus_VRF_mgmt == 'default' %}vlan999{% else %}mgmt0{% endif %}"
     state: replaced
   when: ansible_network_os == 'nxos'
   tags:
