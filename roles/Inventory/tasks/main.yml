@@ -3,14 +3,14 @@
 - name: IOS get fact
   cisco.ios.ios_facts:
     gather_subset: hardware
-  when: ansible_network_os == 'ios'
+  when: ansible_network_os is defined and ansible_network_os == 'ios'
   tags:
     - inventory
 
 - name: NXOS get fact
   cisco.nxos.nxos_facts:
     gather_subset: hardware
-  when: ansible_network_os == 'nxos'
+  when: ansible_network_os is defined and ansible_network_os == 'nxos'
   tags:
     - inventory
 
@@ -19,7 +19,7 @@
     provider: '{{ device }}'
     cmd: 'show system info'
   register: res
-  when: ansible_network_os == 'panos'
+  when: ansible_network_os is defined and ansible_network_os == 'panos'
   tags:
     - pan
     - inventory
@@ -28,12 +28,12 @@
     msg: '{{ (res.stdout | from_json).response.result.system }}'
   tags:
     - pan
-  when: ansible_network_os == 'panos'
+  when: ansible_network_os is defined and ansible_network_os == 'panos'
 
 - name: define OS Version
   set_fact:
     os_version: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_version }}{% elif '2960' in ansible_net_model %}{{ cat2960_version }}{% elif '9200' in ansible_net_model %}{{ cat9200_version }}{% elif '9300' in ansible_net_model %}{{ cat9300_version }}{% elif '3560' in ansible_net_model %}{{ cat3560_version }}{% elif 'Nexus' in ansible_net_model %}{{ nxos_version }}{% else %}{% endif %}"
-  when: ansible_network_os == 'ios' or ansible_network_os == 'nxos'
+  when: ansible_network_os is defined and ansible_network_os == 'ios' or ansible_network_os == 'nxos'
   tags:
     - inventory
 
@@ -44,6 +44,7 @@
     dest: "{{ dest_folder }}"
     force: yes
     version: master
+  when: ansible_network_os is defined
   tags:
     - inventory
     - pan
@@ -53,7 +54,7 @@
   file:
     state: absent
     path: "{{ dest_folder }}/{{ inventory_file }}"
-  when: ansible_network_os == 'ios' or ansible_network_os == 'nxos'
+  when: ansible_network_os is defined and ansible_network_os == 'ios' or ansible_network_os == 'nxos'
   tags:
     - inventory
 
@@ -62,7 +63,7 @@
   file:
     state: absent
     path: "{{ dest_folder }}/{{ panos_inventory_file }}"
-  when: ansible_network_os == 'panos'
+  when: ansible_network_os is defined and ansible_network_os == 'panos'
   tags:
     - pan
     - inventory
@@ -72,7 +73,7 @@
   file:
     state: touch
     path: "{{ dest_folder }}/temp.csv"
-  when: ansible_network_os == 'ios' or ansible_network_os == 'nxos'
+  when: ansible_network_os is defined and ansible_network_os == 'ios' or ansible_network_os == 'nxos'
   tags:
     - inventory
 
@@ -81,7 +82,7 @@
   file:
     state: touch
     path: "{{ dest_folder }}/panostemp.csv"
-  when: ansible_network_os == 'panos'
+  when: ansible_network_os is defined and ansible_network_os == 'panos'
   tags:
     - pan
     - inventory
@@ -102,7 +103,7 @@
   loop_control:
     extended: yes
   throttle: 1
-  when: ansible_network_os == 'ios' or ansible_network_os == 'nxos'
+  when: ansible_network_os is defined and ansible_network_os == 'ios' or ansible_network_os == 'nxos'
   tags:
     - inventory
 
@@ -120,7 +121,7 @@
            {{ (res.stdout | from_json).response.result.system['wildfire-version'] }}
            "
     create: yes
-  when: ansible_network_os == 'panos'
+  when: ansible_network_os is defined and ansible_network_os == 'panos'
   tags:
     - pan
     - inventory
@@ -131,7 +132,7 @@
     cmd: "sort -t, -k1n temp.csv >> {{ inventory_file }}"
   args:
     chdir: "{{ dest_folder }}"
-  when: ansible_network_os == 'ios' or ansible_network_os == 'nxos'
+  when: ansible_network_os is defined and ansible_network_os == 'ios' or ansible_network_os == 'nxos'
   tags:
     - inventory
 
@@ -141,7 +142,7 @@
     cmd: "sort -t, -k1n panostemp.csv >> {{ panos_inventory_file }}"
   args:
     chdir: "{{ dest_folder }}"
-  when: ansible_network_os == 'panos'
+  when: ansible_network_os is defined and ansible_network_os == 'panos'
   tags:
     - pan
     - inventory
@@ -152,7 +153,7 @@
     path: "{{ dest_folder }}/{{ inventory_file }}"
     line: Site,Hostname,Model,Serial_Number,Year,OS_Type,OS_Version,Upgrade_Needed
     insertbefore: BOF
-  when: ansible_network_os == 'ios' or ansible_network_os == 'nxos'
+  when: ansible_network_os is defined and ansible_network_os == 'ios' or ansible_network_os == 'nxos'
   tags:
     - inventory
 
@@ -162,7 +163,7 @@
     path: "{{ dest_folder }}/{{ panos_inventory_file }}"
     line: Site,Hostname,Model,Serial_Number,OS_Version,APP_Version,AV_Version,Threat_Version,WildFire_Version
     insertbefore: BOF
-  when: ansible_network_os == 'panos'
+  when: ansible_network_os is defined and ansible_network_os == 'panos'
   tags:
     - pan
     - inventory
@@ -179,6 +180,7 @@
     exit 0
   args:
     chdir: "{{ dest_folder }}"
+  when: ansible_network_os is defined
   tags:
     - inventory
     - pan
@@ -188,6 +190,7 @@
   file:
     state: absent
     path: "{{ dest_folder}}"
+  when: ansible_network_os is defined 
   tags:
     - inventory
     - pan
