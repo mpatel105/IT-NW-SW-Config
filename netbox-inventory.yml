@@ -3,7 +3,7 @@ plugin: netbox.netbox.nb_inventory
 validate_certs: True
 config_context: false
 compose:
-  ansible_network_os: "{% if 'cisco-ios' in platform.slug %}ios{% elif 'cisco-nxos' in platform.slug %}nxos{% elif 'pan-os' in platform.slug %}panos{% else %}unknown{% endif %}"
+  ansible_network_os: platform.slug
 group_by:
   - region
   - device_roles
