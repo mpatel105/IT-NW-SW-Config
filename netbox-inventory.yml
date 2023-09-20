@@ -12,7 +12,7 @@ group_by:
   - sites
   - site_group
   - is_virtual
-#  - tenants
+  - tenants
 group_names_raw: True
 device_query_filters:
   - status: 'active'
