@@ -1,0 +1,69 @@
+---
+
+- name: IOS - Configure aaa new-model
+  ios_config:
+    lines:
+      - aaa new-model
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+    - globalTACACS
+
+# - name: IOS - Configure SV2-Tacacs
+#   ios_config:
+#     lines:
+#       - address ipv4 {{ tacacs_SV2 }}
+#       - key {{ tacacs_SV2_key }}
+#     parents: tacacs server {{ tacacs_SV2_name }}
+#     before: no tacacs server {{ tacacs_SV2_name }}
+#   when: ansible_network_os == 'ios'
+#   tags:
+#     - global
+#     - globalTACACS
+
+- name: IOS - Configure PA7-Tacacs
+  ios_config:
+    lines:
+      - address ipv4 {{ tacacs_PA7 }}
+      - key {{ tacacs_PA7_key }}
+    parents: tacacs server {{ tacacs_PA7_name }}
+    before: no tacacs server {{ tacacs_PA7_name }}
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+    - globalTACACS
+
+# - name: IOS - Configure group TACACS-Servers
+#   ios_config:
+#     lines:
+#       - server name {{ tacacs_1_name }}
+#       - server name {{ tacacs_2_name }}
+#       - deadtime 5
+#     parents: aaa group server radius TACACS-Servers
+#     before: no aaa group server radius TACACS-Servers
+#     match: exact
+#   when: ansible_network_os == 'ios'
+#   tags:
+#     - global
+#     - globalTACACS
+
+- name: IOS - Configure TACACS Global Config
+  ios_config:
+    lines:
+      - aaa authentication login default group tacacs+ local
+      - aaa authorization console
+      - aaa authorization exec default group tacacs+ local
+      - aaa authorization commands 15 default group tacacs+ local
+      - aaa accounting exec default start-stop group tacacs+
+      - ip tacacs source-interface Vlan999
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+    - globalTACACS
+
+- name: IOS - Save config
+  ios_config:
+    save_when: always
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
