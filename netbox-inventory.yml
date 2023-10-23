@@ -1,7 +1,7 @@
 ---
 plugin: netbox.netbox.nb_inventory
 validate_certs: True
-config_context: false
+config_context: True
 compose:
   ansible_network_os: platform.slug
 group_by:
