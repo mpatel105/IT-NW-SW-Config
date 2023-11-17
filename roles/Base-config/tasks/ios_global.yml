@@ -12,6 +12,7 @@
     - lldp
     - configvlan
 
+
 - name: IOS - set fact for portfast
   set_fact:
     edge: "{% if item in ansible_net_model %}edge{% else %}{% endif %}"

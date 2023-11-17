@@ -9,17 +9,17 @@
     - global
     - globalTACACS
 
-# - name: IOS - Configure SV2-Tacacs
-#   ios_config:
-#     lines:
-#       - address ipv4 {{ tacacs_SV2 }}
-#       - key {{ tacacs_SV2_key }}
-#     parents: tacacs server {{ tacacs_SV2_name }}
-#     before: no tacacs server {{ tacacs_SV2_name }}
-#   when: ansible_network_os == 'ios'
-#   tags:
-#     - global
-#     - globalTACACS
+- name: IOS - Configure SV2-Tacacs
+  ios_config:
+    lines:
+      - address ipv4 {{ tacacs_SV2 }}
+      - key {{ tacacs_SV2_key }}
+    parents: tacacs server {{ tacacs_SV2_name }}
+    before: no tacacs server {{ tacacs_SV2_name }}
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+    - globalTACACS
 
 - name: IOS - Configure PA7-Tacacs
   ios_config:
