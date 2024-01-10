@@ -14,6 +14,7 @@
     lines:
       - address ipv4 {{ tacacs_SV2 }}
       - key 7 {{ tacacs_SV2_key }}
+      - timeout 2
     parents: tacacs server {{ tacacs_SV2_name }}
   when: ansible_network_os == 'ios'
   tags:
@@ -25,6 +26,7 @@
     lines:
       - address ipv4 {{ tacacs_PA7 }}
       - key 7 {{ tacacs_PA7_key }}
+      - timeout 2
     parents: tacacs server {{ tacacs_PA7_name }}
   when: ansible_network_os == 'ios'
   tags:
@@ -36,7 +38,6 @@
     lines:
       - server name {{ tacacs_1_name }}
       - server name {{ tacacs_2_name }}
-      - timeout 2
     parents: aaa group server tacacs+ Portnox-TACACS-Group
   when: ansible_network_os == 'ios'
   tags:
