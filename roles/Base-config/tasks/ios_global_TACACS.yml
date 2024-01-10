@@ -38,7 +38,7 @@
     lines:
       - server name {{ tacacs_1_name }}
       - server name {{ tacacs_2_name }}
-      - deadtime 2
+      - timeout 2
     parents: aaa group server tacacs+ PORTNOX_TACACS_Servers
   when: ansible_network_os == 'ios'
   tags:
