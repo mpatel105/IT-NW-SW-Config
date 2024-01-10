@@ -57,12 +57,6 @@
     - global
     - globalTACACS
 
-- name: IOS - reset the connection
-  meta: reset_connection
-  when: ansible_network_os == 'ios'
-  tags:
-    - globalTACACS
-
 - name: IOS - Cleanup old config
   ios_config:
     lines:
@@ -72,7 +66,7 @@
       - no aaa accounting system default
   when: ansible_network_os == 'ios'
   tags:
-    - globalTACACS
+    - globalTACACS_Cleanup
 
 - name: IOS - Save config
   ios_config:
