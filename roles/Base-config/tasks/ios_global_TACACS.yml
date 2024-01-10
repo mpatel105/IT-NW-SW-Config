@@ -14,6 +14,7 @@
     lines:
       - address ipv4 {{ tacacs_SV2 }}
       - key {{ tacacs_SV2_key }}
+      - timeout 3
     parents: tacacs server {{ tacacs_SV2_name }}
     before: no tacacs server {{ tacacs_SV2_name }}
   when: ansible_network_os == 'ios'
@@ -26,6 +27,7 @@
     lines:
       - address ipv4 {{ tacacs_PA7 }}
       - key {{ tacacs_PA7_key }}
+      - timeout 3
     parents: tacacs server {{ tacacs_PA7_name }}
     before: no tacacs server {{ tacacs_PA7_name }}
   when: ansible_network_os == 'ios'
