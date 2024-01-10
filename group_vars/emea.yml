@@ -21,3 +21,6 @@ talend_radius_1_name: "{{ talend_radius_PA7_name }}"
 talend_radius_2_name: "{{ talend_radius_SV2_name }}"
 
 scp_region_server: "{{ scp_emea_server }}"
+
+tacacs_1_name: "{{ pa7-tacacs-001 }}"
+tacacs_2_name: "{{ sv2-tacacs-001 }}"

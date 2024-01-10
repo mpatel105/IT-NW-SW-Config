@@ -1,9 +1,6 @@
 hostname: sur-sw-test
 
 
-ansible_user: "{{ q_login }}"
-ansible_password: "{{ q_password }}"
-
 interfaces:
     GigabitEthernet0/0:
         negotiation_auto: true
