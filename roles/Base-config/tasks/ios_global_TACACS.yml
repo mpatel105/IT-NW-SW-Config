@@ -50,9 +50,9 @@
     lines:
       - aaa authentication login default group PORTNOX_TACACS_Servers local
       - aaa authorization console
-      - aaa authorization exec default group PORTNOX_TACACS_Servers local
+      - aaa authorization exec default group PORTNOX_TACACS_Servers if-authenticated
       - aaa authorization commands 15 default group PORTNOX_TACACS_Servers local
-      - aaa accounting exec default start-stop group tacacs+
+      - aaa accounting exec default start-stop group PORTNOX_TACACS_Servers
       - ip tacacs source-interface Vlan999
   when: ansible_network_os == 'ios'
   tags:
