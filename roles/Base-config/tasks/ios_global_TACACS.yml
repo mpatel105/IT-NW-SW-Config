@@ -46,7 +46,7 @@
 - name: IOS - Configure TACACS Global Config
   ios_config:
     lines:
-      - aaa authentication login default group Portnox-TACACS-Grouplocal
+      - aaa authentication login default group Portnox-TACACS-Group local
       - aaa authorization console
       - aaa authorization exec default group Portnox-TACACS-Group if-authenticated
       - aaa authorization commands 15 default group Portnox-TACACS-Group if-authenticated
