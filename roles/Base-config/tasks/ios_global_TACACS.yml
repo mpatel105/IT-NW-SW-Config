@@ -57,6 +57,12 @@
     - global
     - globalTACACS
 
+- name: IOS - reset the connection
+  meta: reset_connection
+  when: ansible_network_os == 'ios'
+  tags:
+    - globalTACACS
+
 - name: IOS - Cleanup old config
   ios_config:
     lines:
