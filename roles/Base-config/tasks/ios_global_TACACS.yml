@@ -57,6 +57,24 @@
     - global
     - globalTACACS
 
+- name: IOS - reset the connection
+  meta: reset_connection
+  when: ansible_network_os == 'ios'
+  tags:
+    - globalTACACS
+
+- name: IOS - Cleanup old config
+  ios_config:
+    lines:
+      - no aaa group server radius Global-Radius-Servers
+      - no radius server PA7-Radius
+      - no radius server SV2-Radius
+      - no aaa accounting system default start-stop group Global-Radius-Servers
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+    - globalTACACS
+
 - name: IOS - Save config
   ios_config:
     save_when: always
