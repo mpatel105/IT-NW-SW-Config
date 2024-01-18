@@ -247,7 +247,7 @@
     name: "{{ adminlocal_username }}"
     hashed_password:
       type: 9
-      value: "{{ admin_hash_password }}"
+      value: "{{ adminlocal_password }}"
   when: ansible_network_os == 'ios'
   tags:
     - global
@@ -270,7 +270,7 @@
   ios_command:
     commands:
       - configure terminal
-      - enable secret 9 {{ admin_hash_password }}
+      - enable secret 9 {{ adminlocal_password }}
       - exit
   when: ansible_network_os == 'ios'
   tags:
