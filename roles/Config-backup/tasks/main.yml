@@ -59,7 +59,7 @@
 
 - debug:
     msg:
-      - Username: { ansible_user }}
+      - Username: {{ ansible_user }}
   when: ansible_network_os == 'panos'
   tags:
     - save
