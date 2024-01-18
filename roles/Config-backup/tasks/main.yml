@@ -60,7 +60,7 @@
 
 
 - name: PAN - get API key xml reponse
-#  no_log: true
+  no_log: true
   uri:
     validate_certs: no
     url: "https://{{inventory_hostname}}/api/?type=keygen&user={{ ansible_user }}&password={{ ansible_password | urlencode() }}"
@@ -71,7 +71,7 @@
   tags: save
 
 - name: PAN - Extract api key from xml response
-#  no_log: true
+  no_log: true
   community.general.xml:
     xmlstring: "{{ xml_resp.content }}"
     content: text
@@ -84,7 +84,7 @@
 
 
 - name: PAN - Get backup
-#  no_log: true
+  no_log: true
   uri:
     validate_certs: no
     url: "https://{{inventory_hostname}}/api/?type=op&cmd=<show><config><running><%2Frunning><%2Fconfig><%2Fshow>&key={{ api_key.matches[0].key }}"
