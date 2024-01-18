@@ -229,14 +229,12 @@
     - global
 
 - name: IOS - remove all legacy credentials
-  ios_command:
-    commands:
-      - configure terminal
+  ios_config:
+    lines:
       - no ip ssh pubkey-chain
       - no ip ftp username
       - no enable password
       - no username admin
-      - exit
   when: ansible_network_os == 'ios'
   tags:
     - global
