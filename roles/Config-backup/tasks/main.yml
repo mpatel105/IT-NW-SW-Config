@@ -57,6 +57,13 @@
 ### PALO ALTO
 ##############################################################################
 
+- debug:
+    msg:
+      - Username: { ansible_user }}
+  when: ansible_network_os == 'panos'
+  tags:
+    - save
+
 - name: PAN - get API key xml reponse
 #  no_log: true
   uri:
@@ -77,6 +84,9 @@
   register: api_key
   when: ansible_network_os == 'panos'
   tags: save
+
+
+
 
 - name: PAN - Get backup
   no_log: true
