@@ -103,7 +103,7 @@
 # Remove clear test password and timestamp for github upload and revision history showing changes
 - name: Remove commented lines with timestamps
   run_once: true
-  shell: |
+  ansible.builtin.shell: |
     sed -i -e '/^! Last configuration change at/d' {{ backup_folder }}/*.txt
     sed -i -e '/^! NVRAM config last updated at/d' {{ backup_folder }}/*.txt
     sed -i -e '/^Current configuration/d' {{ backup_folder }}/*.txt
@@ -116,13 +116,13 @@
     sed -i -e 's/^ client {{ talend_portnox_PA7 }} server-key 7.*/ client {{ talend_portnox_PA7 }} server-key 7 ********/' {{ backup_folder }}/*.txt
     sed -i -e 's/^ client {{ talend_portnox_SV2 }} server-key 7.*/ client {{ talend_portnox_SV2 }} server-key 7 ********/' {{ backup_folder }}/*.txt
     sed -i -e 's/^ client {{ talend_portnox_US }} server-key 7.*/ client {{ talend_portnox_US }} server-key 7 ********/' {{ backup_folder }}/*.txt
-    sed -i -e 's/^ client {{ talend_portnox_EU }} server-key 7.*/ client {{ talend_portnox_EU }} server-key 7 ********/' {{ backup_folder }}/*.txt    
+    sed -i -e 's/^ client {{ talend_portnox_EU }} server-key 7.*/ client {{ talend_portnox_EU }} server-key 7 ********/' {{ backup_folder }}/*.txt
     sed -i -e 's/^radius-server host {{ talend_radius_PA7 }} key 7.*/radius-server host {{ talend_radius_PA7 }} key 7 ******** authentication accounting timeout 3/' {{ backup_folder }}/*.txt
     sed -i -e 's/^radius-server host {{ talend_radius_SV2 }} key 7.*/radius-server host {{ talend_radius_SV2 }} key 7 ******** authentication accounting timeout 3/' {{ backup_folder }}/*.txt
     sed -i -e 's/^snmp-server community .*/snmp-server community ******** /' {{ backup_folder }}/*.txt
     sed -i -e 's/^snmp-server user admin network-admin auth md5 .*/snmp-server user admin network-admin auth md5 ******** priv ******** localizedkey/' {{ backup_folder }}/*.txt
-  args:
-    warn: no
+# args:
+#    warn: no
   delegate_to: localhost
   tags: save
 
