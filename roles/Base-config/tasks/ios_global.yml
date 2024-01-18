@@ -238,6 +238,14 @@
   when: ansible_network_os == 'ios'
   tags:
     - global
+
+- name: IOS - remove legacy admin
+  ios_config:
+    lines:
+      - no username admin
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
     - localadmin
 
 - name: IOS - Add admin user with  hashed password
