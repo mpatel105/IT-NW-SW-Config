@@ -115,6 +115,8 @@
     sed -i -e 's/^username admin password 5.*/username admin password 5 ******** role network-admin/' {{ backup_folder }}/*.txt
     sed -i -e 's/^ client {{ talend_portnox_PA7 }} server-key 7.*/ client {{ talend_portnox_PA7 }} server-key 7 ********/' {{ backup_folder }}/*.txt
     sed -i -e 's/^ client {{ talend_portnox_SV2 }} server-key 7.*/ client {{ talend_portnox_SV2 }} server-key 7 ********/' {{ backup_folder }}/*.txt
+    sed -i -e 's/^ client {{ talend_portnox_US }} server-key 7.*/ client {{ talend_portnox_US }} server-key 7 ********/' {{ backup_folder }}/*.txt
+    sed -i -e 's/^ client {{ talend_portnox_EU }} server-key 7.*/ client {{ talend_portnox_EU }} server-key 7 ********/' {{ backup_folder }}/*.txt    
     sed -i -e 's/^radius-server host {{ talend_radius_PA7 }} key 7.*/radius-server host {{ talend_radius_PA7 }} key 7 ******** authentication accounting timeout 3/' {{ backup_folder }}/*.txt
     sed -i -e 's/^radius-server host {{ talend_radius_SV2 }} key 7.*/radius-server host {{ talend_radius_SV2 }} key 7 ******** authentication accounting timeout 3/' {{ backup_folder }}/*.txt
     sed -i -e 's/^snmp-server community .*/snmp-server community ******** /' {{ backup_folder }}/*.txt

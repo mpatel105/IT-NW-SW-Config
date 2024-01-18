@@ -1,0 +1,15 @@
+---
+collections:
+  - name: cisco.ios
+    version: 4.5.0
+
+  - name: cisco.nxos
+    version: 4.3.0
+
+  - name: cisco.meraki
+    version: 2.15.1
+
+  - name: paloaltonetworks.panos
+    version: 2.16.0
+
+  - name: netbox.netbox

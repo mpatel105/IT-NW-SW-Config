@@ -224,8 +224,10 @@
 
 - name: IOS - wait for ios network device to come back up
   wait_for_connection:
-    delay: 100
-    connect_timeout: 1200
+    delay: 180
+    timeout: 1200
+    connect_timeout: 10
+    sleep: 30
   when: ansible_network_os == 'ios'
   tags:
     - upgrade-test
@@ -243,17 +245,8 @@
   assert:
     that:
      - new_ios_version == ansible_net_version
-  when: ansible_network_os == 'ios'
-  tags:
-    - upgrade-test
-    - upgrade
-
-- name: IOS - Assert that the IOS version is correct
-  assert:
-    that:
-     - new_ios_version == ansible_net_version
-    fail_msg: "IOS Software Upgrade has been completed"
-    success_msg: "IOS Software not Updated !"
+    fail_msg: "IOS Software not Updated !"
+    success_msg: "IOS Software Upgrade has been completed"
   when: ansible_network_os == 'ios'
   tags:
     - upgrade-test
@@ -281,7 +274,7 @@
       debug:
         msg: "{{ msg.split('\n') }}"
     - meta: end_host
-  when: ansible_network_os == 'nxos' and ansible_net_version == new_nxos_version
+  when: ansible_network_os == 'nxos' and ansible_net_version == nxos_version
   tags:
     - upgrade-test
     - upgrade
@@ -297,16 +290,16 @@
 
 - block:
   - debug:
-      msg: "file {{ new_nxos_image }} not available. Stopping playbook for the device {{ inventory_hostname }}"
+      msg: "file {{ nxos_image }} not available. Stopping playbook for the device {{ inventory_hostname }}"
   - meta: end_host
-  when: ansible_network_os == 'nxos' and new_nxos_image|string not in resultdir.stdout[0]
+  when: ansible_network_os == 'nxos' and nxos_image|string not in resultdir.stdout[0]
   tags:
     - upgrade-test
     - upgrade
 
 - name: NXOS Image MD5 hash check
   nxos_command:
-    commands: "show file bootflash:{{ new_nxos_image }} md5sum"
+    commands: "show file bootflash:{{ nxos_image }} md5sum"
   register: nxos_md5_result
   vars:
     ansible_command_timeout: 180
@@ -320,13 +313,13 @@
       vars:
         msg: |-
           Task end for Device : {{ inventory_hostname }}
-          OS to install : {{ new_nxos_image }}
+          OS to install : {{ nxos_image }}
           MD5 error !
       debug:
         msg: "{{ msg.split('\n') }}"
-      failed_when: new_nxos_md5_value != nxos_md5_result.stdout[0]
+      failed_when: nxos_md5_value != nxos_md5_result.stdout[0]
     - meta: end_host
-  when: ansible_network_os == 'nxos' and nxos_md5_result is defined and new_nxos_md5_value != nxos_md5_result.stdout[0]
+  when: ansible_network_os == 'nxos' and nxos_md5_result is defined and nxos_md5_value != nxos_md5_result.stdout[0]
   tags:
     - upgrade-test
     - upgrade
@@ -341,7 +334,7 @@
 - name: NXOS - Install new nxos image
   check_mode: no
   nxos_install_os:
-    system_image_file: "{{new_nxos_image}}"
+    system_image_file: "{{nxos_image}}"
 #    issu: desired
   vars:
     ansible_connect_timeout: 900
@@ -350,17 +343,28 @@
   tags:
     - upgrade
 
-- name: NXOS - Wait for nxos device to come back up with new image
-  wait_for:
-   port: 22
-   state: started
-   timeout: 900
-   delay: 60
-   host: '{{ inventory_hostname }}'
+- name: NXOS - wait 5min for device to come back up
+  wait_for_connection:
+    delay: 300
+    timeout: 1200
+    connect_timeout: 10
+    sleep: 30
   when: ansible_network_os == 'nxos'
   tags:
     - upgrade-test
     - upgrade
+
+# - name: NXOS - Wait for nxos device to come back up with new image
+#   wait_for:
+#    port: 22
+#    state: started
+#    timeout: 900
+#    delay: 60
+#    host: '{{ inventory_hostname }}'
+#   when: ansible_network_os == 'nxos'
+#   tags:
+#     - upgrade-test
+#     - upgrade
 
 - name: NXOS - Getting facts
   nxos_facts:
@@ -373,9 +377,9 @@
 - name: NXOS - Assert that the NXOS version is correct
   assert:
     that:
-     - new_nxos_version == ansible_net_version
-    fail_msg: "NXOS Software Upgrade has been completed"
-    success_msg: "NXOS Software not Updated !"
+     - nxos_version == ansible_net_version
+    fail_msg: "NXOS Software not Updated !"
+    success_msg: "NXOS Software Upgrade has been completed"
   when: ansible_network_os == 'nxos'
   tags:
     - upgrade-test

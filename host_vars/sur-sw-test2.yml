@@ -1,4 +1,5 @@
-hostname: sur-sw-test2
+hostname: sur-sw-test
+
 
 interfaces:
     GigabitEthernet0/0:

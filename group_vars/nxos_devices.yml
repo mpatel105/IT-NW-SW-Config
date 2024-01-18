@@ -1,4 +1,4 @@
-ansible_network_os: nxos
+#ansible_network_os: nxos
 
 mgmt0:
   - bei-sw-002

@@ -1,0 +1,169 @@
+---
+# tasks file for netbox-update
+- name: Getting IOS facts
+  ios_facts:
+    gather_subset:
+      - hardware
+      - interfaces
+  when: ansible_network_os is defined and ansible_network_os == 'ios'
+  tags:
+    - OSupdate
+    - cabling
+
+- name: NXOS get fact
+  cisco.nxos.nxos_facts:
+    gather_subset:
+      - hardware
+      - interfaces
+  when: ansible_network_os is defined and  ansible_network_os == 'nxos'
+  tags:
+    - OSupdate
+    - cabling
+
+- name: PANOS get fact
+  paloaltonetworks.panos.panos_op:
+    provider: '{{ device }}'
+    cmd: 'show system info'
+  register: res
+  when: ansible_network_os == 'panos'
+  tags:
+    - pan
+    - OSupdate
+
+- name: napalm get_facts
+  napalm.napalm.get_facts:
+    filter: facts,lldp_neighbors_detail
+  register: napalmfacts
+  when: ansible_network_os is defined and (ansible_network_os == 'ios' or ansible_network_os == 'nxos')
+  tags:
+    - cabling
+
+
+- name: IOS/NXOS - update custom field OS version
+  netbox.netbox.netbox_device:
+    netbox_url: "{{ NETBOX_API }}"
+    netbox_token: "{{ NETBOX_TOKEN }}"
+    data:
+      name: "{{ ansible_net_hostname }}{% if ansible_net_stacked_models is defined and (ansible_net_stacked_models | length) > 1 and ansible_loop.index > 1 %}_{{ansible_loop.index}}{% else %}{% endif %}"
+      serial: "{{ ansible_net_stacked_serialnums[ansible_loop.index0] | default(ansible_net_serialnum) }}"
+      custom_fields:
+        version: "{{ ansible_net_version }}"
+    state: present
+#loop: "{{ ansible_net_stacked_models if ansible_net_stacked_models is defined and ansible_net_stacked_models is iterable else ansible_net_model if ansible_net_model is defined else [] }}"
+  loop: "{{ ansible_net_stacked_models if ansible_net_stacked_models is defined and ansible_net_stacked_models is iterable else [ansible_net_model] if ansible_net_model is defined else [] }}"
+  loop_control:
+    extended: yes
+  when: ansible_network_os is defined and ansible_net_model is defined and (ansible_network_os == 'ios' or ansible_network_os == 'nxos')
+  tags:
+    - OSupdate
+
+# - name: IOS/NXOS - update custom field OS version
+#   netbox.netbox.netbox_device:
+#     netbox_url: "{{ NETBOX_API }}"
+#     netbox_token: "{{ NETBOX_TOKEN }}"
+#     data:
+#       name: "{{ ansible_net_hostname }}{% if ansible_net_stacked_models is defined and (ansible_net_stacked_models | length) > 1 and ansible_loop.index > 1 %}_{{ansible_loop.index}}{% else %}{% endif %}"
+#       serial: "{{ ansible_net_stacked_serialnums[ansible_loop.index0] | default(ansible_net_serialnum) }}"
+#       custom_fields:
+#         OS_Version: "{{ ansible_net_version }}"
+#     state: present
+#   loop: "{{ ansible_net_stacked_models | default ([ansible_net_model]) }}"
+#   loop_control:
+#     extended: yes
+#   when: ansible_network_os is defined and ansible_net_model is defined and (ansible_network_os == 'ios' or ansible_network_os == 'nxos')
+#   tags:
+#     - OSupdate
+
+- name: PANOS - update custom field OS version
+  netbox.netbox.netbox_device:
+    netbox_url: "{{ NETBOX_API }}"
+    netbox_token: "{{ NETBOX_TOKEN }}"
+    data:
+      name: "{{ (res.stdout | from_json).response.result.system.hostname }}"
+      serial: "{{ (res.stdout | from_json).response.result.system.serial }}"
+      custom_fields:
+        version: "{{ (res.stdout | from_json).response.result.system['sw-version'] }}"
+    state: present
+  when: ansible_network_os is defined and ansible_network_os == 'panos' and inventory_hostname not in groups['is_virtual']
+  tags:
+    - OSupdate
+
+# - debug:
+#     msg: "{{ groups['all'] }}"
+#   tags:
+#     - cabling
+#
+# - debug:
+#     msg: " ios cabling OK between {{ ansible_net_hostname}} intf {{ item.key }} and {% if 'meraki' in item.value[0].platform|lower %}{{ napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key][0]['remote_system_name'] }} intf main{% else %}{{ item.value[0].host.split('.')[0]|lower }} intf {{ item.value[0].port }}{% endif %}"
+#   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
+#   when:
+#     - ansible_network_os is defined and ansible_network_os == "ios" and
+#       ( ( item.value[0].host is defined and sites[0] == item.value[0].host.split('.')[0][:3]|lower and item.value[0].host.split('.')[0] in groups['all'] ) or
+#       ( item.value[0].platform is defined and 'meraki' in item.value[0].platform|lower ) and napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key][0]['remote_system_name']|lower in groups['all'] )
+#   tags:
+#     - cabling
+
+- debug:
+    msg: "cabling OK between {{ ansible_net_hostname}} intf {{ item.key }} and {% if napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key] is defined and 'Meraki' in napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key][0]['remote_system_description'] %}{{ napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key][0]['remote_system_name']|lower }}{% else %}{{ item.value[0].host.split('.')[0]|lower }}{% endif %} intf {{ item.value[0].port }}"
+  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
+  when:
+    - ansible_network_os is defined and (ansible_network_os == "ios" or ansible_network_os == "nxos") and
+      ( item.value[0].host is defined and item.value[0].host is string and sites[0] == item.value[0].host.split('.')[0][:3]|lower and item.value[0].host.split('.')[0] in groups['all'] or
+      ( napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key] is defined and 'Meraki' in napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key][0]['remote_system_description'] ))
+  tags:
+    - cabling
+
+# - debug:
+#     msg: "{% if item.value[0].platform is defined and 'Meraki' in item.value[0].platform %}{{ napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key][0]['remote_system_name'] }}{% else %}{{ item.value[0].host.split('.')[0] }}{% endif %}"
+#   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
+#   when:
+#     - ansible_network_os == "ios"
+#   tags:
+#     - cabling
+
+
+# - debug:
+#     msg: >
+#         "Device {{ item }} with ID: {{ item.key }}"
+#   loop: "{{ query('netbox.netbox.nb_lookup', 'interfaces',
+#                     api_endpoint=NETBOX_API,
+#                     api_filter='device='+ansible_net_hostname+' name=GigabitEthernet1/0/48')}}"
+#
+#   tags:
+#     - cabling
+#
+# - debug:
+#     msg: "local host {{ ansible_net_hostname }} connected between {{ item.key }} and remote host {{ item.value[0].host.split('.')[0] }} interface {{ item.value[0].port }}"
+#     # msg: "host is {{ item.value[0] }} "
+#     # msg: "{{ output.ansible_facts.ansible_net_neighbors | type_debug }}"
+#     # msg: "{{ group_names }}"
+#     # msg: "{{ output.ansible_facts.ansible_net_interfaces }}"
+#   loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
+#   when:
+#     - ansible_network_os == "ios"
+#   tags:
+#     - cabling
+
+- name: Create cable within NetBox
+  netbox.netbox.netbox_cable:
+    netbox_url: "{{ NETBOX_API }}"
+    netbox_token: "{{ NETBOX_TOKEN }}"
+    data:
+      termination_a_type: dcim.interface
+      termination_a:
+        device: "{{ ansible_net_hostname }}"
+        name: "{{ item.key }}"
+      termination_b_type: dcim.interface
+      termination_b:
+        device: "{% if napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key] is defined and 'Meraki' in napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key][0]['remote_system_description'] %}{{ napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key][0]['remote_system_name']|lower }}{% else %}{{ item.value[0].host.split('.')[0]|lower }}{% endif %}"
+        name: "{% if napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key] is defined and 'Meraki' in napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key][0]['remote_system_description'] %}main{% else %}{{ item.value[0].port }}{% endif %}"
+      status: connected
+    state: present
+  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
+  ignore_errors: yes
+  when:
+    - ansible_network_os is defined and (ansible_network_os == "ios" or ansible_network_os == "nxos") and
+      ( item.value[0].host is defined and item.value[0].host is string and sites[0] == item.value[0].host.split('.')[0][:3]|lower and item.value[0].host.split('.')[0] in groups['all'] or
+      ( napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key] is defined and 'Meraki' in napalmfacts['ansible_facts']['napalm_lldp_neighbors_detail'][item.key][0]['remote_system_description'] ))
+  tags:
+    - cabling

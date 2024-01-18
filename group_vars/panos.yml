@@ -1,4 +1,4 @@
-ansible_network_os: panos
+#ansible_network_os: panos
 ansible_connection: local
 
 device:

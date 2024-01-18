@@ -259,7 +259,17 @@
   tags:
     - copy-test
     - copy
-    -
+    - md5
+    - debug
+
+- debug:
+    msg:
+      - "VRF to use for management: {{ custom_fields.Nexus_VRF_mgmt }}"
+  when: ansible_network_os == 'nxos' and custom_fields is defined
+  tags:
+    - debug
+
+
 
 - block:
     - name: NXOS test if current installed image is compliant
@@ -271,7 +281,7 @@
       debug:
         msg: "{{ msg.split('\n') }}"
     - meta: end_host
-  when: ansible_network_os == 'nxos' and ansible_net_version == new_nxos_version
+  when: ansible_network_os == 'nxos' and ansible_net_version == nxos_version
   tags:
     - copy-test
     - copy
@@ -279,7 +289,7 @@
 - debug:
     msg:
       - "Version {{ ansible_net_version }} is not compliant"
-  when: ansible_network_os == 'nxos' and ansible_net_version != new_nxos_version
+  when: ansible_network_os == 'nxos' and ansible_net_version != nxos_version
   tags:
     - copy-test
     - copy
@@ -321,9 +331,9 @@
 
 - block:
   - debug:
-      msg: "file {{ new_nxos_image }} already exists on device. Stopping playbook for the device {{ inventory_hostname }}"
+      msg: "file {{ nxos_image }} already exists on device. Stopping playbook for the device {{ inventory_hostname }}"
   - meta: end_host
-  when: ansible_network_os == 'nxos' and new_nxos_image|string in resultdir.stdout[0]
+  when: ansible_network_os == 'nxos' and nxos_image|string in resultdir.stdout[0]
   tags:
     - copy
     - copy-test
@@ -338,12 +348,12 @@
 - name: NXOS Copy image
   nxos_file_copy:
     file_pull: true
-    local_file: "{{new_nxos_image}}"
-    remote_file: "{{scp_image_dir}}/{{new_nxos_image}}"
+    local_file: "{{nxos_image}}"
+    remote_file: "{{scp_image_dir}}/{{nxos_image}}"
     remote_scp_server: "{{scp_region_server}}"
     remote_scp_server_user: "{{scp_server_username}}"
     remote_scp_server_password: "{{scp_server_password}}"
-    vrf: management
+    vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
     file_pull_timeout: 3600
     file_pull_kstack: True
   vars:
@@ -355,31 +365,34 @@
 
 - name: NXOS Image MD5 hash check
   nxos_command:
-    commands: "show file bootflash:{{ new_nxos_image }} md5sum"
+    commands: "show file bootflash:{{ nxos_image }} md5sum"
   register: nxos_md5_result
   vars:
     ansible_command_timeout: 180
   when: ansible_network_os == 'nxos'
   tags:
     - copy
+    - md5
 
 - block:
     - name: NXOS stop playbook if MD5 is incorrect
       vars:
         msg: |-
           Task end for Device : {{ inventory_hostname }}
-          OS to install : {{ new_nxos_image }}
+          OS to install : {{ nxos_image }}
           MD5 error after copy !
       debug:
         msg: "{{ msg.split('\n') }}"
-      failed_when: new_nxos_md5_value != nxos_md5_result.stdout[0]
+      failed_when: nxos_md5_value != nxos_md5_result.stdout[0]
     - meta: end_host
-  when: ansible_network_os == 'nxos' and nxos_md5_result is defined and new_nxos_md5_value != nxos_md5_result.stdout[0]
+  when: ansible_network_os == 'nxos' and nxos_md5_result is defined and nxos_md5_value != nxos_md5_result.stdout[0]
   tags:
     - copy
+    - md5
 
 - debug:
     msg: "MD5 check Verified successfully"
   when: ansible_network_os == 'nxos'
   tags:
     - copy
+    - md5
