@@ -57,18 +57,13 @@
 ### PALO ALTO
 ##############################################################################
 
-- debug:
-    msg:
-      - "Username: {{ ansible_user }}"
-  when: ansible_network_os == 'panos'
-  tags:
-    - save
+
 
 - name: PAN - get API key xml reponse
-#  no_log: true
+  no_log: true
   uri:
     validate_certs: no
-    url: "https://{{inventory_hostname}}/api/?type=keygen&user={{ ansible_user }}&password={{ ansible_password }}"
+    url: "https://{{inventory_hostname}}/api/?type=keygen&user={{ ansible_user }}&password={{ ansible_password | urlencode() }}"
     return_content: yes
     method: GET
   register: xml_resp
