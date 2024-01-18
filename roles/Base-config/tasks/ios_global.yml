@@ -242,7 +242,7 @@
 #     - localadmin
 
 - name: IOS - remove legacy admin
-  ios_config:
+  cisco.ios.ios_config:
     lines:
       - no username admin
   when: ansible_network_os == 'ios'
@@ -252,7 +252,7 @@
 
 - name: IOS - Add admin user with  hashed password
 #  no_log: true
-  ios_user:
+  cisco.ios.ios_user:
     name: "{{ adminlocal_username }}"
     password_type: secret
     privilege: 15
