@@ -242,7 +242,7 @@
     - global
 
 - name: IOS - Add admin user with  hashed password
-  no_log: true
+#  no_log: true
   ios_user:
     name: "{{ adminlocal_username }}"
     hashed_password:
@@ -254,7 +254,7 @@
     - localadmin
 
 - name: IOS - set admin user to privilege level 15
-  no_log: true
+#  no_log: true
   ios_user:
     aggregate:
       - name: "{{ adminlocal_username }}"
@@ -266,7 +266,7 @@
     - localadmin
 
 - name: IOS - enable secret scrypt
-  no_log: true
+#  no_log: true
   ios_command:
     commands:
       - configure terminal
