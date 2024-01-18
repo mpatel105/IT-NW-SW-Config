@@ -11,7 +11,6 @@
     - ntp
     - lldp
     - configvlan
-    - localadmin
 
 
 - name: IOS - set fact for portfast
@@ -245,25 +244,27 @@
 #  no_log: true
   ios_user:
     name: "{{ adminlocal_username }}"
+    password_type: secret
+    privilege: 15
     hashed_password:
       type: 9
       value: "{{ adminlocal_password }}"
-  when: ansible_network_os == 'ios'
-  tags:
-    - global
-    - localadmin
-
-- name: IOS - set admin user to privilege level 15
-#  no_log: true
-  ios_user:
-    aggregate:
-      - name: "{{ adminlocal_username }}"
-    privilege: 15
     state: present
   when: ansible_network_os == 'ios'
   tags:
     - global
     - localadmin
+
+# - name: IOS - set admin user to privilege level 15
+# #  no_log: true
+#   ios_user:
+#     name: "{{ adminlocal_username }}"
+#     privilege: 15
+#     state: present
+#   when: ansible_network_os == 'ios'
+#   tags:
+#     - global
+#     - localadmin
 
 - name: IOS - enable secret scrypt
 #  no_log: true
