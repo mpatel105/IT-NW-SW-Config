@@ -235,10 +235,12 @@
       - no ip ssh pubkey-chain
       - no ip ftp username
       - no enable password
+      - no username admin
       - exit
   when: ansible_network_os == 'ios'
   tags:
     - global
+    - localadmin
 
 - name: IOS - Add admin user with  hashed password
 #  no_log: true
