@@ -1,2 +1,4 @@
 ansible_user: "{{ t_login }}"
 ansible_password: "{{ t_password }}"
+
+mgmt_vlan: vlan999

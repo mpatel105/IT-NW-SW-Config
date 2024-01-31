@@ -1,2 +1,4 @@
 ansible_user: "{{ q_login }}"
 ansible_password: "{{ q_password }}"
+
+mgmt_vlan: vlan251
