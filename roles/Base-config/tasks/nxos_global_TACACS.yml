@@ -42,8 +42,8 @@
 - name: NXOS - Configure group Portnox-TACACS-Group
   nxos_config:
     lines:
-      - server name {{ tacacs_PA7 }}
-      - server name {{ tacacs_SV2 }}
+      - server {{ tacacs_PA7 }}
+      - server {{ tacacs_SV2 }}
     parents: aaa group server tacacs+ Portnox-TACACS-Group
   when: ansible_network_os == 'nxos'
   tags:
