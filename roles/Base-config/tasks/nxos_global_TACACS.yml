@@ -18,7 +18,7 @@
     host_timeout: 3
     address: "{{ tacacs_SV2 }}"
     key: "{{ tacacs_SV2_key }}"
-    encrypt_type: 7
+    encrypt_type: 0
   when: ansible_network_os == 'nxos'
   tags:
     - global
@@ -31,7 +31,7 @@
     host_timeout: 3
     address: "{{ tacacs_PA7 }}"
     key: "{{ tacacs_PA7_key }}"
-    encrypt_type: 7
+    encrypt_type: 0
   when: ansible_network_os == 'nxos'
   tags:
     - global
@@ -49,7 +49,34 @@
   tags:
     - global
     - globalTACACS
-#
+
+- name: NXOS - Tacacs Server Basic settings
+  cisco.nxos.nxos_aaa_server:
+    server_type: tacacs
+    server_timeout: 3
+    deadtime: 19
+    directed_request: disabled
+  when: ansible_network_os == 'nxos'
+  tags:
+    - global
+    - globalTACACS
+
+
+- name: NXOS - Configure TACACS Global Config
+  ios_config:
+    lines:
+      - ip tacacs source-interface vlan 999
+      - aaa authentication login default group Portnox-TACACS-Group local
+
+
+  when: ansible_network_os == 'nxos'
+  tags:
+    - global
+    - globalTACACS
+
+
+
+
 # - name: IOS - Configure TACACS Global Config
 #   ios_config:
 #     lines:
@@ -63,4 +90,3 @@
 #   tags:
 #     - global
 #     - globalTACACS
-#
