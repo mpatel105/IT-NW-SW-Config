@@ -68,7 +68,6 @@
       - ip tacacs source-interface vlan {{ vlan_nw_mgmt }}
       - aaa authentication login default group Portnox-TACACS-Group local
       - aaa authorization commands default group Portnox-TACACS-Group local
-      - aaa authorization config-commands default group Portnox-TACACS-Group local
       - aaa accounting default group Portnox-TACACS-Group
   when: ansible_network_os == 'nxos'
   tags:
