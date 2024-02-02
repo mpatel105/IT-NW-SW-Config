@@ -13,7 +13,7 @@
   ios_config:
     lines:
       - address ipv4 {{ tacacs_SV2 }}
-      - key 7 {{ tacacs_SV2_key }}
+      - key 0 {{ tacacs_SV2_key }}
     parents: tacacs server {{ tacacs_SV2_name }}
   when: ansible_network_os == 'ios'
   tags:
@@ -24,7 +24,7 @@
   ios_config:
     lines:
       - address ipv4 {{ tacacs_PA7 }}
-      - key 7 {{ tacacs_PA7_key }}
+      - key 0 {{ tacacs_PA7_key }}
     parents: tacacs server {{ tacacs_PA7_name }}
   when: ansible_network_os == 'ios'
   tags:

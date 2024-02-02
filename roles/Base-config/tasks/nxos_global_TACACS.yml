@@ -67,8 +67,6 @@
     lines:
       - ip tacacs source-interface vlan 999
       - aaa authentication login default group Portnox-TACACS-Group local
-
-
   when: ansible_network_os == 'nxos'
   tags:
     - global
