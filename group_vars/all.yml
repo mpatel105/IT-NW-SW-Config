@@ -69,7 +69,9 @@ vlan_list_access_remove:
   - 998
   - 224
 
-vlan_standard_id: 208
+vlan_nw_mgmt: 999
+vlan_switchport_standard_endpoint: 208
+NAC_critical_vlan: 169
 
 vlan_quarantine_id: 169
 vlan_quarantine_name: Guest.Wired
