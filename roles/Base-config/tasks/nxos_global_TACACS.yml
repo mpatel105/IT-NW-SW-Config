@@ -16,8 +16,8 @@
     state: present
     server_type: tacacs
     host_timeout: 3
-    address: {{ tacacs_SV2 }}
-    key: {{ tacacs_SV2_key }}
+    address: "{{ tacacs_SV2 }}"
+    key: "{{ tacacs_SV2_key }}"
     encrypt_type: 7
   when: ansible_network_os == 'nxos'
   tags:
@@ -29,8 +29,8 @@
     state: present
     server_type: tacacs
     host_timeout: 3
-    address: {{ tacacs_PA7 }}
-    key: {{ tacacs_PA7_key }}
+    address: "{{ tacacs_PA7 }}"
+    key: "{{ tacacs_PA7_key }}"
     encrypt_type: 7
   when: ansible_network_os == 'nxos'
   tags:
