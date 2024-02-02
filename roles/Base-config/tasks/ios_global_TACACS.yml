@@ -36,7 +36,6 @@
     lines:
       - server name {{ tacacs_1_name }}
       - server name {{ tacacs_2_name }}
-      - timeout 10
     parents: aaa group server tacacs+ Portnox-TACACS-Group
   when: ansible_network_os == 'ios'
   tags:
@@ -46,12 +45,13 @@
 - name: IOS - Configure TACACS Global Config
   ios_config:
     lines:
+      - ip tacacs source-interface Vlan999
+      - tacacs-server timeout 10
       - aaa authentication login default group Portnox-TACACS-Group local
       - aaa authorization console
       - aaa authorization exec default group Portnox-TACACS-Group if-authenticated
       - aaa authorization commands 15 default group Portnox-TACACS-Group if-authenticated
       - aaa accounting exec default start-stop group Portnox-TACACS-Group
-      - ip tacacs source-interface Vlan999
   when: ansible_network_os == 'ios'
   tags:
     - global
