@@ -4,9 +4,7 @@
 - debug:
     msg: "test"
 #  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
-#  when:
-    -
-   tags:
+  tags:
     - sp_primIP
 
 
