@@ -65,7 +65,7 @@
 - name: NXOS - Configure TACACS Global Config
   nxos_config:
     lines:
-      - ip tacacs source-interface vlan {% if custom_fields.Nexus_VRF_mgmt == 'default' %}{{ vlan_nw_mgmt }}{% else %}mgmt0{% endif %}
+      - ip tacacs source-interface {% if custom_fields.Nexus_VRF_mgmt == 'default' %}{{ vlan_nw_mgmt }}{% else %}mgmt0{% endif %}
       - aaa authentication login default group Portnox-TACACS-Group local
       - aaa authorization commands default group Portnox-TACACS-Group local
       - aaa accounting default group Portnox-TACACS-Group
