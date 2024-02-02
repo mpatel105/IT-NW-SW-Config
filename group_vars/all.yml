@@ -30,34 +30,35 @@ hostname: "{{ inventory_hostname }}"
 
 vlan_list_core:
   ISP1.WAN: 900
+  ISP2.WAN: 901
   ISP1.LAN: 910
-  ISP2.WAN: 920
-  ISP2.LAN: 930
-  Network.Management: 999
+  ISP2.LAN: 911
+  Network.Management: 251
   Firewall.Management: 998
   Server.Management: 997
   Infra.Management: 996
   OOB.Management: 995
-  Users.Wired: 8
-  Users.Wireless: 16
-  OPs.Devices.Network: 24
+  Users.Wired: 208
+  Users.Wireless: 216
+  OPs.Devices: 224
   Corp.Servers: 32
-  Phones: 40
-  Audio.Video: 48
+  Phones: 240
+  AV.Devices: 248
   SSL.VPN.Network: 224
-  Users.Guest: 240
-  Quarantine: 169
+  Guest.Wireless: 240
+  Guest.Wired: 169
   Blackhole: 99
+  OOB.Management: 204
 
 vlan_list_access:
-  Network.Management: 999
-  Users.Wired: 8
-  Users.Wireless: 16
-  OPs.Devices.Network: 24
-  Phones: 40
-  Audio.Video: 48
-  Users.Guest: 240
-  Quarantine: 169
+  Network.Management: 251
+  Users.Wired: 208
+  Users.Wireless: 216
+  OPs.Devices: 224
+  Phones: 240
+  AV.Devices: 248
+  Guest.Wireless: 240
+  Guest.Wired: 169
   Blackhole: 99
 
 vlan_list_access_remove:
@@ -68,8 +69,10 @@ vlan_list_access_remove:
   - 998
   - 224
 
+vlan_standard_id: 208
+
 vlan_quarantine_id: 169
-vlan_quarantine_name: Quarantine
+vlan_quarantine_name: Guest.Wired
 
 vlan_blackhole_id: 99
 vlan_blackhole_name: Blackhole

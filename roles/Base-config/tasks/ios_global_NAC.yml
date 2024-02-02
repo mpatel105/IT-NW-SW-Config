@@ -214,7 +214,7 @@
       - aaa authorization network default group Portnox-RADIUS-Group
       - aaa accounting update newinfo periodic 2880
       - aaa accounting dot1x default start-stop group Portnox-RADIUS-Group
-      - ip radius source-interface Vlan999
+      - ip radius source-interface Vlan251
       - radius-server vsa send authentication
       - radius-server vsa send accounting
       - radius-server dead-criteria time 10 tries 3
@@ -245,7 +245,7 @@
   ios_config:
     lines:
       - spanning-tree portfast
-      - switchport access vlan 8
+      - switchport access vlan {{ vlan_switchport_standard_endpoint }}
       - switchport mode access
       - description Standard Endpoints (NO NAC)
     parents: template TEMPLATE_STANDARD_ENDPOINTS
@@ -259,8 +259,8 @@
 - name: IOS - Configure template TEMPLATE_TRUNK_WIFI_AP
   ios_config:
     lines:
-      - switchport trunk allowed vlan 16,24,240,999
-      - switch trunk native vlan 999
+      - switchport trunk allowed vlan 16,24,240,999,216,224,251
+      - switch trunk native vlan 251
       - switchport mode trunk
       - description Wifi AP
     parents: template TEMPLATE_TRUNK_WIFI_AP
@@ -306,7 +306,7 @@
   ios_config:
     lines:
       - switchport mode access
-      - switchport access vlan 995
+      - switchport access vlan 204
       - description Link to Opengear Console Switch
     parents: template TEMPLATE_CSW
     replace: block
@@ -512,7 +512,7 @@
 - name: IOS - Configure service-template CRITICAL_AUTH_VLAN
   ios_config:
     lines:
-      - vlan 8
+      - vlan {{ NAC_critical_vlan }}
     parents: service-template CRITICAL_AUTH_VLAN
     before: no service-template CRITICAL_AUTH_VLAN
     match: exact
