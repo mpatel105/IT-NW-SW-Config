@@ -15,7 +15,7 @@
   cisco.nxos.nxos_aaa_server_host:
     state: present
     server_type: tacacs
-    host_timeout: 5
+    host_timeout: 10
     address: "{{ tacacs_SV2 }}"
     key: "{{ tacacs_SV2_key }}"
     encrypt_type: 0
@@ -28,7 +28,7 @@
   cisco.nxos.nxos_aaa_server_host:
     state: present
     server_type: tacacs
-    host_timeout: 5
+    host_timeout: 10
     address: "{{ tacacs_PA7 }}"
     key: "{{ tacacs_PA7_key }}"
     encrypt_type: 0
@@ -53,7 +53,7 @@
 - name: NXOS - Tacacs Server Basic settings
   cisco.nxos.nxos_aaa_server:
     server_type: tacacs
-    server_timeout: 5
+    server_timeout: 10
     deadtime: 19
     directed_request: disabled
   when: ansible_network_os == 'nxos'
