@@ -5,6 +5,8 @@
 #- import_tasks: ios_global_interfaces_deprecated.yml
 #  when: ansible_network_os == 'ios'
 
+- import_tasks: Netbox_pri_IP.yml
+
 - import_tasks: ios_global_TACACS.yml
   when: ansible_network_os == 'ios'
 

@@ -1,0 +1,24 @@
+---
+
+
+- debug:
+    msg: "test"
+#  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
+#  when:
+    -
+   tags:
+    - sp_primIP
+
+
+# - name: Create device within NetBox with only required information
+#   netbox.netbox.netbox_ip_address:
+#     netbox_url: "{{ NETBOX_API }}"
+#     netbox_token: "{{ NETBOX_TOKEN }}"
+#     data:
+#      address: 10.254.254.23
+#      assigned_object:
+#       device: QTFRLABSP01
+#       name: lo20000
+#     state: present
+#   tags:
+#     - sp_primIP
