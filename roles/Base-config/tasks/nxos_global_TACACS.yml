@@ -10,27 +10,34 @@
     - global
     - globalTACACS
 
-# - name: IOS - Configure SV2_Tacacs
-#   ios_config:
-#     lines:
-#       - address ipv4 {{ tacacs_SV2 }}
-#       - key 7 {{ tacacs_SV2_key }}
-#     parents: tacacs server {{ tacacs_SV2_name }}
-#   when: ansible_network_os == 'nxos'
-#   tags:
-#     - global
-#     - globalTACACS
-#
-# - name: IOS - Configure PA7_Tacacs
-#   ios_config:
-#     lines:
-#       - address ipv4 {{ tacacs_PA7 }}
-#       - key 7 {{ tacacs_PA7_key }}
-#     parents: tacacs server {{ tacacs_PA7_name }}
-#   when: ansible_network_os == 'nxos'
-#   tags:
-#     - global
-#     - globalTACACS
+
+- name: NXOS - Configure SV2_Tacacs
+  cisco.nxos.nxos_aaa_server_host:
+    state: present
+    server_type: tacacs
+    host_timeout: 3
+    address: {{ tacacs_SV2 }}
+    key: {{ tacacs_SV2_key }}
+    encrypt_type: 7
+  when: ansible_network_os == 'nxos'
+  tags:
+    - global
+    - globalTACACS
+
+- name: NXOS - Configure PA7_Tacacs
+  cisco.nxos.nxos_aaa_server_host:
+    state: present
+    server_type: tacacs
+    host_timeout: 3
+    address: {{ tacacs_PA7 }}
+    key: {{ tacacs_PA7_key }}
+    encrypt_type: 7
+  when: ansible_network_os == 'nxos'
+  tags:
+    - global
+    - globalTACACS
+
+
 #
 # - name: IOS - Configure group Portnox-TACACS-Group
 #   ios_config:
