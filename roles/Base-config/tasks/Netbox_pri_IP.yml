@@ -2,7 +2,7 @@
 
 
 - debug:
-    msg: "test"
+    msg: "{{ QTFRNANSP02 }}"
 #  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   tags:
     - sp_primIP
