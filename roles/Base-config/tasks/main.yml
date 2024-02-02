@@ -19,3 +19,6 @@
 
 - import_tasks: nxos_global.yml
   when: ansible_network_os == 'nxos'
+
+- import_tasks: nxos_global_TACACS.yml
+  when: ansible_network_os == 'nxos'
