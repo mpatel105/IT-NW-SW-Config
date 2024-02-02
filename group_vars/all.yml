@@ -1,4 +1,4 @@
-ansible_connection: network_cli
+#ansible_connection: network_cli
 #talend_ntp: ntp.talend.com
 talend_ntp: 10.44.32.33
 talend_ntp_server: ntp.talend.com
