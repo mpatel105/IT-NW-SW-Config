@@ -1,4 +1,5 @@
 #ansible_network_os: nxos
+ansible_connection: network_cli
 
 mgmt0:
   - bei-sw-002
