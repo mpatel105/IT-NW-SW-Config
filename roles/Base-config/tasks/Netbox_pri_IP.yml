@@ -27,8 +27,8 @@
     - sp_primIP
 
 - debug:
-    msg: "{{ hostvars[item]['interfaces'][0] }}"
+    msg: "{{ hostvars[item]['interfaces'] }}"
   loop: "{{ silverpeaklist['msg'] }}"
-#  when: hostvars[item]['interfaces']['display']=='lo20000'
+  when: hostvars[item]['interfaces'].display=='lo20000'
   tags:
     - sp_primIP
