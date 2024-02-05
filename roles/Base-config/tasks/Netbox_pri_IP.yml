@@ -1,8 +1,31 @@
 ---
+- name: Update primary IP addresses of Silver Peak devices with lo2000 interface
+  hosts: localhost
+  connection: local
+  gather_facts: no
 
+  tasks:
+    - name: Retrieve Silver Peak devices
+      netbox.netbox.netbox_device_list:
+        netbox_url: "{{ NETBOX_API }}"
+        netbox_token: "{{ NETBOX_TOKEN }}"
+        manufacturer: Silver Peak
+      register: silverpeak_devices
+
+    # - name: Update primary IP4 address for devices with lo2000
+    #   vars:
+    #     device: "{{ item }}"
+    #   loop: "{{ silverpeak_devices.results }}"
+    #   when: "'lo2000' in device.interfaces"
+    #   netbox.netbox.netbox_device:
+    #     netbox_url: "{{ netbox_url }}"
+    #     netbox_token: "{{ netbox_token }}"
+    #     data:
+    #       name: "{{ device.name }}"
+    #       primary_ip4: "{{ new_primary_ip4 }}"
 
 - debug:
-    msg: "{{ custom_fields }}"
+    msg: "{{ silverpeak_devices }}"
 #  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   tags:
     - sp_primIP
