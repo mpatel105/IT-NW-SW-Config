@@ -1,16 +1,15 @@
 ---
 - name: Update primary IP addresses of Silver Peak devices
-  hosts: localhost
   connection: local
+  hosts: localhost
   gather_facts: False
 
-  tasks:
-    - name: Retrieve Silver Peak devices
-      netbox.netbox.netbox_device_list:
-        netbox_url: "{{ NETBOX_API }}"
-        netbox_token: "{{ NETBOX_TOKEN }}"
-        manufacturer: Silver Peak
-      register: silverpeak_devices
+- name: Retrieve Silver Peak devices
+  netbox.netbox.netbox_device_list:
+    netbox_url: "{{ NETBOX_API }}"
+    netbox_token: "{{ NETBOX_TOKEN }}"
+    manufacturer: Silver Peak
+  register: silverpeak_devices
   tags:
     - sp_primIP
 
