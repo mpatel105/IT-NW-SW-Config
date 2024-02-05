@@ -22,12 +22,13 @@
     - sp_primIP
 
 - debug:
-    msg: "{{ silverpeak }}"
+    msg: "{{ silverpeaklist }}"
   tags:
     - sp_primIP
 
 # - debug:
-#     msg: "{{ hostvars[item]['interfaces'] }}"
-#   loop: "{{ groups['silverpeak'] }}"
+#     msg: "{{ hostvars[item]['interfaces']['display'] }}"
+#   loop: "{{ silverpeaklist }}"
+#   when: hostvars[item]['interfaces']['display']=='lo20000'
 #   tags:
 #     - sp_primIP
