@@ -1,6 +1,6 @@
 ---
 
-- name: Update primary IP addresses of Silver Peak devices
+- name: Netbox local connection
   connection: local
   hosts: localhost
   gather_facts: no
