@@ -1,4 +1,4 @@
---
+---
 - name: Update primary IP addresses of Silver Peak devices with lo2000 interface
   hosts: localhost
   connection: local
