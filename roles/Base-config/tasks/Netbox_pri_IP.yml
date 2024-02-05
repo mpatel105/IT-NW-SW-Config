@@ -1,7 +1,7 @@
 ---
 
 - name: Update primary IP addresses of Silver Peak devices
-  connection: local
+#  connection: local
   hosts: localhost
   gather_facts: False
   tags:
