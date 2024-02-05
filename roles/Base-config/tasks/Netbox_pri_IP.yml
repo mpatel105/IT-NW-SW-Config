@@ -22,7 +22,7 @@
     - sp_primIP
 
 - debug:
-    msg: "{{ silverpeaklist }}"
+    msg: "{{ silverpeaklist[0] }}"
   tags:
     - sp_primIP
 
