@@ -16,7 +16,7 @@
 #     - sp_primIP
 
 - debug:
-    msg: "{{ groups['silverpeak'] }}"
-#  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
+    msg: "{{ item }}"
+  loop: "{{ groups['silverpeak'] }}"
   tags:
     - sp_primIP
