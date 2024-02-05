@@ -1,8 +1,8 @@
 ---
-- name: Update primary IP addresses of Silver Peak devices with lo2000 interface
+- name: Update primary IP addresses of Silver Peak devices
   hosts: localhost
   connection: local
-  gather_facts: no
+  gather_facts: False
 
   tasks:
     - name: Retrieve Silver Peak devices
