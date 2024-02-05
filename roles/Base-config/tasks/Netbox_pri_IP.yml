@@ -3,6 +3,9 @@
   connection: local
   hosts: localhost
   gather_facts: False
+  tags:
+    - sp_primIP
+
 
 - name: Retrieve Silver Peak devices
   netbox.netbox.netbox_device_list:
