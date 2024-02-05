@@ -16,7 +16,7 @@
 #     - sp_primIP
 
 - debug:
-    msg: "{{ hostvars[item] }}"
+    msg: "{{ hostvars[item]['interfaces'] }}"
   loop: "{{ groups['silverpeak'] }}"
   tags:
     - sp_primIP
