@@ -3,7 +3,6 @@
 - name: Netbox local connection
   connection: local
   hosts: localhost
-  gather_facts: no
   tags:
     - sp_primIP
 
