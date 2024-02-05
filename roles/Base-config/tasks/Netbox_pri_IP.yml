@@ -6,17 +6,17 @@
 #   tags:
 #     - sp_primIP
 
-- name: Retrieve Silver Peak devices
-  netbox.netbox.netbox_device_type:
-    netbox_url: "{{ NETBOX_API }}"
-    netbox_token: "{{ NETBOX_TOKEN }}"
-    manufacturer: Silver Peak
-  register: silverpeak_devices
-  tags:
-    - sp_primIP
+# - name: Retrieve Silver Peak devices
+#   netbox.netbox.netbox_device_type:
+#     netbox_url: "{{ NETBOX_API }}"
+#     netbox_token: "{{ NETBOX_TOKEN }}"
+#     manufacturer: Silver Peak
+#   register: silverpeak_devices
+#   tags:
+#     - sp_primIP
 
 - debug:
-    msg: "{{ silverpeak_devices.stdout }}"
+    msg: "{{ groups['SD-WAN'] }}"
 #  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   tags:
     - sp_primIP
