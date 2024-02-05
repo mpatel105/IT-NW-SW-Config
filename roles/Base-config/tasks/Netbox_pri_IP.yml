@@ -17,7 +17,7 @@
     - sp_primIP
 
 - debug:
-    msg: "{{ silverpeak_devices }}"
+    msg: "{{ silverpeak_devices.stdout }}"
 #  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
   tags:
     - sp_primIP
