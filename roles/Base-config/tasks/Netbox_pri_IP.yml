@@ -1,10 +1,10 @@
 ---
 
-- name: Netbox local connection
-  connection: local
-  hosts: localhost
-  tags:
-    - sp_primIP
+# - name: Netbox local connection
+#   connection: local
+#   hosts: localhost
+#   tags:
+#     - sp_primIP
 
 - name: Retrieve Silver Peak devices
   netbox.netbox.netbox_device_type:
