@@ -12,6 +12,12 @@
         manufacturer: Silver Peak
       register: silverpeak_devices
 
+- debug:
+    msg: "{{ silverpeak_devices }}"
+#  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
+  tags:
+    - sp_primIP
+
     # - name: Update primary IP4 address for devices with lo2000
     #   vars:
     #     device: "{{ item }}"
@@ -23,12 +29,6 @@
     #     data:
     #       name: "{{ device.name }}"
     #       primary_ip4: "{{ new_primary_ip4 }}"
-
-- debug:
-    msg: "{{ silverpeak_devices }}"
-#  loop: "{{ ansible_net_neighbors | default({}) | dict2items }}"
-  tags:
-    - sp_primIP
 
 
 # - name: Create device within NetBox with only required information
