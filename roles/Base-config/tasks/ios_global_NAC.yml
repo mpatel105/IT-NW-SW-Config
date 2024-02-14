@@ -36,7 +36,6 @@
   register: napalmfacts
   when: ansible_network_os == 'ios'
   tags:
-    - NACglobal
     - NACinterfaces
     - convertNAC
     - napalm
@@ -46,7 +45,6 @@
     name: clay584.parse_genie
   when: ansible_network_os == 'ios'
   tags:
-    - NACglobal
     - NACinterfaces
     - convertNAC
 
@@ -58,7 +56,6 @@
     ansible_command_timeout: 300
   when: ansible_network_os == 'ios'
   tags:
-    - NACglobal
     - NACinterfaces
     - convertNAC
 
@@ -68,7 +65,6 @@
   delegate_to: localhost
   when: ansible_network_os == 'ios'
   tags:
-    - NACglobal
     - NACinterfaces
     - convertNAC
 
@@ -302,33 +298,33 @@
 #     - NACglobal
 #     - convertNACops
 
-- name: IOS - Configure template TEMPLATE_CSW
-  ios_config:
-    lines:
-      - switchport mode access
-      - switchport access vlan 204
-      - description Link to Opengear Console Switch
-    parents: template TEMPLATE_CSW
-    replace: block
-  when:
-    - ansible_network_os == 'ios' and 'CORE' in group_names
-  tags:
-    - NACglobal
-    - convertNAC
+# - name: IOS - Configure template TEMPLATE_CSW
+#   ios_config:
+#     lines:
+#       - switchport mode access
+#       - switchport access vlan 204
+#       - description Link to Opengear Console Switch
+#     parents: template TEMPLATE_CSW
+#     replace: block
+#   when:
+#     - ansible_network_os == 'ios' and 'CORE' in group_names
+#   tags:
+#     - NACglobal
+#     - convertNAC
 
-- name: IOS - Configure template TEMPLATE_PANFW_MGMT
-  ios_config:
-    lines:
-      - switchport mode access
-      - switchport access vlan 998
-      - description Link to PAN FW MGMT
-    parents: template TEMPLATE_PANFW_MGMT
-    replace: block
-  when:
-    - ansible_network_os == 'ios' and 'CORE' in group_names
-  tags:
-    - NACglobal
-    - convertNAC
+# - name: IOS - Configure template TEMPLATE_PANFW_MGMT
+#   ios_config:
+#     lines:
+#       - switchport mode access
+#       - switchport access vlan 998
+#       - description Link to PAN FW MGMT
+#     parents: template TEMPLATE_PANFW_MGMT
+#     replace: block
+#   when:
+#     - ansible_network_os == 'ios' and 'CORE' in group_names
+#   tags:
+#     - NACglobal
+#     - convertNAC
 
 - name: IOS 3650/3850/9x00 - Configure NAC - global config device tracking
   ios_command:
