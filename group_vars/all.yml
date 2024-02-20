@@ -37,7 +37,6 @@ vlan_list_core:
   Firewall.Management: 998
   Server.Management: 997
   Infra.Management: 996
-  OOB.Management: 995
   Users.Wired: 208
   Users.Wireless: 216
   OPs.Devices: 224
@@ -45,6 +44,22 @@ vlan_list_core:
   Phones: 240
   AV.Devices: 248
   SSL.VPN.Network: 224
+  Guest.Wireless: 240
+  Guest.Wired: 169
+  Blackhole: 99
+  OOB.Management: 204
+
+vlan_list_dist:
+  ISP1.WAN: 900
+  ISP2.WAN: 901
+  ISP1.LAN: 910
+  ISP2.LAN: 911
+  Network.Management: 251
+  Users.Wired: 208
+  Users.Wireless: 216
+  OPs.Devices: 224
+  Phones: 240
+  AV.Devices: 248
   Guest.Wireless: 240
   Guest.Wired: 169
   Blackhole: 99
