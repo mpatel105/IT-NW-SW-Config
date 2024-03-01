@@ -56,7 +56,7 @@
       - aaa authorization exec default group Global-Radius-Servers local
       - aaa accounting exec default start-stop group Global-Radius-Servers
       - aaa accounting system default start-stop group Global-Radius-Servers
-      - ip radius source-interface Vlan999
+      - ip radius source-interface {{ vlan_nw_mgmt }}
   when: ansible_network_os == 'ios'
   tags:
     - global

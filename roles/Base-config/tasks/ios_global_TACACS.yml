@@ -45,7 +45,7 @@
 - name: IOS - Configure TACACS Global Config
   ios_config:
     lines:
-      - ip tacacs source-interface Vlan999
+      - ip tacacs source-interface {{ vlan_nw_mgmt }}
       - tacacs-server timeout 10
       - aaa authentication login default group Portnox-TACACS-Group local
       - aaa authorization console
