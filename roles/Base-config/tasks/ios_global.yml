@@ -52,7 +52,7 @@
       shutdown: disabled
     state: merged
   loop: "{{ vlan_list_access | dict2items }}"
-  when: ansible_network_os == 'ios' and inventory_hostname in groups['access-switch']
+  when: ansible_network_os == 'ios' and inventory_hostname in groups['lab-switch']
   tags:
     - configvlan
     - global
