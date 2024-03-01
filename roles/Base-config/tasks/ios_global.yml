@@ -274,9 +274,11 @@
   tags:
     - global
 
-- name: IOS - remove all users except admin
+- name: IOS - remove all users except admin & listed account
   no_log: true
   ios_user:
+      aggregate:
+      - name: qlik20231024
     purge: yes
   when: ansible_network_os == 'ios'
   tags:
@@ -294,14 +296,14 @@
 #     - global
 #     - localadmin
 
-- name: IOS - remove legacy admin
-  cisco.ios.ios_config:
-    lines:
-      - no username admin
-  when: ansible_network_os == 'ios'
-  tags:
-    - global
-    - localadmin
+# - name: IOS - remove legacy admin
+#   cisco.ios.ios_config:
+#     lines:
+#       - no username admin
+#   when: ansible_network_os == 'ios'
+#   tags:
+#     - global
+#     - localadmin
 
 - name: IOS - Add admin user with  hashed password
 #  no_log: true
