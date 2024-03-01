@@ -121,16 +121,16 @@
   cisco.ios.ios_ntp_global:
     config:
       servers:
-        - server: "{{ ntp_server[0] }}"
+        - server: "{{ ntp_servers[0] }}"
           version: 2
           use_ipv4: True
-        - server: "{{ ntp_server[1] }}"
+        - server: "{{ ntp_servers[1] }}"
           version: 2
           use_ipv4: True
-        - server: "{{ ntp_server[2] }}"
+        - server: "{{ ntp_servers[2] }}"
           version: 2
           use_ipv4: True
-        - server: "{{ ntp_server[3] }}"
+        - server: "{{ ntp_servers[3] }}"
           version: 2
           use_ipv4: True
       source: vlan251
