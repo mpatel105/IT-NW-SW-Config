@@ -52,7 +52,7 @@
       shutdown: disabled
     state: merged
   loop: "{{ vlan_list_access | dict2items }}"
-  when: ansible_network_os == 'ios' and inventory_hostname in groups['lab-switch']
+  when: ansible_network_os == 'ios' and inventory_hostname in groups['access-switch']
   tags:
     - configvlan
     - global
@@ -66,7 +66,7 @@
       shutdown: disabled
     state: merged
   loop: "{{ vlan_list_core | dict2items }}"
-  when: ansible_network_os == 'ios' and 'core' in group_names
+  when: ansible_network_os == 'ios' and inventory_hostname in groups['core-switch']
   tags:
     - configvlan
     - global
@@ -80,7 +80,7 @@
       shutdown: disabled
     state: merged
   loop: "{{ vlan_list_dist | dict2items }}"
-  when: ansible_network_os == 'ios' and 'distribution' in group_names
+  when: ansible_network_os == 'ios' and inventory_hostname in groups['distribution-switch']
   tags:
     - configvlan
     - global
@@ -160,7 +160,7 @@
       - spanning-tree portfast {{ edge }} bpduguard default
       - spanning-tree vlan 1-4094 priority 32768
       - exit
-  when: ansible_network_os == 'ios' and 'access' in group_names
+  when: ansible_network_os == 'ios' and inventory_hostname in groups['access-switch']
   tags:
     - global
 
@@ -173,7 +173,7 @@
       - spanning-tree portfast {{ edge }} bpduguard default
       - spanning-tree vlan 1-4094 root primary
       - exit
-  when: ansible_network_os == 'ios' and ('core' in group_names or 'distribution' in group_names)
+  when: ansible_network_os == 'ios' and (inventory_hostname in groups['core-switch'] or inventory_hostname in groups['distribution-switch'])
   tags:
     - global
 
