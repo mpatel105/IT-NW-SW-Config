@@ -40,6 +40,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - global
+    - configvlan
 
 
 - name: IOS - Configure standard Vlan for Access Switches
@@ -51,7 +52,7 @@
       shutdown: disabled
     state: merged
   loop: "{{ vlan_list_access | dict2items }}"
-  when: ansible_network_os == 'ios' and 'access' in group_names
+  when: ansible_network_os == 'ios' and inventory_hostname in groups['access-switch']
   tags:
     - configvlan
     - global
