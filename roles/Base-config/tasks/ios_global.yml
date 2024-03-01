@@ -35,6 +35,14 @@
 #     - global
 #     - interfaces
 
+- debug:
+    msg: "{{ group_names }}"
+  when: ansible_network_os == 'ios'
+  tags:
+    - copy-test
+    - copy
+
+
 - name: IOS - Configure standard Vlan for Access Switches
   ios_vlans:
     config:
