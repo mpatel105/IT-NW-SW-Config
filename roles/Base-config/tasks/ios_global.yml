@@ -305,20 +305,20 @@
 #     - global
 #     - localadmin
 
-- name: IOS - Add admin user with  hashed password
-#  no_log: true
-  cisco.ios.ios_user:
-    name: "{{ adminlocal_username }}"
-    password_type: secret
-    privilege: 15
-    hashed_password:
-      type: 9
-      value: "{{ adminlocal_password }}"
-    state: present
-  when: ansible_network_os == 'ios'
-  tags:
-    - global
-    - localadmin
+# - name: IOS - Add admin user with  hashed password
+# #  no_log: true
+#   cisco.ios.ios_user:
+#     name: "{{ adminlocal_username }}"
+#     password_type: secret
+#     privilege: 15
+#     hashed_password:
+#       type: 9
+#       value: "{{ adminlocal_password }}"
+#     state: present
+#   when: ansible_network_os == 'ios'
+#   tags:
+#     - global
+#     - localadmin
 
 # - name: IOS - set admin user to privilege level 15
 # #  no_log: true
@@ -336,6 +336,7 @@
   ios_command:
     commands:
       - configure terminal
+      - username {{ adminlocal_username }} privilege 15 secret 9 {{ adminlocal_password }}
       - enable secret 9 {{ adminlocal_password }}
       - exit
   when: ansible_network_os == 'ios'
