@@ -35,7 +35,7 @@
 #     - global
 #     - interfaces
 
-- name: IOS - Configure standard Vlan for Switches
+- name: IOS - Configure standard Vlan for Access Switches
   ios_vlans:
     config:
     - name: "{{ item.key }}"
@@ -44,7 +44,35 @@
       shutdown: disabled
     state: merged
   loop: "{{ vlan_list_access | dict2items }}"
-  when: ansible_network_os == 'ios'
+  when: ansible_network_os == 'ios' and 'access' in group_names
+  tags:
+    - configvlan
+    - global
+
+- name: IOS - Configure standard Vlan for Core Switches
+  ios_vlans:
+    config:
+    - name: "{{ item.key }}"
+      vlan_id: "{{ item.value }}"
+      state: active
+      shutdown: disabled
+    state: merged
+  loop: "{{ vlan_list_core | dict2items }}"
+  when: ansible_network_os == 'ios' and 'core' in group_names
+  tags:
+    - configvlan
+    - global
+
+- name: IOS - Configure standard Vlan for Distribution Switches
+  ios_vlans:
+    config:
+    - name: "{{ item.key }}"
+      vlan_id: "{{ item.value }}"
+      state: active
+      shutdown: disabled
+    state: merged
+  loop: "{{ vlan_list_dist | dict2items }}"
+  when: ansible_network_os == 'ios' and 'distribution' in group_names
   tags:
     - configvlan
     - global
