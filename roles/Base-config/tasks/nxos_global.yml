@@ -14,7 +14,7 @@
 - name: NXOS - configure dns
   nxos_system:
     hostname: "{{ hostname }}"
-    domain_name: "{{ talend_domain_name }}"
+    domain_name: "{{ domain_name }}"
     domain_lookup: yes
     name_servers: "{{ talend_dns }}"
   when: ansible_network_os == 'nxos'
@@ -26,7 +26,16 @@
     config:
       logging: True
       servers:
-        - server: "{{ talend_ntp }}"
+        - server: "{{ ntp_server[0] }}"
+          use_vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
+          prefer: yes
+        - server: "{{ ntp_server[1] }}"
+          use_vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
+          prefer: yes
+        - server: "{{ ntp_server[2] }}"
+          use_vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
+          prefer: yes
+        - server: "{{ ntp_server[3] }}"
           use_vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
           prefer: yes
 #      source_interface: "{% if hostname in mgmt0 %}mgmt0{% else %}Vlan999{% endif %}"
@@ -56,7 +65,7 @@
       - spanning-tree port type edge bpduguard default
       - "{% if '001' in inventory_hostname %}spanning-tree vlan 1-3967 root primary{% else %}spanning-tree vlan 1-3967 root secondary{% endif %}"
       - exit
-  when: ansible_network_os == 'nxos' and 'CORE' in group_names
+  when: ansible_network_os == 'nxos' and ('core' in group_names or 'distribution' in group_names)
   tags:
     - global
 
@@ -69,7 +78,7 @@
       - spanning-tree port type edge bpduguard default
       - spanning-tree vlan 1-3967 priority 32768
       - exit
-  when: ansible_network_os == 'nxos' and 'ACCESS' in group_names
+  when: ansible_network_os == 'nxos' and 'access' in group_names
   tags:
     - global
 
@@ -122,7 +131,7 @@
         - community: "{{ talend_snmp_community }}"
           group: network-operator
           use_ipv4acl: ACLsnmp
-      location: "{{ inventory_hostname[:3]|upper }}"
+      location: "{{ inventory_hostname[:7][:-5] | upper }}"
     state: merged
   when: ansible_network_os == 'nxos'
   tags:
@@ -144,7 +153,7 @@
       logfile:
         name: logs
         severity: notification
-      source_interface: "{% if custom_fields.Nexus_VRF_mgmt == 'default' %}vlan999{% else %}mgmt0{% endif %}"
+      source_interface: "{% if custom_fields.Nexus_VRF_mgmt == 'default' %}{{ vlan_nw_mgmt }}{% else %}mgmt0{% endif %}"
     state: replaced
   when: ansible_network_os == 'nxos'
   tags:

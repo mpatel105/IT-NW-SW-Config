@@ -73,10 +73,10 @@
 - name: IOS - configure dns
   ios_system:
     hostname: "{{ hostname | default(inventory_hostname) }}"
-    domain_name: "{{ talend_domain_name }}"
-    lookup_source: vlan999
+    domain_name: "{{ domain_name }}"
+    lookup_source: vlan251
     lookup_enabled: yes
-    name_servers: "{{ talend_dns }}"
+    name_servers: "{{ dns_servers }}"
   when: ansible_network_os == 'ios'
   tags:
     - global
@@ -85,10 +85,20 @@
   cisco.ios.ios_ntp_global:
     config:
       servers:
-        - server: "{{ talend_ntp_server }}"
+        - server: "{{ ntp_server[0] }}"
+          version: 2
           use_ipv4: True
-      source: vlan999
-    state: overridden
+        - server: "{{ ntp_server[1] }}"
+          version: 2
+          use_ipv4: True
+        - server: "{{ ntp_server[2] }}"
+          version: 2
+          use_ipv4: True
+        - server: "{{ ntp_server[3] }}"
+          version: 2
+          use_ipv4: True
+      source: vlan251
+    state: replaced
   when: ansible_network_os == 'ios'
   tags:
     - global
@@ -114,11 +124,11 @@
       - spanning-tree portfast {{ edge }} bpduguard default
       - spanning-tree vlan 1-4094 priority 32768
       - exit
-  when: ansible_network_os == 'ios' and 'ACCESS' in group_names
+  when: ansible_network_os == 'ios' and 'access' in group_names
   tags:
     - global
 
-- name: IOS - STP Global configuration for Core switches
+- name: IOS - STP Global configuration for Core or Distribution switches
   ios_command:
     commands:
       - configure terminal
@@ -127,7 +137,7 @@
       - spanning-tree portfast {{ edge }} bpduguard default
       - spanning-tree vlan 1-4094 root primary
       - exit
-  when: ansible_network_os == 'ios' and 'CORE' in group_names
+  when: ansible_network_os == 'ios' and ('core' in group_names or 'distribution' in group_names)
   tags:
     - global
 
@@ -141,6 +151,14 @@
       - service password-encryption
       - vtp mode off
       - errdisable recovery cause bpduguard
+      - privilege exec level 3 authentication display config-mode
+      - privilege exec level 3 authentication display
+      - privilege exec level 3 authentication
+      - privilege exec level 3 show startup-config
+      - privilege exec level 3 show running-config view full
+      - privilege exec level 3 show running-config view
+      - privilege exec level 3 show running-config
+      - privilege exec level 3 show
   when: ansible_network_os == 'ios'
   tags:
     - global
@@ -151,7 +169,7 @@
       - configure terminal
       - access-list 98 permit any
       - snmp-server community {{ talend_snmp_community }} RO 98
-      - snmp-server location {{ inventory_hostname[:3]|upper }}
+      - snmp-server location {{ inventory_hostname[:7][:-5] | upper }}
       - exit
   when: ansible_network_os == 'ios'
   tags:
@@ -167,14 +185,14 @@
       console:
         severity: critical
       hosts:
-        - hostname: "{{ talend_logs[0] }}"
-        - hostname: "{{ talend_logs[1] }}"
+        - hostname: "{{ logs_servers[0] }}"
+        - hostname: "{{ logs_servers[1] }}"
           transport:
             udp:
               port: 1515
       logging_on: enable
       source_interface:
-        - interface: Vlan999
+        - interface: Vlan251
     state: overridden
   when: ansible_network_os == 'ios'
   tags:
@@ -185,8 +203,8 @@
   ios_command:
     commands:
       - configure terminal
-      - crypto key generate rsa usage-keys label talend modulus 2048
-      - ip ssh rsa keypair-name talend
+      - crypto key generate rsa usage-keys label qlik modulus 2048
+      - ip ssh rsa keypair-name qlik
       - ip ssh dh min size 2048
       - ip ssh version 2
       - exit
