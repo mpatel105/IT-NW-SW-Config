@@ -278,8 +278,8 @@
   no_log: true
   ios_user:
       aggregate:
-      - name: qlik20231024
-    purge: yes
+        - name: qlik20231024
+      purge: yes
   when: ansible_network_os == 'ios'
   tags:
     - global
