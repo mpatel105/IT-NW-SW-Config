@@ -131,8 +131,10 @@
       servers:
         - server: "{{ ntp_servers[0] }}"
           version: 2
+          prefer: true
         - server: "{{ ntp_servers[1] }}"
           version: 2
+          prefer: true
 #          use_ipv4: True
         - server: "{{ ntp_servers[2] }}"
           version: 2

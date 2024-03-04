@@ -28,16 +28,14 @@
       servers:
         - server: "{{ ntp_servers[0] }}"
           use_vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
-          prefer: yes
+          prefer: true
         - server: "{{ ntp_servers[1] }}"
           use_vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
-          prefer: yes
+          prefer: true
         - server: "{{ ntp_servers[2] }}"
           use_vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
-          prefer: yes
         - server: "{{ ntp_servers[3] }}"
           use_vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
-          prefer: yes
 #      source_interface: "{% if hostname in mgmt0 %}mgmt0{% else %}Vlan999{% endif %}"
     state: replaced
   when: ansible_network_os == 'nxos'
