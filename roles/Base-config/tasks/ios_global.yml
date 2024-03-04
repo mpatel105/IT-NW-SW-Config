@@ -118,7 +118,8 @@
     - global
 
 - debug:
-    msg: "{{ ntp_servers[0] }}"
+    msg: |
+      "NTP: {{ ntp_servers[0] }} {{ ntp_servers[1] }} {{ ntp_servers[2] }} {{ ntp_servers[3] }}"
   when: ansible_network_os == 'ios'
   tags:
     - global
@@ -135,13 +136,10 @@
         - server: "{{ ntp_servers[1] }}"
           version: 2
           prefer: true
-#          use_ipv4: True
         - server: "{{ ntp_servers[2] }}"
           version: 2
-#          use_ipv4: True
         - server: "{{ ntp_servers[3] }}"
           version: 2
-#          use_ipv4: True
       source: vlan251
     state: replaced
   when: ansible_network_os == 'ios'
