@@ -18,4 +18,3 @@ group_names_raw: True
 interfaces: True
 device_query_filters:
   - status: planned
-  - has_primary_ip: 'true'
