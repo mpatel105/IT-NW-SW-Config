@@ -117,22 +117,29 @@
   tags:
     - global
 
+- debug:
+    msg: "{{ ntp_servers[0] }}"
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+    - configvlan
+
+
 - name: IOS - configure NTP servers
   cisco.ios.ios_ntp_global:
     config:
       servers:
         - server: "{{ ntp_servers[0] }}"
           version: 2
-          use_ipv4: True
         - server: "{{ ntp_servers[1] }}"
           version: 2
-          use_ipv4: True
+#          use_ipv4: True
         - server: "{{ ntp_servers[2] }}"
           version: 2
-          use_ipv4: True
+#          use_ipv4: True
         - server: "{{ ntp_servers[3] }}"
           version: 2
-          use_ipv4: True
+#          use_ipv4: True
       source: vlan251
     state: replaced
   when: ansible_network_os == 'ios'
