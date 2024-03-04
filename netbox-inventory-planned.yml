@@ -17,5 +17,5 @@ group_by:
 group_names_raw: True
 interfaces: True
 device_query_filters:
-  - status: 'active'
+  - status: planned
   - has_primary_ip: 'true'
