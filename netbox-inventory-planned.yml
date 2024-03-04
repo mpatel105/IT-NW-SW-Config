@@ -16,5 +16,5 @@ group_by:
   - tenants
 group_names_raw: True
 interfaces: True
-device_query_filters:
+query_filters:
   - status: planned
