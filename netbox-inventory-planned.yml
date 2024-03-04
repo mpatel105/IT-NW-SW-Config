@@ -18,3 +18,4 @@ group_names_raw: True
 interfaces: True
 query_filters:
   - status: planned
+  - manufacturers: cisco
