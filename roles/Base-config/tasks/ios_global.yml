@@ -171,7 +171,20 @@
   tags:
     - global
 
-- name: IOS - STP Global configuration for Core or Distribution switches
+- name: IOS - STP Global configuration for Distribution switches
+  ios_command:
+    commands:
+      - configure terminal
+      - spanning-tree mode Rapid-pvst
+      - spanning-tree extend system-id
+      - spanning-tree portfast {{ edge }} bpduguard default
+      - spanning-tree vlan 1-4094 root secondary
+      - exit
+  when: ansible_network_os == 'ios' and groups['distribution-switch'] is defined and inventory_hostname in groups['distribution-switch']
+  tags:
+    - global
+
+- name: IOS - STP Global configuration for Core switches
   ios_command:
     commands:
       - configure terminal
@@ -180,7 +193,7 @@
       - spanning-tree portfast {{ edge }} bpduguard default
       - spanning-tree vlan 1-4094 root primary
       - exit
-  when: ansible_network_os == 'ios' and groups['core-switch'] is defined and groups['distribution-switch'] is defined and (inventory_hostname in groups['core-switch'] or inventory_hostname in groups['distribution-switch'])
+  when: ansible_network_os == 'ios' and groups['core-switch'] is defined and inventory_hostname in groups['core-switch']
   tags:
     - global
 
