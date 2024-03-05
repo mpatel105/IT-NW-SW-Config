@@ -227,7 +227,7 @@
 - name: IOS - Configure template TEMPLATE_TRUNK_WIFI_AP
   ios_config:
     lines:
-      - switchport trunk allowed vlan 216,224,240,251
+      - switchport trunk allowed vlan 216,224,240,248,251
       - switch trunk native vlan 251
       - switchport mode trunk
       - description Wifi AP
