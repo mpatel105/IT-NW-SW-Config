@@ -12,6 +12,7 @@
     - lldp
     - configvlan
     - localadmin
+    - NACglobal
 
 
 - name: IOS - set fact for portfast
@@ -56,6 +57,7 @@
   tags:
     - configvlan
     - global
+    - NACglobal
 
 - name: IOS - Configure standard Vlan for Core Switches
   ios_vlans:
@@ -65,11 +67,12 @@
       state: active
       shutdown: disabled
     state: merged
-  loop: "{{ vlan_list_core | dict2items }}"
+  loop: "{{ vlan_list_dist | dict2items }}"
   when: ansible_network_os == 'ios' and groups['core-switch'] is defined and inventory_hostname in groups['core-switch']
   tags:
     - configvlan
     - global
+    - NACglobal
 
 - name: IOS - Configure standard Vlan for Distribution Switches
   ios_vlans:
@@ -84,6 +87,7 @@
   tags:
     - configvlan
     - global
+    - NACglobal
 
 # - name: Remove Infra Vlan from ACCESS Switches
 #  ios_vlans:

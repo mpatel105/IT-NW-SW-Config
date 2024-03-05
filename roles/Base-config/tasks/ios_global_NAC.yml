@@ -21,7 +21,6 @@
       - 'l2_interfaces'
   when: ansible_network_os == 'ios'
   tags:
-    - NACglobal
     - NACinterfaces
     - convertNAC
     - NACradius
@@ -67,60 +66,6 @@
   tags:
     - NACinterfaces
     - convertNAC
-
-- name: IOS - Configure standard Vlan for Access Switches
-  ios_vlans:
-    config:
-    - name: "{{ item.key }}"
-      vlan_id: "{{ item.value }}"
-      state: active
-      shutdown: disabled
-    state: merged
-  loop: "{{ vlan_list_access | dict2items }}"
-  when: ansible_network_os == 'ios'
-#  when: ansible_network_os == 'ios' and inventory_hostname in access-switch
-  tags:
-    - NACglobal
-
-# - name: IOS - Configure standard Vlan for Distribution Switches
-#   ios_vlans:
-#     config:
-#     - name: "{{ item.key }}"
-#       vlan_id: "{{ item.value }}"
-#       state: active
-#       shutdown: disabled
-#     state: merged
-#   loop: "{{ vlan_list_dist | dict2items }}"
-#   when: ansible_network_os == 'ios' and inventory_hostname in distribution-switch
-#   tags:
-#     - NACglobal
-
-# - name: IOS - Configure Blackhole vlan
-#   ios_vlans:
-#     config:
-#       - name: "{{ vlan_blackhole_name }}"
-#         vlan_id: "{{ vlan_blackhole_id }}"
-#         state: active
-#         shutdown: disabled
-#     state: merged
-#   when: ansible_network_os == 'ios'
-#   tags:
-#     - NACglobal
-#     - convertNAC
-#
-# - name: IOS - Configure Quarantine vlan
-#   ios_vlans:
-#     config:
-#       - name: "{{ vlan_quarantine_name }}"
-#         vlan_id: "{{ vlan_quarantine_id }}"
-#         state: active
-#         shutdown: disabled
-#     state: merged
-#   when: ansible_network_os == 'ios'
-#   tags:
-#     - NACglobal
-#     - convertNAC
-
 
 # - debug:
 #     msg: "{{ item }}"
