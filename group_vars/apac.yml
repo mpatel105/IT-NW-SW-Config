@@ -14,18 +14,19 @@ ntp_servers:
   - 10.20.0.11
   - 10.20.0.12
 
-talend_portnox_1: "{{ talend_portnox_PA7 }}"
-talend_portnox_2: "{{ talend_portnox_SV2 }}"
-talend_portnox_3: "{{ talend_portnox_EU }}"
-talend_portnox_4: "{{ talend_portnox_US }}"
-talend_portnox_1_name: "{{ talend_portnox_PA7_name }}"
-talend_portnox_2_name: "{{ talend_portnox_SV2_name }}"
-talend_portnox_3_name: "{{ talend_portnox_EU_name }}"
-talend_portnox_4_name: "{{ talend_portnox_US_name }}"
-talend_portnox_1_radius_key: "{{ talend_portnox_PA7_radius_key }}"
-talend_portnox_2_radius_key: "{{ talend_portnox_SV2_radius_key }}"
-talend_portnox_3_radius_key: "{{ talend_portnox_EU_radius_key }}"
-talend_portnox_4_radius_key: "{{ talend_portnox_US_radius_key }}"
+talend_portnox_1: "{{ talend_portnox_EU }}"
+talend_portnox_2: "{{ talend_portnox_US }}"
+talend_portnox_3: "{{ talend_portnox_PA7 }}"
+talend_portnox_4: "{{ talend_portnox_SV2 }}"
+talend_portnox_1_name: "{{ talend_portnox_EU_name }}"
+talend_portnox_2_name: "{{ talend_portnox_US_name }}"
+talend_portnox_3_name: "{{ talend_portnox_PA7_name }}"
+talend_portnox_4_name: "{{ talend_portnox_SV2_name }}"
+talend_portnox_1_radius_key: "{{ talend_portnox_EU_radius_key }}"
+talend_portnox_2_radius_key: "{{ talend_portnox_US_radius_key }}"
+talend_portnox_3_radius_key: "{{ talend_portnox_PA7_radius_key }}"
+talend_portnox_4_radius_key: "{{ talend_portnox_SV2_radius_key }}"
+
 
 talend_radius_1: "{{ talend_radius_PA7 }}"
 talend_radius_2: "{{ talend_radius_SV2 }}"
