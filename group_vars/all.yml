@@ -4,7 +4,8 @@
 # talend_ntp_server: ntp.talend.com
 #talend_domain_name: talend.com
 domain_name: net.qliktech.com
-
+ansible_user: "{{ q_login }}"
+ansible_password: "{{ q_password }}"
 
 logs_servers:
   - 10.9.160.21 #syslog-splunk.talend.com
@@ -45,7 +46,7 @@ vlan_list_core:
   OPs.Devices: 224
   Corp.Servers: 32
   Phones: 240
-  AV.Devices: 248
+  IOT.Devices: 248
   SSL.VPN.Network: 224
   Guest.Wireless: 240
   Guest.Wired: 169
@@ -63,7 +64,7 @@ vlan_list_dist:
   Users.Wireless: 216
   OPs.Devices: 224
   Phones: 240
-  AV.Devices: 248
+  IOT.Devices: 248
   Guest.Wireless: 240
   Guest.Wired: 169
   Blackhole: 99
@@ -76,7 +77,7 @@ vlan_list_access:
   Users.Wireless: 216
   OPs.Devices: 224
   Phones: 240
-  AV.Devices: 248
+  IOT.Devices: 248
   Guest.Wireless: 240
   Guest.Wired: 169
   Blackhole: 99
