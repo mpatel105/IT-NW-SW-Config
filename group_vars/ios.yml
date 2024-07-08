@@ -1,2 +1,5 @@
 #ansible_network_os: ios
 ansible_connection: network_cli
+
+ansible_user: "{{ tacacs_login }}"
+ansible_password: "{{ tacacs_password }}"
