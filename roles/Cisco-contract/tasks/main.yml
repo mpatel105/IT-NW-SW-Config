@@ -31,6 +31,7 @@
   tags:
     - serial2info
     - serial2info_all
+    - serial2info_netbox2
 
 # SET TOKEN #
 - name: Set JSON
@@ -41,6 +42,7 @@
   tags:
     - serial2info
     - serial2info_all
+    - serial2info_netbox2
 
 # GET SERIAL 2 INFO #
 
