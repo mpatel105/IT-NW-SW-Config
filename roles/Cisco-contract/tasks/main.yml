@@ -62,7 +62,7 @@
     - serial2info
 
 - debug:
-    msg: "{{ hostvars['item']['serial'] }}"
+    msg: "{{ hostvars[item]['serial'] }}"
   loop: "{{ groups['cisco'] }}"
   delegate_to: localhost
   tags:
