@@ -42,6 +42,12 @@
     - serial2info
     - serial2info_all
 
+- name: Obtain list of devices from NetBox
+  debug:
+    msg: "{{ NETBOX_API }}"
+  tags:
+    - serial2info_netbox
+    
 # GET SERIAL 2 INFO #
 #                  api_filter='manufacturers=Cisco',
 - name: Obtain list of devices from NetBox
