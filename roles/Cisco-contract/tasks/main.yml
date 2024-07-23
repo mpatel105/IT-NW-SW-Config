@@ -38,6 +38,12 @@
     - serial2info
 
 
+- debug:
+    msg: "{{ token }}"
+  tags:
+    - serial2info
+
+
 # SET TOKEN #
 - name: Set JSON
   set_fact:
@@ -47,7 +53,7 @@
     - serial2info
 
 # GET SERIAL 2 INFO #
-- name: GET Serial to Info
+- name: GET Serial to Info1
   uri:
     url: https://apix.cisco.com/sn2info/v2/coverage/summary/serial_numbers/{{ ansible_net_serialnum }}
     method: GET
@@ -67,7 +73,7 @@
 
 
 # GET SERIAL 2 INFO #
-- name: GET Serial to Info
+- name: GET Serial to Info All
   uri:
     url: https://apix.cisco.com/sn2info/v2/coverage/summary/serial_numbers/{{ item.serial }}
     method: GET
