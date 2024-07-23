@@ -48,9 +48,9 @@
   debug:
     msg: "Device {{ item.value.display_name }} Details: {{ item }} "
   loop: "{{ query('netbox.netbox.nb_lookup', 'devices',
-                  api_endpoint='{{ NETBOX_API }}',
+                  api_endpoint={{ NETBOX_API }},
                   api_filter='manufacturers=Cisco',
-                  token='{{ NETBOX_TOKEN }}') }}"
+                  token={{ NETBOX_TOKEN }}) }}"
   delegate_to: localhost
   tags:
     - serial2info_netbox
