@@ -19,4 +19,5 @@ group_names_raw: True
 interfaces: True
 device_query_filters:
   - status: 'active'
-  - has_primary_ip: 'true'
+  - manufacturer_id: 2
+#  - has_primary_ip: 'true'

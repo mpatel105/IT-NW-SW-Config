@@ -43,9 +43,10 @@
     - serial2info_all
 
 # GET SERIAL 2 INFO #
+
 - name: GET Serial to Info1
   uri:
-    url: https://apix.cisco.com/sn2info/v2/coverage/summary/serial_numbers/{{ ansible_net_serialnum }}
+    url: https://apix.cisco.com/sn2info/v2/coverage/summary/serial_numbers/{{ serial }}
     method: GET
     headers:
       Authorization: "{{token_type}} {{access_token}}"
@@ -60,6 +61,27 @@
   register: Serial2Info
   tags:
     - serial2info
+
+- debug:
+    msg: "{{ Serial2Info }}"
+  delegate_to: localhost
+  tags:
+    - serial2info
+
+# - name: IOS/NXOS - update custom field OS version
+#   netbox.netbox.netbox_device:
+#     netbox_url: "{{ NETBOX_API }}"
+#     netbox_token: "{{ NETBOX_TOKEN }}"
+#     data:
+#       name: "{{ ansible_net_hostname }}{% if ansible_net_stacked_models is defined and (ansible_net_stacked_models | length) > 1 and ansible_loop.index > 1 %}_{{ansible_loop.index}}{% else %}{% endif %}"
+#       serial: "{{ ansible_net_stacked_serialnums[ansible_loop.index0] | default(ansible_net_serialnum) }}"
+#       custom_fields:
+#         version: "{{ ansible_net_version }}"
+#     state: present
+#   loop: "{{ ansible_net_stacked_models if ansible_net_stacked_models is defined and ansible_net_stacked_models is iterable else [ansible_net_model] if ansible_net_model is defined else [] }}"
+#   loop_control:
+#     extended: yes
+
 
 - debug:
     msg: "{{ hostvars[item]['serial'] }}"
