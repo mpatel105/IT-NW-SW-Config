@@ -105,7 +105,7 @@
   loop: "{{ groups['cisco'] }}"
   delegate_to: localhost
   tags:
-    - serial2info_all2
+    - serial2info_all
 
 - name: Create raw YAML
   copy:
@@ -128,4 +128,3 @@
     chdir: "{{ dest_folder }}"
   tags:
     - serial2info_all
-    
