@@ -61,6 +61,13 @@
   tags:
     - serial2info
 
+- debug:
+    msg: "{{ item }}"
+  loop: "{{ groups['cisco'] }}"
+  delegate_to: localhost
+  tags:
+    - serial2info_all
+
 
 # GET SERIAL 2 INFO #
 - name: GET Serial to Info All
@@ -81,4 +88,4 @@
   loop: "{{ groups['cisco'] }}"
   delegate_to: localhost
   tags:
-    - serial2info_all
+    - serial2info_all2
