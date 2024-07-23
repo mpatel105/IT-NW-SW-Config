@@ -70,11 +70,6 @@
     force_basic_auth: yes
     follow_redirects: yes
   register: Serial2Info
-  loop: "{{ groups['all'] }}"
+  loop: "{{ groups['cisco'] }}"
   tags:
-    - serial2info
-
-
-
-    msg: "{{ item }}"
-  loop: "{{ groups['all'] }}"
+    - serial2info_all
