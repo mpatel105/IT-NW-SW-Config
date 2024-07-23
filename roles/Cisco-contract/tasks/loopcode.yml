@@ -20,7 +20,7 @@
     - serial2info_netbox2
 
 - debug:
-    msg: "{{ item.value.name }} {{ item.value.serial }} {{ Serial2Info.json.serial_numbers[0] }}"
+    msg: "{{ item.value.name }} {{ item.value.serial }} {{ Serial2Info.json.serial_numbers[0].is_covered }}"
   delegate_to: localhost
   when:
   tags:
