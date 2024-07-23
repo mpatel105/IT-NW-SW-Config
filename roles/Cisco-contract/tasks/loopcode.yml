@@ -15,11 +15,12 @@
     follow_redirects: yes
   register: Serial2Info
   delegate_to: localhost
+  ignore_errors: yes
   tags:
     - serial2info_netbox2
 
 - debug:
-    msg: "{{ Serial2Info }}"
+    msg: "{{ item.value.name }} {{ item.value.serial }} {{ Serial2Info['serial_numbers'].is_covered }}"
   delegate_to: localhost
   tags:
     - serial2info_netbox2
