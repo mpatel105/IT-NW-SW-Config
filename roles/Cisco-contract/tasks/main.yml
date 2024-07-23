@@ -47,13 +47,13 @@
     msg: "{{ NETBOX_API }}"
   tags:
     - serial2info_netbox
-    
+
 # GET SERIAL 2 INFO #
 #                  api_filter='manufacturers=Cisco',
 - name: Obtain list of devices from NetBox
   debug:
     msg: "{{ item }}"
-  loop: "{{ query('netbox.netbox.nb_lookup', 'devices', api_endpoint='{{ NETBOX_API }}', token='{{ NETBOX_TOKEN }}') }}"
+  loop: "{{ query('netbox.netbox.nb_lookup', 'devices', api_endpoint=NETBOX_API, token=NETBOX_TOKEN ) }}"
   delegate_to: localhost
   tags:
     - serial2info_netbox
