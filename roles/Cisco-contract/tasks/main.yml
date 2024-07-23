@@ -17,13 +17,13 @@
     #url: https://cloudsso.cisco.com/as/token.oauth2?grant_type=client_credentials&client_id={{cisco_api_client_id}}&client_secret={{cisco_api_client_secret}}
     url: https://id.cisco.com/oauth2/default/v1/token?grant_type=client_credentials&client_id={{cisco_api_client_id}}&client_secret={{cisco_api_client_secret}}
     headers:
-      Accept-Encoding: gzip, deflate, br
+       #Accept-Encoding: gzip, deflate, br
       Accept: application/json
       Content-Type: application/x-www-form-urlencoded
-      User-Agent: Jakarta Commons-HttpClient/3.1
+      #User-Agent: Jakarta Commons-HttpClient/3.1
       host: id.cisco.com
-      Connection: keep-alive
-      Content-Length: 0
+      #Connection: keep-alive
+      #Content-Length: 0
     method: POST
     return_content: yes
     validate_certs: no
