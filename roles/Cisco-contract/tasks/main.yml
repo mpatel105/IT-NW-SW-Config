@@ -3,8 +3,7 @@
 
 - name: IOS - get facts
   ios_facts:
-    gather_network_resources:
-      - 'l2_interfaces'
+    gather_subset: min
   register: output
   when: ansible_network_os == 'ios'
   tags:
@@ -14,16 +13,11 @@
 # GET TOKEN #
 - name: PUT Get Token
   uri:
-    #url: https://cloudsso.cisco.com/as/token.oauth2?grant_type=client_credentials&client_id={{cisco_api_client_id}}&client_secret={{cisco_api_client_secret}}
     url: https://id.cisco.com/oauth2/default/v1/token?grant_type=client_credentials&client_id={{cisco_api_client_id}}&client_secret={{cisco_api_client_secret}}
     headers:
-       #Accept-Encoding: gzip, deflate, br
       Accept: application/json
       Content-Type: application/x-www-form-urlencoded
-      #User-Agent: Jakarta Commons-HttpClient/3.1
       host: id.cisco.com
-      #Connection: keep-alive
-      #Content-Length: 0
     method: POST
     return_content: yes
     validate_certs: no
@@ -36,21 +30,17 @@
   run_once: true
   tags:
     - serial2info
-
-
-- debug:
-    msg: "{{ token }}"
-  tags:
-    - serial2info
-
+    - serial2info_all
 
 # SET TOKEN #
 - name: Set JSON
   set_fact:
     token_type: "{{ token.json.token_type }}"
     access_token: "{{ token.json.access_token }}"
+  delegate_to: localhost
   tags:
     - serial2info
+    - serial2info_all
 
 # GET SERIAL 2 INFO #
 - name: GET Serial to Info1
@@ -89,5 +79,6 @@
     follow_redirects: yes
   register: Serial2Info
   loop: "{{ groups['cisco'] }}"
+  delegate_to: localhost
   tags:
     - serial2info_all
