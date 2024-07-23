@@ -20,8 +20,8 @@
     - serial2info_netbox2
 
 - debug:
-    msg: "{{ item.value.name }} {{ item.value.serial }} {{ Serial2Info.json.serial_numbers[0].is_covered }}"
+    msg: "{{ item.value.name }} {{ item.value.serial }} {{ Serial2Info.json.serial_numbers[0].is_covered }} Support end date: {{ Serial2Info.json.serial_numbers[0].covered_product_line_end_date }} Warranty End Date: {{ Serial2Info.json.serial_numbers[0].warranty_end_date }}"    
   delegate_to: localhost
-  when:
+  when: Serial2Info is defined
   tags:
     - serial2info_netbox2
