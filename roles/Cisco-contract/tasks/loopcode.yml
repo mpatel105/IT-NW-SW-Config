@@ -1,0 +1,25 @@
+---
+- name: GET Serial to Info3
+  uri:
+    url: https://apix.cisco.com/sn2info/v2/coverage/summary/serial_numbers/{{ item.value.serial }}
+    method: GET
+    headers:
+      Authorization: "{{token_type}} {{access_token}}"
+      Cache-Control: no-cache
+      Accept-Encoding: gzip, deflate, br
+      Connection: keep-alive
+      Accept: application/json
+    return_content: yes
+    validate_certs: no
+    force_basic_auth: yes
+    follow_redirects: yes
+  register: Serial2Info
+  delegate_to: localhost
+  tags:
+    - serial2info_netbox2
+
+- debug:
+    msg: "{{ Serial2Info }}"
+  delegate_to: localhost
+  tags:
+    - serial2info_netbox2
