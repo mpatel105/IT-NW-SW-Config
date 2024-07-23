@@ -1,2 +1,5 @@
 ---
 # vars file for Cisco-contract
+inventory_file: Serial2Contract.yml
+dest_folder: /tmp/SW-Config
+repo: github.com/TalendIT/IT-Network-Scripts.git

@@ -68,11 +68,28 @@
   tags:
     - serial2info_all
 
+- name: clone repository
+  run_once: true
+  git:
+    repo: "https://{{awx_user_github}}:{{awx_pwd_github}}@{{repo}}"
+    dest: "{{ dest_folder }}"
+    force: yes
+    version: master
+  tags:
+    - serial2info_all
+
+- name: deleting inventory file
+  run_once: true
+  file:
+    state: absent
+    path: "{{ dest_folder }}/{{ inventory_file }}"
+  tags:
+    - serial2info_all
 
 # GET SERIAL 2 INFO #
 - name: GET Serial to Info All
   uri:
-    url: https://apix.cisco.com/sn2info/v2/coverage/summary/serial_numbers/{{ item.serial }}
+    url: https://apix.cisco.com/sn2info/v2/coverage/summary/serial_numbers/{{ hostvars[item]['serial'] }}
     method: GET
     headers:
       Authorization: "{{token_type}} {{access_token}}"
@@ -89,3 +106,26 @@
   delegate_to: localhost
   tags:
     - serial2info_all2
+
+- name: Create raw YAML
+  copy:
+    content: |
+      {{ Serial2Info | to_nice_yaml }}
+    dest: "{{ dest_folder }}/{{ inventory_file }}"
+  tags:
+    - serial2info_all
+
+- name: push to git
+  run_once: true
+  shell: |
+    git config --global user.email "networks@talend.com"
+    git config --global user.name "sa-netgit"
+    git add {{ inventory_file }}
+    git commit -m "inventory: $(date +"%Y-%m-%d %H:%M:%S")"
+    git push origin master
+    exit 0
+  args:
+    chdir: "{{ dest_folder }}"
+  tags:
+    - serial2info_all
+    
