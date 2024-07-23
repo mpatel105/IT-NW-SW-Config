@@ -104,6 +104,7 @@
   register: Serial2Info
   loop: "{{ groups['cisco'] }}"
   delegate_to: localhost
+  ignore_errors: yes
   tags:
     - serial2info_all
 
