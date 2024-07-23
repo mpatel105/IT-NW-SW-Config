@@ -1,6 +1,16 @@
 ---
 # tasks file for Cisco-contract
 
+- name: IOS - get facts
+  ios_facts:
+    gather_network_resources:
+      - 'l2_interfaces'
+  register: output
+  when: ansible_network_os == 'ios'
+  tags:
+    - serial2info
+
+
 # GET TOKEN #
 - name: PUT Get Token
   uri:
