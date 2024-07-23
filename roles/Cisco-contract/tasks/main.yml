@@ -44,6 +44,18 @@
 
 # GET SERIAL 2 INFO #
 
+- name: Obtain list of devices from NetBox
+  debug:
+    msg: >
+      "Device {{ item.value.display_name }} Details: {{ item }} "
+  loop: "{{ query('netbox.netbox.nb_lookup', 'devices',
+                  api_endpoint='{{ NETBOX_API }}',
+                  api_filter='manufacturers=cisco'),
+                  token='{{ NETBOX_TOKEN }}') }}"
+  delegate_to: localhost
+  tags:
+    - serial2info_netbox
+
 - name: GET Serial to Info1
   uri:
     url: https://apix.cisco.com/sn2info/v2/coverage/summary/serial_numbers/{{ serial }}
