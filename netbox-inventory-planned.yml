@@ -11,6 +11,7 @@ compose:
 group_by:
   - region
   - device_roles
+  - manufacturers
   - device_types
   - platforms
   - sites

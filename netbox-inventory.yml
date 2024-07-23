@@ -9,6 +9,7 @@ group_by:
   - region
   - device_roles
   - device_types
+  - manufacturers
   - platforms
   - sites
   - site_group

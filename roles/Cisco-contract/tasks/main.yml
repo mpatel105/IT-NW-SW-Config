@@ -1,0 +1,80 @@
+---
+# tasks file for Cisco-contract
+
+# GET TOKEN #
+- name: PUT Get Token
+  uri:
+    #url: https://cloudsso.cisco.com/as/token.oauth2?grant_type=client_credentials&client_id={{cisco_api_client_id}}&client_secret={{cisco_api_client_secret}}
+    url: https://id.cisco.com/oauth2/default/v1/token?grant_type=client_credentials&client_id={{cisco_api_client_id}}&client_secret={{cisco_api_client_secret}}
+    headers:
+      Accept-Encoding: gzip, deflate, br
+      Accept: application/json
+      Content-Type: application/x-www-form-urlencoded
+      User-Agent: Jakarta Commons-HttpClient/3.1
+      host: id.cisco.com
+      Connection: keep-alive
+      Content-Length: 0
+    method: POST
+    return_content: yes
+    validate_certs: no
+    force_basic_auth: yes
+    follow_redirects: yes
+    body_format: json
+  register: token
+  delegate_to: localhost
+  no_log: true
+  run_once: true
+  tags:
+    - serial2info
+
+
+# SET TOKEN #
+- name: Set JSON
+  set_fact:
+    token_type: "{{ token.json.token_type }}"
+    access_token: "{{ token.json.access_token }}"
+
+# GET SERIAL 2 INFO #
+- name: GET Serial to Info
+  uri:
+    url: https://apix.cisco.com/sn2info/v2/coverage/summary/serial_numbers/{{ ansible_net_serialnum }}
+    method: GET
+    headers:
+      Authorization: "{{token_type}} {{access_token}}"
+      Cache-Control: no-cache
+      Accept-Encoding: gzip, deflate, br
+      Connection: keep-alive
+      Accept: application/json
+    return_content: yes
+    validate_certs: no
+    force_basic_auth: yes
+    follow_redirects: yes
+  register: Serial2Info
+  tags:
+    - serial2info
+
+
+# GET SERIAL 2 INFO #
+- name: GET Serial to Info
+  uri:
+    url: https://apix.cisco.com/sn2info/v2/coverage/summary/serial_numbers/{{ item.serial }}
+    method: GET
+    headers:
+      Authorization: "{{token_type}} {{access_token}}"
+      Cache-Control: no-cache
+      Accept-Encoding: gzip, deflate, br
+      Connection: keep-alive
+      Accept: application/json
+    return_content: yes
+    validate_certs: no
+    force_basic_auth: yes
+    follow_redirects: yes
+  register: Serial2Info
+  loop: "{{ groups['all'] }}"
+  tags:
+    - serial2info
+
+
+
+    msg: "{{ item }}"
+  loop: "{{ groups['all'] }}"
