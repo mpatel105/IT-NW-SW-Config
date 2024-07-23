@@ -89,7 +89,8 @@
 # GET SERIAL 2 INFO #
 - name: GET Serial to Info All
   uri:
-    url: https://apix.cisco.com/sn2info/v2/coverage/summary/serial_numbers/{{ hostvars[item]['serial'] }}
+    #url: https://apix.cisco.com/sn2info/v2/coverage/summary/serial_numbers/{{ hostvars[item]['serial'] }}
+    url: https://apix.cisco.com/sn2info/v2/coverage/status/serial_numbers/{{ hostvars[item]['serial'] }}
     method: GET
     headers:
       Authorization: "{{token_type}} {{access_token}}"
