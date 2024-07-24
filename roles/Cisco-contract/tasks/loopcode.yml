@@ -40,7 +40,7 @@
       name: "{{ item.value.name }}"
       custom_fields:
         is_covered_by_contract: "{{ Serial2Info.json.serial_numbers[0].is_covered }}"
-        support_expiry_date: {{ Serial2Info.json.serial_numbers[0].covered_product_line_end_date }}
+        support_expiry_date: "{{ Serial2Info.json.serial_numbers[0].covered_product_line_end_date }}"
         warranty_end_date: "{{ Serial2Info.json.serial_numbers[0].warranty_end_date }}"
     state: present
   when: Serial2Info is defined and Serial2Info.json.serial_numbers is defined
