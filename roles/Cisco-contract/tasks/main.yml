@@ -47,7 +47,7 @@
 
 - name: Looping Netbox inventory
   include_tasks: loopcode.yml
-  loop: "{{ query('netbox.netbox.nb_lookup', 'devices', api_endpoint=NETBOX_API, api_filter='status=active manufacturer=cisco name=QTFRLABSW-D01', token=NETBOX_TOKEN ) }}"
+  loop: "{{ query('netbox.netbox.nb_lookup', 'devices', api_endpoint=NETBOX_API, api_filter='status=active manufacturer=cisco name__ic=QTFRLABSW-D01', token=NETBOX_TOKEN ) }}"
   tags:
     - serial2info_netbox
 
