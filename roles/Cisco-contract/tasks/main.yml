@@ -34,6 +34,6 @@
 # GET SERIAL 2 INFO #
 - name: Looping Netbox inventory
   include_tasks: loopcode.yml
-  loop: "{{ query('netbox.netbox.nb_lookup', 'devices', api_endpoint=NETBOX_API, api_filter='status=active manufacturer=cisco name__ic=QTFRNANSW', token=NETBOX_TOKEN ) }}"
+  loop: "{{ query('netbox.netbox.nb_lookup', 'devices', api_endpoint=NETBOX_API, api_filter='status=active manufacturer=cisco name__ic=QTFRNAN', token=NETBOX_TOKEN ) }}"
   tags:
     - serial2info_netbox
