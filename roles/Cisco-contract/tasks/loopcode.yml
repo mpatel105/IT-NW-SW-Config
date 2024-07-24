@@ -22,6 +22,7 @@
   register: Serial2Info
   delegate_to: localhost
   ignore_errors: yes
+  when: item.value.serial is defined and item.value.serial is not null
   tags:
     - serial2info_netbox
 
