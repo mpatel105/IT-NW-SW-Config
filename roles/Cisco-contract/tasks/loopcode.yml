@@ -1,4 +1,10 @@
 ---
+- name: Set counter
+  set_fact:
+    counter: "{{ 1 if counter is undefined else counter|int + 1 }}"
+  tags:
+    - serial2info_netbox
+
 - name: GET Serial to Info3
   uri:
     url: https://apix.cisco.com/sn2info/v2/coverage/summary/serial_numbers/{{ item.value.serial }}
@@ -17,11 +23,26 @@
   delegate_to: localhost
   ignore_errors: yes
   tags:
-    - serial2info_netbox2
+    - serial2info_netbox
 
 - debug:
-    msg: "{{ item.value.name }} {{ item.value.serial }} {{ Serial2Info.json.serial_numbers[0].is_covered }} Support end date: {{ Serial2Info.json.serial_numbers[0].covered_product_line_end_date }} Warranty End Date: {{ Serial2Info.json.serial_numbers[0].warranty_end_date }}"
+    msg: "{{ counter|int }} {{ item.value.name }} {{ item.value.serial }} {{ Serial2Info.json.serial_numbers[0].is_covered }} Support end date: {{ Serial2Info.json.serial_numbers[0].covered_product_line_end_date }} Warranty End Date: {{ Serial2Info.json.serial_numbers[0].warranty_end_date }}"
   delegate_to: localhost
   when: Serial2Info is defined and Serial2Info.json.serial_numbers is defined
   tags:
-    - serial2info_netbox2
+    - serial2info_netbox
+
+# - name: update Netbox custom field
+#   netbox.netbox.netbox_device:
+#     netbox_url: "{{ NETBOX_API }}"
+#     netbox_token: "{{ NETBOX_TOKEN }}"
+#     data:
+#       name: "{{ item.value.name }}"
+#       custom_fields:
+#         is_covered_by_contract: "{{ Serial2Info.json.serial_numbers[0].is_covered }}"
+# #        support_expiry_date: {{ Serial2Info.json.serial_numbers[0].covered_product_line_end_date }}
+# #        warranty_end_date: "{{ Serial2Info.json.serial_numbers[0].warranty_end_date }}"
+#     state: present
+#   when: Serial2Info is defined and Serial2Info.json.serial_numbers is defined
+#   tags:
+#     - serial2info_netbox

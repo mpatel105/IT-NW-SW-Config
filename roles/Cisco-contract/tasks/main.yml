@@ -1,15 +1,6 @@
 ---
 # tasks file for Cisco-contract
 
-- name: IOS - get facts
-  ios_facts:
-    gather_subset: min
-  register: output
-  when: ansible_network_os == 'ios'
-  tags:
-    - serial2info
-
-
 # GET TOKEN #
 - name: PUT Get Token
   uri:
@@ -31,7 +22,7 @@
   tags:
     - serial2info
     - serial2info_all
-    - serial2info_netbox2
+    - serial2info_netbox
 
 # SET TOKEN #
 - name: Set JSON
@@ -42,43 +33,9 @@
   tags:
     - serial2info
     - serial2info_all
-    - serial2info_netbox2
-
-# GET SERIAL 2 INFO #
-
-- name: Obtain list of devices from NetBox
-  debug:
-    msg: "{{ item.value.name }} {{ item.value.serial }}"
-  loop: "{{ query('netbox.netbox.nb_lookup', 'devices', api_endpoint=NETBOX_API, api_filter='status=active manufacturer=cisco', token=NETBOX_TOKEN ) }}"
-  delegate_to: localhost
-  tags:
     - serial2info_netbox
 
-
-- name: GET Serial to Info1
-  uri:
-    url: https://apix.cisco.com/sn2info/v2/coverage/summary/serial_numbers/{{ serial }}
-    method: GET
-    headers:
-      Authorization: "{{token_type}} {{access_token}}"
-      Cache-Control: no-cache
-      Accept-Encoding: gzip, deflate, br
-      Connection: keep-alive
-      Accept: application/json
-    return_content: yes
-    validate_certs: no
-    force_basic_auth: yes
-    follow_redirects: yes
-  register: Serial2Info
-  tags:
-    - serial2info
-
-- name: Looping Netbox inventory
-  include_tasks: loopcode.yml
-  loop: "{{ query('netbox.netbox.nb_lookup', 'devices', api_endpoint=NETBOX_API, api_filter='status=active manufacturer=cisco', token=NETBOX_TOKEN ) }}"
-  tags:
-    - serial2info_netbox2
-
+# GET SERIAL 2 INFO #
 
 # - name: Obtain list of devices from NetBox
 #   debug:
@@ -86,15 +43,13 @@
 #   loop: "{{ query('netbox.netbox.nb_lookup', 'devices', api_endpoint=NETBOX_API, api_filter='status=active manufacturer=cisco', token=NETBOX_TOKEN ) }}"
 #   delegate_to: localhost
 #   tags:
-#     - serial2info_netbox-test
+#     - serial2info_netbox
 
-
-
-- debug:
-    msg: "{{ Serial2Info }}"
-  delegate_to: localhost
+- name: Looping Netbox inventory
+  include_tasks: loopcode.yml
+  loop: "{{ query('netbox.netbox.nb_lookup', 'devices', api_endpoint=NETBOX_API, api_filter='status=active manufacturer=cisco name=QTFRLABSW-D01', token=NETBOX_TOKEN ) }}"
   tags:
-    - serial2info
+    - serial2info_netbox
 
 # - name: IOS/NXOS - update custom field OS version
 #   netbox.netbox.netbox_device:
@@ -111,72 +66,9 @@
 #     extended: yes
 
 
-- debug:
-    msg: "{{ hostvars[item]['serial'] }}"
-  loop: "{{ groups['cisco'] }}"
-  delegate_to: localhost
-  tags:
-    - serial2info_all
-
-- name: clone repository
-  run_once: true
-  git:
-    repo: "https://{{awx_user_github}}:{{awx_pwd_github}}@{{repo}}"
-    dest: "{{ dest_folder }}"
-    force: yes
-    version: master
-  tags:
-    - serial2info_all
-
-- name: deleting inventory file
-  run_once: true
-  file:
-    state: absent
-    path: "{{ dest_folder }}/{{ inventory_file }}"
-  tags:
-    - serial2info_all
-
-# GET SERIAL 2 INFO #
-- name: GET Serial to Info All
-  uri:
-    #url: https://apix.cisco.com/sn2info/v2/coverage/summary/serial_numbers/{{ hostvars[item]['serial'] }}
-    url: https://apix.cisco.com/sn2info/v2/coverage/status/serial_numbers/{{ hostvars[item]['serial'] }}
-    method: GET
-    headers:
-      Authorization: "{{token_type}} {{access_token}}"
-      Cache-Control: no-cache
-      Accept-Encoding: gzip, deflate, br
-      Connection: keep-alive
-      Accept: application/json
-    return_content: yes
-    validate_certs: no
-    force_basic_auth: yes
-    follow_redirects: yes
-  register: Serial2Info
-  loop: "{{ groups['cisco'] }}"
-  delegate_to: localhost
-  ignore_errors: yes
-  tags:
-    - serial2info_all
-
-- name: Create raw YAML
-  copy:
-    content: |
-      {{ Serial2Info | to_nice_yaml }}
-    dest: "{{ dest_folder }}/{{ inventory_file }}"
-  tags:
-    - serial2info_all
-
-- name: push to git
-  run_once: true
-  shell: |
-    git config --global user.email "networks@talend.com"
-    git config --global user.name "sa-netgit"
-    git add {{ inventory_file }}
-    git commit -m "inventory: $(date +"%Y-%m-%d %H:%M:%S")"
-    git push origin master
-    exit 0
-  args:
-    chdir: "{{ dest_folder }}"
-  tags:
-    - serial2info_all
+# - debug:
+#     msg: "{{ hostvars[item]['serial'] }}"
+#   loop: "{{ groups['cisco'] }}"
+#   delegate_to: localhost
+#   tags:
+#     - serial2info_all
