@@ -39,7 +39,7 @@
     data:
       name: "{{ item.value.name }}"
       custom_fields:
-        is_covered_by_contract: "{{ Serial2Info.json.serial_numbers[0].is_covered }}"
+        is_covered_by_contract: "{% if ('YES' in Serial2Info.json.serial_numbers[0].is_covered) %}true{% elif ('NO' in Serial2Info.json.serial_numbers[0].is_covered) %}false{% endif %}"
         support_expiry_date: "{{ Serial2Info.json.serial_numbers[0].covered_product_line_end_date }}"
         warranty_end_date: "{{ Serial2Info.json.serial_numbers[0].warranty_end_date }}"
     state: present
