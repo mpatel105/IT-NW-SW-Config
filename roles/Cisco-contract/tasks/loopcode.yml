@@ -5,7 +5,7 @@
   tags:
     - serial2info_netbox
 
-- name: GET Serial to Info3
+- name: GET SN2Info_from_Cisco
   uri:
     url: https://apix.cisco.com/sn2info/v2/coverage/summary/serial_numbers/{{ item.value.serial }}
     method: GET
@@ -37,7 +37,7 @@
   tags:
     - serial2info_netbox
 
-- name: update Netbox custom field
+- name: update Netbox custom fields
   netbox.netbox.netbox_device:
     netbox_url: "{{ NETBOX_API }}"
     netbox_token: "{{ NETBOX_TOKEN }}"

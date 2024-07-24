@@ -20,8 +20,6 @@
   no_log: true
   run_once: true
   tags:
-    - serial2info
-    - serial2info_all
     - serial2info_netbox
 
 # SET TOKEN #
@@ -31,44 +29,11 @@
     access_token: "{{ token.json.access_token }}"
   delegate_to: localhost
   tags:
-    - serial2info
-    - serial2info_all
     - serial2info_netbox
 
 # GET SERIAL 2 INFO #
-
-# - name: Obtain list of devices from NetBox
-#   debug:
-#     msg: "{{ item.value.name }} {{ item.value.serial }}"
-#   loop: "{{ query('netbox.netbox.nb_lookup', 'devices', api_endpoint=NETBOX_API, api_filter='status=active manufacturer=cisco', token=NETBOX_TOKEN ) }}"
-#   delegate_to: localhost
-#   tags:
-#     - serial2info_netbox
-
 - name: Looping Netbox inventory
   include_tasks: loopcode.yml
   loop: "{{ query('netbox.netbox.nb_lookup', 'devices', api_endpoint=NETBOX_API, api_filter='status=active manufacturer=cisco name__ic=QTFRSURSW', token=NETBOX_TOKEN ) }}"
   tags:
     - serial2info_netbox
-
-# - name: IOS/NXOS - update custom field OS version
-#   netbox.netbox.netbox_device:
-#     netbox_url: "{{ NETBOX_API }}"
-#     netbox_token: "{{ NETBOX_TOKEN }}"
-#     data:
-#       name: "{{ ansible_net_hostname }}{% if ansible_net_stacked_models is defined and (ansible_net_stacked_models | length) > 1 and ansible_loop.index > 1 %}_{{ansible_loop.index}}{% else %}{% endif %}"
-#       serial: "{{ ansible_net_stacked_serialnums[ansible_loop.index0] | default(ansible_net_serialnum) }}"
-#       custom_fields:
-#         version: "{{ ansible_net_version }}"
-#     state: present
-#   loop: "{{ ansible_net_stacked_models if ansible_net_stacked_models is defined and ansible_net_stacked_models is iterable else [ansible_net_model] if ansible_net_model is defined else [] }}"
-#   loop_control:
-#     extended: yes
-
-
-# - debug:
-#     msg: "{{ hostvars[item]['serial'] }}"
-#   loop: "{{ groups['cisco'] }}"
-#   delegate_to: localhost
-#   tags:
-#     - serial2info_all
