@@ -52,7 +52,7 @@
         support_type_descr: "{{ Serial2Info.json.serial_numbers[0].service_line_descr }}"
 #        support_type_descr: "{% if ('HKBN' in item.value.custom_fields.support_type_descr) %}item.value.custom_fields.support_type_descr{% else%}{{ Serial2Info.json.serial_numbers[0].service_line_descr }}{% endif %}"
     state: present
-  when: Serial2Info is defined and Serial2Info.json.serial_numbers is defined and 'bei' not in item.value.name
+  when: Serial2Info is defined and Serial2Info.json.serial_numbers is defined and 'bei' not in item.value.name|lower
   ignore_errors: yes
   delegate_to: localhost
   tags:
