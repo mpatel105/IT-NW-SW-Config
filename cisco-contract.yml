@@ -1,4 +1,4 @@
-- hosts: "{{ devices }}"
+- hosts: localhost
   gather_facts: false
   roles:
     - Cisco-contract
