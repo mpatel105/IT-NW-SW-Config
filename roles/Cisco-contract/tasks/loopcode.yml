@@ -46,11 +46,10 @@
       name: "{{ item.value.name }}"
       custom_fields:
         is_covered_by_contract: "{% if ('YES' in Serial2Info.json.serial_numbers[0].is_covered) %}True{% elif ('NO' in Serial2Info.json.serial_numbers[0].is_covered) %}False{% endif %}"
-#        support_expiry_date: "{% if ('HKBN' in item.value.custom_fields.support_type_descr) %}item.value.custom_fields.support_expiry_date{% else%}{{ Serial2Info.json.serial_numbers[0].covered_product_line_end_date }}{% endif %}"
         support_expiry_date: "{{ Serial2Info.json.serial_numbers[0].covered_product_line_end_date }}"
         warranty_end_date: "{{ Serial2Info.json.serial_numbers[0].warranty_end_date }}"
         support_type_descr: "{{ Serial2Info.json.serial_numbers[0].service_line_descr }}"
-#        support_type_descr: "{% if ('HKBN' in item.value.custom_fields.support_type_descr) %}item.value.custom_fields.support_type_descr{% else%}{{ Serial2Info.json.serial_numbers[0].service_line_descr }}{% endif %}"
+        warranty_type: "{{ Serial2Info.json.serial_numbers[0].warranty_type }}"
     state: present
   when: Serial2Info is defined and Serial2Info.json.serial_numbers is defined and 'bei' not in item.value.name|lower
   ignore_errors: yes
