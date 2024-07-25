@@ -1,10 +1,4 @@
 ---
-- name: Set counter
-  set_fact:
-    counter: "{{ 1 if counter is undefined else counter|int + 1 }}"
-  tags:
-    - serial2info_netbox
-
 - name: GET SN2Info_from_Cisco
   uri:
     url: https://apix.cisco.com/sn2info/v2/coverage/summary/serial_numbers/{{ item.value.serial }}
@@ -23,19 +17,6 @@
   delegate_to: localhost
   ignore_errors: yes
   when: item.value.serial is defined and item.value.serial
-  tags:
-    - serial2info_netbox
-
-- debug:
-    msg:
-      - "{{ counter|int }} {{ item.value.name }} {{ Serial2Info.json.serial_numbers[0].is_covered }}"
-      - "{{ item.value.serial }}"
-      - "Support end date: {{ Serial2Info.json.serial_numbers[0].covered_product_line_end_date }}"
-      - "Support Type: {{ Serial2Info.json.serial_numbers[0].service_line_descr }}"
-      - "Warranty End Date: {{ Serial2Info.json.serial_numbers[0].warranty_end_date }}"
-      - "Warranty Type: {{ Serial2Info.json.serial_numbers[0].warranty_type }}"
-  delegate_to: localhost
-  when: Serial2Info is defined and Serial2Info.json.serial_numbers is defined
   tags:
     - serial2info_netbox
 
