@@ -35,7 +35,7 @@
 - name: Looping Netbox inventory
   include_tasks: loopcode.yml
 #  loop: "{{ query('netbox.netbox.nb_lookup', 'devices', api_endpoint=NETBOX_API, api_filter='status=active manufacturer=cisco', token=NETBOX_TOKEN ) }}"
-  loop: "{{ query('netbox.netbox.nb_lookup', 'devices', api_endpoint=NETBOX_API, api_filter='manufacturer=cisco', token=NETBOX_TOKEN ) }}"
-#  loop: "{{ query('netbox.netbox.nb_lookup', 'devices', api_endpoint=NETBOX_API, api_filter='status=active manufacturer=cisco name__ic=FRLAB', token=NETBOX_TOKEN ) }}"
+#  loop: "{{ query('netbox.netbox.nb_lookup', 'devices', api_endpoint=NETBOX_API, api_filter='manufacturer=cisco', token=NETBOX_TOKEN ) }}"
+  loop: "{{ query('netbox.netbox.nb_lookup', 'devices', api_endpoint=NETBOX_API, api_filter='status=active manufacturer=cisco name__ic=FRLAB', token=NETBOX_TOKEN ) }}"
   tags:
     - serial2info_netbox
