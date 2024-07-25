@@ -21,6 +21,7 @@
   run_once: true
   tags:
     - serial2info_netbox
+    - cisco_api
 
 # SET TOKEN #
 - name: Set JSON
@@ -30,6 +31,7 @@
   delegate_to: localhost
   tags:
     - serial2info_netbox
+    - cisco_api
 
 # GET SERIAL 2 INFO #
 - name: Looping Netbox inventory
@@ -37,3 +39,23 @@
   loop: "{{ query('netbox.netbox.nb_lookup', 'devices', api_endpoint=NETBOX_API, api_filter=cisco_api_filter, token=NETBOX_TOKEN ) }}"
   tags:
     - serial2info_netbox
+
+- name: GET SN2Info_from_Cisco
+  uri:
+    url: {{ cisco_api_url }}
+    method: GET
+    headers:
+      Authorization: "{{token_type}} {{access_token}}"
+      Cache-Control: no-cache
+      Accept-Encoding: gzip, deflate, br
+      Connection: keep-alive
+      Accept: application/json
+    return_content: yes
+    validate_certs: no
+    force_basic_auth: yes
+    follow_redirects: yes
+  register: Serial2Info
+  delegate_to: localhost
+  ignore_errors: yes
+  tags:
+    - cisco_api
