@@ -40,9 +40,9 @@
   tags:
     - serial2info_netbox
 
-- name: GET SN2Info_from_Cisco
+- name: GET Cisco API
   uri:
-    url: {{ cisco_api_url }}
+    url: "{{ cisco_api_url }}"
     method: GET
     headers:
       Authorization: "{{token_type}} {{access_token}}"
