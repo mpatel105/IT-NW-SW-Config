@@ -10,14 +10,8 @@
   tags:
     - copy-test
     - copy
-    - number
 
-- name: save number of stack Switches
-  set_fact:
-    number: "{{ ansible_net_stacked_models | default(1) | length }}"
-  when: ansible_network_os == 'ios'
-  tags:
-    - number
+
 
 - name: define image to install
   set_fact:
