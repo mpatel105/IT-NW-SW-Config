@@ -260,8 +260,8 @@
   assert:
     that:
      - number ==  "{{ ansible_net_stacked_models | default(1) | length }}"
-    fail_msg: "somes Switches in stack are missing !"
-    success_msg: "Same number of stack switches"
+    fail_msg: "Some Switches in stack are missing after reboot ? Please check ! we should have {{ number }} switches"
+    success_msg: "Same number of stack switches: {{ number }}"
   when: ansible_network_os == 'ios'
   tags:
     - upgrade-test
