@@ -142,6 +142,22 @@
     - upgrade-test
     - upgrade
 
+- block:
+    - name: IOS 2960X Test if enough space on device
+      vars:
+        msg: |-
+          Task end for Device : {{ inventory_hostname }}
+          Not enough space : {{ ansible_net_filesystems_info[ansible_net_filesystems[0]]['spacefree_kb'] }}
+          Space needed: {{ space_needed }}
+          Stopping playbook for the device {{ inventory_hostname }}
+      debug:
+        msg: "{{ msg.split('\n') }}"
+      failed_when: ansible_net_filesystems_info[ansible_net_filesystems[0]]['spacefree_kb'] < ( space_needed | float )
+    - meta: end_host
+  when: ansible_network_os == 'ios' and '2960' in ansible_net_model and ansible_net_filesystems_info[ansible_net_filesystems[0]]['spacefree_kb'] < ( space_needed | float )
+  tags:
+    - upgrade
+
 - name: IOS-XE - install the new image
   ios_command:
     commands:
