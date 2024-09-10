@@ -6,6 +6,7 @@
   when: ansible_network_os is defined and ansible_network_os == 'ios'
   tags:
     - inventory
+    - facts
 
 - name: NXOS get fact
   cisco.nxos.nxos_facts:
@@ -13,6 +14,7 @@
   when: ansible_network_os is defined and ansible_network_os == 'nxos'
   tags:
     - inventory
+    - facts
 
 - name: PANOS get fact
   paloaltonetworks.panos.panos_op:
@@ -190,7 +192,7 @@
   file:
     state: absent
     path: "{{ dest_folder}}"
-  when: ansible_network_os is defined 
+  when: ansible_network_os is defined
   tags:
     - inventory
     - pan

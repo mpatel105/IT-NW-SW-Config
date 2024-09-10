@@ -9,7 +9,6 @@
   tags:
     - OSupdate
     - cabling
-    - facts
 
 - name: NXOS get fact
   cisco.nxos.nxos_facts:
@@ -20,7 +19,6 @@
   tags:
     - OSupdate
     - cabling
-    - facts
 
 - name: PANOS get fact
   paloaltonetworks.panos.panos_op:
