@@ -94,15 +94,15 @@
     - global
     - globalTACACS
 
-# - name: NXOS - Configure TACACS Global Config
-#   nxos_config:
-#     lines:
-#       - aaa authentication login default group Portnox-TACACS-Gr1 Portnox-TACACS-Gr2 local
-#       - aaa authorization commands default group Portnox-TACACS-Gr1 Portnox-TACACS-Gr2 local
-#       - aaa accounting default group Portnox-TACACS-Gr1 Portnox-TACACS-Gr2
-#   when: ansible_network_os == 'nxos'
-#   tags:
-#     - updateTACACS
+- name: NXOS - Configure TACACS Global Config
+  nxos_config:
+    lines:
+      - aaa authentication login default group Portnox-TACACS-Gr1 Portnox-TACACS-Gr2 local
+      - aaa authorization commands default group Portnox-TACACS-Gr1 Portnox-TACACS-Gr2 local
+      - aaa accounting default group Portnox-TACACS-Gr1 Portnox-TACACS-Gr2
+  when: ansible_network_os == 'nxos'
+  tags:
+    - updateTACACS
 
 
 # - name: IOS - Configure TACACS Global Config
