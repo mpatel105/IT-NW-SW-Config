@@ -104,6 +104,12 @@
   tags:
     - updateTACACS
 
+- name: NXOS - Save running to startup
+  nxos_config:
+    save_when: always
+  when: ansible_network_os == 'nxos'
+  tags:
+    - updateTACACS
 
 # - name: IOS - Configure TACACS Global Config
 #   ios_config:
