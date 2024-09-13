@@ -36,4 +36,6 @@ talend_radius_2_name: "{{ talend_radius_SV2_name }}"
 scp_region_server: "{{ scp_emea_server }}"
 
 tacacs_1_name: "{{ tacacs_PA7_name }}"
+tacacs_1_ip: "{{ tacacs_PA7 }}"
 tacacs_2_name: "{{ tacacs_SV2_name }}"
+tacacs_2_ip: "{{ tacacs_SV2 }}"

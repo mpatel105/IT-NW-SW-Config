@@ -50,6 +50,25 @@
     - global
     - globalTACACS
 
+- name: NXOS - Configure group Portnox-TACACS-Gr1
+  ios_config:
+    lines:
+      - server {{ tacacs_1_ip }}
+    parents: aaa group server tacacs+ Portnox-TACACS-Gr1
+  when: ansible_network_os == 'ios'
+  tags:
+    - updateTACACS
+
+- name: NXOS - Configure group Portnox-TACACS-Gr2
+  ios_config:
+    lines:
+      - server {{ tacacs_2_ip }}
+    parents: aaa group server tacacs+ Portnox-TACACS-Gr2
+  when: ansible_network_os == 'ios'
+  tags:
+    - updateTACACS
+
+
 - name: NXOS - Tacacs Server Basic settings
   cisco.nxos.nxos_aaa_server:
     server_type: tacacs
@@ -75,7 +94,15 @@
     - global
     - globalTACACS
 
-
+# - name: NXOS - Configure TACACS Global Config
+#   nxos_config:
+#     lines:
+#       - aaa authentication login default group Portnox-TACACS-Gr1 Portnox-TACACS-Gr2 local
+#       - aaa authorization commands default group Portnox-TACACS-Gr1 Portnox-TACACS-Gr2 local
+#       - aaa accounting default group Portnox-TACACS-Gr1 Portnox-TACACS-Gr2
+#   when: ansible_network_os == 'nxos'
+#   tags:
+#     - updateTACACS
 
 
 # - name: IOS - Configure TACACS Global Config
