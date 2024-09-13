@@ -50,20 +50,8 @@
     - global
     - globalTACACS
 
-- debug:
-    msg: "{{ tacacs_1_ip }}"
-  when: ansible_network_os == 'nxos'
-  tags:
-    - updateTACACS
-
-- debug:
-    msg: "{{ tacacs_2_ip }}"
-  when: ansible_network_os == 'nxos'
-  tags:
-    - updateTACACS
-
 - name: NXOS - Configure group Portnox-TACACS-Gr1
-  ios_config:
+  nxos_config:
     lines:
       - server {{ tacacs_1_ip }}
     parents: aaa group server tacacs+ Portnox-TACACS-Gr1
@@ -72,7 +60,7 @@
     - updateTACACS
 
 - name: NXOS - Configure group Portnox-TACACS-Gr2
-  ios_config:
+  nxos_config:
     lines:
       - server {{ tacacs_2_ip }}
     parents: aaa group server tacacs+ Portnox-TACACS-Gr2
