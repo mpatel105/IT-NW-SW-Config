@@ -208,6 +208,13 @@
     - upgrade
     - upgrade9200
 
+- debug:
+    msg: "IOS 9200/9300 - installing image will start"
+  when: (ansible_network_os == 'ios') and ('9200' in ansible_net_model or '9300' in ansible_net_model)
+  tags:
+    - upgrade-test
+    - upgrade
+
 - name: IOS 9200/9300 - install the new image
   cli_command:
     command: install add file flash:{{new_ios_image}} activate commit
