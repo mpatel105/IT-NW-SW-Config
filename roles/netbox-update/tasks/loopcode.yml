@@ -25,14 +25,15 @@
     - OSupdate
 
 - debug:
-    msg: "{{ item.value.tags | dict2items }}"
+    msg: "{{ item }}"
+  loop: item.value.tags
   tags:
     - OSupdate
 
 
 # - debug:
 #     msg: "Key={{ item.0.key }} value={{ item.1 }}"
-#   loop: "{{ item.value.tag | dict2items | subelements('slug') }}"
+#   loop: "{{ item.value.tags | dict2items | subelements('slug') }}"
 #   tags:
 #     - OSupdate
 
