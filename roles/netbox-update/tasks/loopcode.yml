@@ -25,10 +25,16 @@
     - OSupdate
 
 - debug:
-    msg: "Key={{ item.0.key }} value={{ item.1 }}"
-  loop: "{{ item.value.tag | dict2items | subelements('slug') }}"
+    msg: "{{ item.value.tag | dict2items }}"
   tags:
     - OSupdate
+
+
+# - debug:
+#     msg: "Key={{ item.0.key }} value={{ item.1 }}"
+#   loop: "{{ item.value.tag | dict2items | subelements('slug') }}"
+#   tags:
+#     - OSupdate
 
 # - name: update Netbox custom fields
 #   netbox.netbox.netbox_device:
