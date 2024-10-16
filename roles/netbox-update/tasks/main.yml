@@ -32,7 +32,7 @@
 
 - name: define image to install
   set_fact:
-    tags: []
+    new_tags: []
   when: ansible_network_os == 'ios'
   tags:
     - copy-test
@@ -63,8 +63,7 @@
 #      serial: "{{ ansible_net_stacked_serialnums[ansible_loop.index0] | default(ansible_net_serialnum) }}"
       custom_fields:
         version: "{{ ansible_net_version }}"
-      tags:
-        - update_required
+      tags: "{{ tags + ['update_required'] }}"
     state: present
 #loop: "{{ ansible_net_stacked_models if ansible_net_stacked_models is defined and ansible_net_stacked_models is iterable else ansible_net_model if ansible_net_model is defined else [] }}"
   loop: "{{ ansible_net_stacked_models if ansible_net_stacked_models is defined and ansible_net_stacked_models is iterable else [ansible_net_model] if ansible_net_model is defined else [] }}"
