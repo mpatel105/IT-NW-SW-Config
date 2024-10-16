@@ -25,8 +25,8 @@
 #     - OSupdate
 
 - debug:
-    msg: "{{ item.value.tags }}"
-  loop: item.value.tags | subelements('slug')
+    msg: "{{ item }}"
+  loop: item.value.tags | default()
   tags:
     - OSupdate
 
