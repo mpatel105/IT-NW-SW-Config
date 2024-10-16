@@ -33,6 +33,7 @@
 - name: define image to install
   set_fact:
     new_tags: []
+    cisco_api_filter: 'manufacturer=cisco name__ic={{ ansible.hostname }}'
   when: ansible_network_os == 'ios'
   tags:
     - copy-test
@@ -52,7 +53,7 @@
   include_tasks: loopcode.yml
   loop: "{{ query('netbox.netbox.nb_lookup', 'devices', api_endpoint=NETBOX_API, api_filter=cisco_api_filter, token=NETBOX_TOKEN ) }}"
   tags:
-    - noneed
+    - OSupdate
 
 - name: IOS/NXOS - update custom field OS version
   netbox.netbox.netbox_device:
@@ -63,7 +64,7 @@
 #      serial: "{{ ansible_net_stacked_serialnums[ansible_loop.index0] | default(ansible_net_serialnum) }}"
       custom_fields:
         version: "{{ ansible_net_version }}"
-      tags: "{{ tags + ['update_required'] }}"
+#      tags: "{{ tags + ['update_required'] }}"
     state: present
 #loop: "{{ ansible_net_stacked_models if ansible_net_stacked_models is defined and ansible_net_stacked_models is iterable else ansible_net_model if ansible_net_model is defined else [] }}"
   loop: "{{ ansible_net_stacked_models if ansible_net_stacked_models is defined and ansible_net_stacked_models is iterable else [ansible_net_model] if ansible_net_model is defined else [] }}"
