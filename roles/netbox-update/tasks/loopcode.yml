@@ -1,8 +1,26 @@
 ---
 
 - debug:
-    msg: "{{ item.value.tags }}"
+    msg: "TAG 0 SLUG:{{ item.value.tags[0].slug }}"
   when: item.value.tags is defined and item.value.tags
+  tags:
+    - OSupdate
+
+- debug:
+    msg: "TAG 1 SLUG:{{ item.value.tags[1].slug }}"
+  when: item.value.tags is defined and item.value.tags
+  tags:
+    - OSupdate
+
+- name: set facts
+  set_fact:
+    tagslug: "{{ item.value.tags[0].slug }}"
+    newtags: "{{ newtags + ['update_required'] }}"
+  tags:
+    - OSupdate
+
+- debug:
+    msg: "NEW TAG: {{ newtags }}"
   tags:
     - OSupdate
 
