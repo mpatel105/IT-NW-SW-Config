@@ -31,6 +31,7 @@
     - OSupdate
 
 - name: get tags
+  set_fact:
     existing_tags: "{{ existing_tags + [ item.slug ] }}"
   loop: "{{ item.value.tags | default({}) }}"
 #  loop: "{{ item.value.tags }}"
