@@ -30,14 +30,11 @@
     - pan
     - OSupdate
 
-- name: define image to install
+- name: set facts
   set_fact:
-    new_tags: []
-    cisco_api_filter: 'manufacturer=cisco name__ic={{ ansible.hostname }}'
+    cisco_api_filter: 'manufacturer=cisco name__ic={{ inventory_hostname }}'
   when: ansible_network_os == 'ios'
   tags:
-    - copy-test
-    - copy
     - OSupdate
 
 - name: napalm get_facts
