@@ -14,7 +14,6 @@
 #
 # - name: set facts
 #   set_fact:
-#     tagslug: "{{ item.value.tags[0].slug }}"
 #     newtags: "{{ newtags + ['update_required'] }}"
 #   tags:
 #     - OSupdate
@@ -31,6 +30,17 @@
   tags:
     - OSupdate
 
+- name: get tags
+    existing_tags: "{{ existing_tags + [ item.slug ] }}"
+  loop: "{{ item.value.tags | default({}) }}"
+#  loop: "{{ item.value.tags }}"
+  tags:
+    - OSupdate
+
+- debug:
+    msg: "Existing Tags: {{ existing_tags }}"
+  tags:
+    - OSupdate
 
 # - debug:
 #     msg: "Key={{ item.0.key }} value={{ item.1 }}"
