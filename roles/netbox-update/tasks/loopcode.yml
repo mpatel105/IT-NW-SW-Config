@@ -26,7 +26,7 @@
 
 - debug:
     msg: "{{ item }}"
-  loop: "{{ item.value.tags | default({}) | dict2items }}"
+  loop: "{{ item.value.tags | default({}) }}"
 #  loop: "{{ item.value.tags }}"
   tags:
     - OSupdate
