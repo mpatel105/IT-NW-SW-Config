@@ -23,6 +23,12 @@
 #   tags:
 #     - OSupdate
 
+- name: set facts
+  set_fact:
+    existing_tags: []
+  tags:
+    - OSupdate
+
 - debug:
     msg: "{{ item.slug }}"
   loop: "{{ item.value.tags | default({}) }}"
@@ -39,7 +45,7 @@
     - OSupdate
 
 - debug:
-    msg: "Existing Tags: {{ existing_tags }}"
+    msg: "Existing Tags of {{ item.value.name }}: {{ existing_tags }}"
   tags:
     - OSupdate
 

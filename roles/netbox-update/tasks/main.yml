@@ -35,7 +35,6 @@
     cisco_api_filter: 'manufacturer=cisco name__ic={{ inventory_hostname }}'
     newtags: []
     existing_tags: []
-  when: ansible_network_os == 'ios'
   tags:
     - OSupdate
 
