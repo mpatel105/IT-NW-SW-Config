@@ -30,6 +30,15 @@
     - pan
     - OSupdate
 
+- name: define image to install
+  set_fact:
+    tags: []
+  when: ansible_network_os == 'ios'
+  tags:
+    - copy-test
+    - copy
+    - OSupdate
+
 - name: napalm get_facts
   napalm.napalm.get_facts:
     filter: facts,lldp_neighbors_detail
@@ -38,6 +47,12 @@
   tags:
     - cabling
 
+# GET SERIAL 2 INFO #
+- name: Looping Netbox inventory
+  include_tasks: loopcode.yml
+  loop: "{{ query('netbox.netbox.nb_lookup', 'devices', api_endpoint=NETBOX_API, api_filter=cisco_api_filter, token=NETBOX_TOKEN ) }}"
+  tags:
+    - noneed
 
 - name: IOS/NXOS - update custom field OS version
   netbox.netbox.netbox_device:
@@ -48,6 +63,8 @@
 #      serial: "{{ ansible_net_stacked_serialnums[ansible_loop.index0] | default(ansible_net_serialnum) }}"
       custom_fields:
         version: "{{ ansible_net_version }}"
+      tags:
+        - update_required
     state: present
 #loop: "{{ ansible_net_stacked_models if ansible_net_stacked_models is defined and ansible_net_stacked_models is iterable else ansible_net_model if ansible_net_model is defined else [] }}"
   loop: "{{ ansible_net_stacked_models if ansible_net_stacked_models is defined and ansible_net_stacked_models is iterable else [ansible_net_model] if ansible_net_model is defined else [] }}"
