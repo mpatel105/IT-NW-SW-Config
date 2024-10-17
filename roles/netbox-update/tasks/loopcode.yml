@@ -68,7 +68,7 @@
       name: "{{ item.value.name }}"
       custom_fields:
         version: "{{ ansible_net_version }}"
-      tags: "{% if ansible_net_version = new_os_version %}{{ existing_tags }}{% else %}{{ existing_tags + ['update_required'] }}{% endif %}"
+      tags: "{% if ansible_net_version == new_os_version %}{{ existing_tags }}{% else %}{{ existing_tags + ['update_required'] }}{% endif %}"
     state: present
   when: ansible_network_os is defined and ansible_net_model is defined and (ansible_network_os == 'ios' or ansible_network_os == 'nxos')
   tags:
