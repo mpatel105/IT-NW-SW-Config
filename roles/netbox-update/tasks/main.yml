@@ -35,6 +35,7 @@
     cisco_api_filter: 'manufacturer=cisco name__ic={{ inventory_hostname }}'
     newtags: []
     existing_tags: []
+    new_os_version: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_version }}{% elif '2960' in ansible_net_model %}{{ cat2960_version }}{% elif '9300' in ansible_net_model %}{{ cat9300_version }}{% elif '9200' in ansible_net_model %}{{ cat9200_version }}{% elif '3560' in ansible_net_model %}{{ cat3560_version }}{% else %}{% endif %}"
   tags:
     - OSupdate
 
@@ -53,24 +54,24 @@
   tags:
     - OSupdate
 
-- name: IOS/NXOS - update custom field OS version
-  netbox.netbox.netbox_device:
-    netbox_url: "{{ NETBOX_API }}"
-    netbox_token: "{{ NETBOX_TOKEN }}"
-    data:
-      name: "{{ ansible_net_hostname }}{% if ansible_net_stacked_models is defined and (ansible_net_stacked_models | length) > 1 and ansible_loop.index > 1 %}-{{ansible_loop.index}}{% else %}{% endif %}"
-#      serial: "{{ ansible_net_stacked_serialnums[ansible_loop.index0] | default(ansible_net_serialnum) }}"
-      custom_fields:
-        version: "{{ ansible_net_version }}"
-#      tags: "{{ tags + ['update_required'] }}"
-    state: present
-#loop: "{{ ansible_net_stacked_models if ansible_net_stacked_models is defined and ansible_net_stacked_models is iterable else ansible_net_model if ansible_net_model is defined else [] }}"
-  loop: "{{ ansible_net_stacked_models if ansible_net_stacked_models is defined and ansible_net_stacked_models is iterable else [ansible_net_model] if ansible_net_model is defined else [] }}"
-  loop_control:
-    extended: yes
-  when: ansible_network_os is defined and ansible_net_model is defined and (ansible_network_os == 'ios' or ansible_network_os == 'nxos')
-  tags:
-    - OSupdate
+# - name: IOS/NXOS - update custom field OS version
+#   netbox.netbox.netbox_device:
+#     netbox_url: "{{ NETBOX_API }}"
+#     netbox_token: "{{ NETBOX_TOKEN }}"
+#     data:
+#       name: "{{ ansible_net_hostname }}{% if ansible_net_stacked_models is defined and (ansible_net_stacked_models | length) > 1 and ansible_loop.index > 1 %}-{{ansible_loop.index}}{% else %}{% endif %}"
+# #      serial: "{{ ansible_net_stacked_serialnums[ansible_loop.index0] | default(ansible_net_serialnum) }}"
+#       custom_fields:
+#         version: "{{ ansible_net_version }}"
+# #      tags: "{{ tags + ['update_required'] }}"
+#     state: present
+# #loop: "{{ ansible_net_stacked_models if ansible_net_stacked_models is defined and ansible_net_stacked_models is iterable else ansible_net_model if ansible_net_model is defined else [] }}"
+#   loop: "{{ ansible_net_stacked_models if ansible_net_stacked_models is defined and ansible_net_stacked_models is iterable else [ansible_net_model] if ansible_net_model is defined else [] }}"
+#   loop_control:
+#     extended: yes
+#   when: ansible_network_os is defined and ansible_net_model is defined and (ansible_network_os == 'ios' or ansible_network_os == 'nxos')
+#   tags:
+#     - OSupdate
 
 # - name: IOS/NXOS - update custom field OS version
 #   netbox.netbox.netbox_device:
