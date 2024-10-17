@@ -49,6 +49,17 @@
   tags:
     - OSupdate
 
+- name: remove update tag
+  set_fact:
+    existing_tags: "{{ existing_tags | reject('eq', 'update_required') | list }}"
+  tags:
+    - OSupdate
+
+- debug:
+    msg: "Removed Update Tag of {{ item.value.name }}: {{ existing_tags }}"
+  tags:
+    - OSupdate
+
 # - debug:
 #     msg: "Key={{ item.0.key }} value={{ item.1 }}"
 #   loop: "{{ item.value.tags | dict2items | subelements('slug') }}"
