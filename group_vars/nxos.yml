@@ -3,10 +3,10 @@
 
 #ansible_network_cli_ssh_type: libssh
 
-ansible_connection: httpapi
-ansible_httpapi_use_ssl: yes
-ansible_httpapi_validate_certs: no
-
+#ansible_connection: httpapi
+#ansible_httpapi_use_ssl: yes
+#ansible_httpapi_validate_certs: no
+ansible_connection: network_cli
 
 mgmt0:
   - bei-sw-002
