@@ -31,6 +31,51 @@
     - global
     - globalTACACS
 
+- name: IOS - Configure Tacacs_1
+  ios_config:
+    lines:
+      - address ipv4 {{ tacacs_1_new_ip }}
+      - key 0 {{ tacacs_1_new_key }}
+    parents: tacacs server {{ tacacs_1_new_name }}
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+    - newTACACS
+
+- name: IOS - Configure Tacacs_2
+  ios_config:
+    lines:
+      - address ipv4 {{ tacacs_2_new_ip }}
+      - key 0 {{ tacacs_2_new_key }}
+    parents: tacacs server {{ tacacs_2_new_name }}
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+    - newTACACS
+
+- name: IOS - Configure group Portnox-newTACACS-Group
+  ios_config:
+    lines:
+      - server name {{ tacacs_1_new_name }}
+      - server name {{ tacacs_2_new_name }}
+    parents: aaa group server tacacs+ Portnox-newTACACS-Group
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+    - newTACACS
+
+- name: IOS - Configure TACACS Global Config
+  ios_config:
+    lines:
+      - aaa authentication login default group Portnox-newTACACS-Group local
+      - aaa authorization exec default group Portnox-newTACACS-Group if-authenticated
+      - aaa authorization commands 15 default group Portnox-newTACACS-Group if-authenticated
+      - aaa accounting exec default start-stop group Portnox-newTACACS-Group
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+    - newTACACS
+
 - name: IOS - Configure group Portnox-TACACS-Group
   ios_config:
     lines:

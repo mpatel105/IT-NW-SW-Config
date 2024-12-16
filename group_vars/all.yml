@@ -142,6 +142,11 @@ tacacs_SV2_name: sv2-tacacs-001
 tacacs_SV2: 10.9.32.18
 tacacs_PA7_name: pa7-tacacs-001
 tacacs_PA7: 10.44.32.18
+tacacs_azu_weu: 172.21.0.23
+tacacs_azu_weu_name: qtazuweutac01
+tacacs_azu_eus: 172.20.0.143
+tacacs_azu_eus_name: qtazueustac01
+
 
 # macro_dot1x_name: Corp_switchport
 # macro_dot1x_corp:
