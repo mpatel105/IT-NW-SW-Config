@@ -35,7 +35,7 @@
     cisco_api_filter: 'status=active manufacturer=cisco name__ic={{ inventory_hostname }}'
     newtags: []
     existing_tags: []
-    new_os_version: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_version }}{% elif '2960' in ansible_net_model %}{{ cat2960_version }}{% elif '9300' in ansible_net_model %}{{ cat9300_version }}{% elif '9200' in ansible_net_model %}{{ cat9200_version }}{% elif '3560' in ansible_net_model %}{{ cat3560_version }}{% elif 'Nexus' in ansible_net_model %}{{ nxos_version }}{% else %}{% endif %}"
+    new_os_version: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_version }}{% elif '9500' in ansible_net_model %}{{ cat9500_version }}{% elif '2960' in ansible_net_model %}{{ cat2960_version }}{% elif '9300' in ansible_net_model %}{{ cat9300_version }}{% elif '9200' in ansible_net_model %}{{ cat9200_version }}{% elif '3560' in ansible_net_model %}{{ cat3560_version }}{% elif 'Nexus' in ansible_net_model %}{{ nxos_version }}{% else %}{% endif %}"
   when: ansible_network_os is defined and (ansible_network_os == 'ios' or ansible_network_os == 'nxos')
   tags:
     - OSupdate
