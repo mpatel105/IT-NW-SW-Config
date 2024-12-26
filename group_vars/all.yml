@@ -36,18 +36,14 @@ vlan_list_core:
   ISP2.WAN: 901
   ISP1.LAN: 910
   ISP2.LAN: 911
-  Old.NW.Mgmt: 999
+#  Old.NW.Mgmt: 999
   Network.Management: 251
-  Firewall.Management: 998
-  Server.Management: 997
-  Infra.Management: 996
   Users.Wired: 208
   Users.Wireless: 216
   OPs.Devices: 224
   Corp.Servers: 32
   Phones: 240
   IOT.Devices: 248
-  SSL.VPN.Network: 224
   Guest.Wireless: 240
   Guest.Wired: 169
   Blackhole: 99
@@ -58,7 +54,7 @@ vlan_list_dist:
   ISP2.WAN: 901
   ISP1.LAN: 910
   ISP2.LAN: 911
-  Old.NW.Mgmt: 999
+#  Old.NW.Mgmt: 999
   Network.Management: 251
   Users.Wired: 208
   Users.Wireless: 216
@@ -71,7 +67,7 @@ vlan_list_dist:
   OOB.Management: 204
 
 vlan_list_access:
-  Old.NW.Mgmt: 999
+#  Old.NW.Mgmt: 999
   Network.Management: 251
   Users.Wired: 208
   Users.Wireless: 216
