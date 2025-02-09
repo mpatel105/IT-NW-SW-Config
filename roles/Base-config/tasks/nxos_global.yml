@@ -127,7 +127,6 @@
   when: ansible_network_os == 'nxos'
   tags:
     - global
-    - dc4
 
 - name: NXOS - configure SNMP
   cisco.nxos.nxos_snmp_server:
@@ -141,7 +140,6 @@
   when: ansible_network_os == 'nxos'
   tags:
     - global
-    - dc4
 
 - name: NXOS - configure logging
   cisco.nxos.nxos_logging_global:
