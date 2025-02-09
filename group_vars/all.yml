@@ -105,12 +105,15 @@ model_stp_edge:
   - WS-C3560CX-12PC-S
   - WS-C3560X-48T-S
 
-scp_emea_server: pa7-nwsrv-001.talend.com
-scp_noram_server: sv2-nwsrv-001.talend.com
-scp_apac_server: bei-nwsrv-001.talend.com
+#scp_emea_server: pa7-nwsrv-001.talend.com
+#scp_noram_server: sv2-nwsrv-001.talend.com
+#scp_apac_server: bei-nwsrv-001.talend.com
 scp_image_dir: /home/sa-netcopy/images
 #scp_emea_server: 10.50.17.11
 #scp_noram_server: 10.10.17.6
+scp_emea_server: PA7-itnet-329.itnet.pa7.fr.talend.com
+scp_noram_server: sv2-itnet-043.itnet.sv2.us.talend.com
+scp_apac_server: BEI-itnet-331.itnet.bei.cn.talend.com
 
 talend_portnox_PA7_name: PA7-Portnox
 talend_portnox_SV2_name: SV2-Portnox
