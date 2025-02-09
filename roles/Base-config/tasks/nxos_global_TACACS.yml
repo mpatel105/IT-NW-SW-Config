@@ -9,6 +9,7 @@
   tags:
     - global
     - globalTACACS
+    - newTACACS
 
 
 # - name: NXOS - Configure SV2_Tacacs
@@ -128,6 +129,7 @@
   tags:
     - global
     - globalTACACS
+    - newTACACS
 
 # - name: NXOS - Configure TACACS Global Config
 #   nxos_config:
