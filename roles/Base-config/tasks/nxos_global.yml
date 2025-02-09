@@ -11,16 +11,18 @@
     - syslog
     - radius
     - ntp
+    - dc4
 
 - name: NXOS - configure dns
   nxos_system:
     hostname: "{{ hostname }}"
     domain_name: "{{ domain_name }}"
     domain_lookup: yes
-    name_servers: "{{ talend_dns }}"
+    name_servers: "{{ dns_servers }}"
   when: ansible_network_os == 'nxos'
   tags:
     - global
+    - dc4
 
 - name: NXOS - configure NTP servers
   cisco.nxos.nxos_ntp_global:
@@ -43,6 +45,7 @@
   tags:
     - global
     - ntp
+    - dc4
 
 - name: NXOS - UTC Timezone
   nxos_command:
@@ -54,6 +57,7 @@
   when: ansible_network_os == 'nxos'
   tags:
     - global
+    - dc4
 
 - name: NXOS - STP Global configuration for Core switches
   nxos_command:
@@ -115,6 +119,7 @@
   when: ansible_network_os == 'nxos'
   tags:
     - global
+    - dc4
 
 - name: NXOS - delete existing snmp configuration
   cisco.nxos.nxos_snmp_server:
@@ -122,6 +127,7 @@
   when: ansible_network_os == 'nxos'
   tags:
     - global
+    - dc4
 
 - name: NXOS - configure SNMP
   cisco.nxos.nxos_snmp_server:
@@ -135,6 +141,7 @@
   when: ansible_network_os == 'nxos'
   tags:
     - global
+    - dc4
 
 - name: NXOS - configure logging
   cisco.nxos.nxos_logging_global:
@@ -158,6 +165,7 @@
   tags:
     - global
     - syslog
+    - dc4
 
 - name: NXOS - SSH configuration
   nxos_command:
@@ -177,6 +185,7 @@
   when: ansible_network_os == 'nxos'
   tags:
     - global
+    - dc4
 
 - name: NXOS - remove all users except admin
   no_log: true
