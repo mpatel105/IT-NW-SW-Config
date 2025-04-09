@@ -8,7 +8,6 @@ ansible_user: "{{ q_login }}"
 ansible_password: "{{ q_password }}"
 
 logs_servers:
-  - 10.9.160.21 #syslog-splunk.talend.com
   - 10.3.1.72 # qtgraylog01.qliktech.com
 ANSIBLE_HOST_KEY_CHECKING: false
 backup_folder: /tmp/backup

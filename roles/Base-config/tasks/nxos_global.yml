@@ -23,6 +23,7 @@
   when: ansible_network_os == 'nxos'
   tags:
     - global
+    - configdns
     - dc4
 
 - name: NXOS - configure NTP servers
@@ -45,7 +46,7 @@
   when: ansible_network_os == 'nxos'
   tags:
     - global
-    - ntp
+    - configntp
     - dc4
 
 - name: NXOS - UTC Timezone
@@ -149,9 +150,6 @@
         severity: alert
       hosts:
         - host: "{{ talend_logs[0] }}"
-          severity: warning
-          use_vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
-        - host: "{{ talend_logs[1] }}"
           severity: informational
           use_vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
           port: 1515

@@ -122,6 +122,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - global
+    - configdns
 
 - debug:
     msg: |
@@ -151,7 +152,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - global
-    - ntp
+    - configntp
 
 - name: IOS - UTC Timezone
   ios_command:
@@ -248,7 +249,6 @@
         severity: critical
       hosts:
         - hostname: "{{ logs_servers[0] }}"
-        - hostname: "{{ logs_servers[1] }}"
           transport:
             udp:
               port: 1515
