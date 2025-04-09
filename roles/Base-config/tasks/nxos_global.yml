@@ -149,7 +149,7 @@
       monitor:
         severity: alert
       hosts:
-        - host: "{{ talend_logs[0] }}"
+        - host: "{{ logs_servers[0] }}"
           severity: informational
           use_vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
           port: 1515
