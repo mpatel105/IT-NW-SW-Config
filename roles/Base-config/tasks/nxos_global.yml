@@ -11,8 +11,9 @@
     - interfaces
     - syslog
     - radius
-    - ntp
     - dc4
+    - configdns
+    - configntp
 
 - name: NXOS - configure dns
   nxos_system:
