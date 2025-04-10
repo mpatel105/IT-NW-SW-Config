@@ -254,8 +254,7 @@
           transport:
             udp:
               port: 1515
-      trap:
-        severity: "warnings"
+      trap: "warnings"
       logging_on: enable
       source_interface:
         - interface: "{{ logging_source_interface }}"
