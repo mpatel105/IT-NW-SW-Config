@@ -153,7 +153,7 @@
         - host: "{{ logs_servers[0] }}"
           severity: warning
           port: 1515
-          vrf: "{{ 'management' if custom_fields.Nexus_VRF_mgmt == 'management' else omit }}"
+          use_vrf: "{{ 'management' if custom_fields.Nexus_VRF_mgmt == 'management' else omit }}"
       logfile:
         name: logs
         severity: informational
