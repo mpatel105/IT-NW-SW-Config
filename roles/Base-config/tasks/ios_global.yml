@@ -256,7 +256,7 @@
               port: 1515
       logging_on: enable
       source_interface:
-        - interface: Vlan251
+        - interface: "{{ logging_source_interface }}"
     state: overridden
   when: ansible_network_os == 'ios'
   tags:
