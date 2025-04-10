@@ -155,8 +155,8 @@
           port: 1515
       logfile:
         name: logs
-        severity: notification
-      source_interface: "{% if custom_fields.Nexus_VRF_mgmt == 'default' %}{{ vlan_nw_mgmt }}{% else %}mgmt0{% endif %}"
+        severity: informational
+      source_interface: "{% if custom_fields.Nexus_VRF_mgmt == 'management' %}mgmt0{% else %}{{ logging_source_interface }}{% endif %}"
     state: replaced
   when: ansible_network_os == 'nxos'
   tags:
