@@ -151,8 +151,7 @@
         severity: alert
       hosts:
         - host: "{{ logs_servers[0] }}"
-          severity: informational
-          use_vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
+          severity: warning
           port: 1515
       logfile:
         name: logs
