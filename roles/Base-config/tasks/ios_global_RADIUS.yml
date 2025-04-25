@@ -1,70 +1,70 @@
 ---
 
-- name: IOS - Configure aaa new-model
-  ios_config:
-    lines:
-      - aaa new-model
-  when: ansible_network_os == 'ios'
-  tags:
-    - global
-    - globalRADIUS
+# - name: IOS - Configure aaa new-model
+#   ios_config:
+#     lines:
+#       - aaa new-model
+#   when: ansible_network_os == 'ios'
+#   tags:
+#     - global
+#     - globalRADIUS
 
-- name: IOS - Configure SV2-Radius
-  ios_config:
-    lines:
-      - address ipv4 {{ talend_radius_SV2 }} auth-port {{ talend_radius_auth_port }} acct-port {{ talend_radius_acct_port }}
-      - timeout 3
-      - key {{ talend_radius_key }}
-    parents: radius server {{ talend_radius_SV2_name }}
-  when: ansible_network_os == 'ios'
-  tags:
-    - global
-    - globalRADIUS
+# - name: IOS - Configure SV2-Radius
+#   ios_config:
+#     lines:
+#       - address ipv4 {{ radius_SV2 }} auth-port {{ radius_auth_port }} acct-port {{ radius_acct_port }}
+#       - timeout 3
+#       - key {{ radius_key }}
+#     parents: radius server {{ talend_radius_SV2_name }}
+#   when: ansible_network_os == 'ios'
+#   tags:
+#     - global
+#     - globalRADIUS
 
-- name: IOS - Configure PA7-Radius
-  ios_config:
-    lines:
-      - address ipv4 {{ talend_radius_PA7 }} auth-port {{ talend_radius_auth_port }} acct-port {{ talend_radius_acct_port }}
-      - timeout 3
-      - key {{ talend_radius_key }}
-    parents: radius server {{ talend_radius_PA7_name }}
-    before: no radius server SUR-Radius
-  when: ansible_network_os == 'ios'
-  tags:
-    - global
-    - globalRADIUS
+# - name: IOS - Configure PA7-Radius
+#   ios_config:
+#     lines:
+#       - address ipv4 {{ talend_radius_PA7 }} auth-port {{ talend_radius_auth_port }} acct-port {{ talend_radius_acct_port }}
+#       - timeout 3
+#       - key {{ talend_radius_key }}
+#     parents: radius server {{ talend_radius_PA7_name }}
+#     before: no radius server SUR-Radius
+#   when: ansible_network_os == 'ios'
+#   tags:
+#     - global
+#     - globalRADIUS
 
-- name: IOS - Configure group Global-Radius-Servers
-  ios_config:
-    lines:
-      - server name {{ talend_radius_1_name }}
-      - server name {{ talend_radius_2_name }}
-      - deadtime 5
-    parents: aaa group server radius Global-Radius-Servers
-    before: no aaa group server radius Global-Radius-Servers
-    match: exact
-  when: ansible_network_os == 'ios'
-  tags:
-    - global
-    - globalRADIUS
+# - name: IOS - Configure group Global-Radius-Servers
+#   ios_config:
+#     lines:
+#       - server name {{ talend_radius_1_name }}
+#       - server name {{ talend_radius_2_name }}
+#       - deadtime 5
+#     parents: aaa group server radius Global-Radius-Servers
+#     before: no aaa group server radius Global-Radius-Servers
+#     match: exact
+#   when: ansible_network_os == 'ios'
+#   tags:
+#     - global
+#     - globalRADIUS
 
-- name: IOS - Configure Radius Global Config
-  ios_config:
-    lines:
-      - aaa authentication login default group Global-Radius-Servers local
-      - aaa authorization console
-      - aaa authorization exec default group Global-Radius-Servers local
-      - aaa accounting exec default start-stop group Global-Radius-Servers
-      - aaa accounting system default start-stop group Global-Radius-Servers
-      - ip radius source-interface {{ vlan_nw_mgmt }}
-  when: ansible_network_os == 'ios'
-  tags:
-    - global
-    - globalRADIUS
+# - name: IOS - Configure Radius Global Config
+#   ios_config:
+#     lines:
+#       - aaa authentication login default group Global-Radius-Servers local
+#       - aaa authorization console
+#       - aaa authorization exec default group Global-Radius-Servers local
+#       - aaa accounting exec default start-stop group Global-Radius-Servers
+#       - aaa accounting system default start-stop group Global-Radius-Servers
+#       - ip radius source-interface {{ vlan_nw_mgmt }}
+#   when: ansible_network_os == 'ios'
+#   tags:
+#     - global
+#     - globalRADIUS
 
-- name: IOS - Save config
-  ios_config:
-    save_when: always
-  when: ansible_network_os == 'ios'
-  tags:
-    - global
+# - name: IOS - Save config
+#   ios_config:
+#     save_when: always
+#   when: ansible_network_os == 'ios'
+#   tags:
+#     - global
