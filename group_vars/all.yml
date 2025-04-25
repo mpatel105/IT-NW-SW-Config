@@ -117,10 +117,12 @@ scp_apac_server: BEI-itnet-331.itnet.bei.cn.talend.com
 
 talend_portnox_PA7_name: PA7-Portnox
 talend_portnox_SV2_name: SV2-Portnox
+talend_portnox_DC4_name: DC4-Portnox
 talend_portnox_US_name: US-Portnox
 talend_portnox_EU_name: EU-Portnox
 talend_portnox_SV2: 10.9.32.19
 talend_portnox_PA7: 10.44.32.19
+talend_portnox_DC4: 10.4.36.11
 talend_portnox_US: 13.90.229.234
 talend_portnox_EU: 52.232.122.157
 talend_portnox_auth_port: 1812
@@ -141,10 +143,13 @@ tacacs_SV2_name: sv2-tacacs-001
 tacacs_SV2: 10.9.32.18
 tacacs_PA7_name: pa7-tacacs-001
 tacacs_PA7: 10.44.32.18
+tacacs_DC4_name: qtusdc4tac01
+tacacs_DC4: 10.4.36.12
 tacacs_azu_weu: 172.21.0.23
 tacacs_azu_weu_name: qtazuweutac01
 tacacs_azu_eus: 172.20.0.143
 tacacs_azu_eus_name: qtazueustac01
+
 
 
 # macro_dot1x_name: Corp_switchport

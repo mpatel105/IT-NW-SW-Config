@@ -1,2 +1,11 @@
 
 scp_emea_server: PA7-itnet-329.itnet.pa7.fr.talend.com
+
+tacacs_2_new_name: "{{ tacacs_azu_eus_name }}"
+tacacs_2_new_ip: "{{ tacacs_azu_eus }}"
+tacacs_2_new_key: "{{ tacacs_azu_eus_key }}"
+tacacs_1_new_name: "{{ tacacs_DC4_name }}"
+tacacs_1_new_ip: "{{ tacacs_DC4 }}"
+tacacs_1_new_key: "{{ tacacs_DC4_key }}"
+
+
