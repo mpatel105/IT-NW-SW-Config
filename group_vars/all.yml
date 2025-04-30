@@ -36,13 +36,10 @@ vlan_list_core:
   ISP2.WAN: 901
   ISP1.LAN: 910
   ISP2.LAN: 911
-#  Old.NW.Mgmt: 999
   Network.Management: 251
   Users.Wired: 208
   Users.Wireless: 216
   OPs.Devices: 224
-  Corp.Servers: 32
-  Phones: 240
   IOT.Devices: 248
   Guest.Wireless: 240
   Guest.Wired: 169
@@ -54,12 +51,10 @@ vlan_list_dist:
   ISP2.WAN: 901
   ISP1.LAN: 910
   ISP2.LAN: 911
-#  Old.NW.Mgmt: 999
   Network.Management: 251
   Users.Wired: 208
   Users.Wireless: 216
   OPs.Devices: 224
-  Phones: 240
   IOT.Devices: 248
   Guest.Wireless: 240
   Guest.Wired: 169
@@ -67,12 +62,10 @@ vlan_list_dist:
   OOB.Management: 204
 
 vlan_list_access:
-#  Old.NW.Mgmt: 999
   Network.Management: 251
   Users.Wired: 208
   Users.Wireless: 216
   OPs.Devices: 224
-  Phones: 240
   IOT.Devices: 248
   Guest.Wireless: 240
   Guest.Wired: 169
@@ -112,7 +105,7 @@ scp_image_dir: /home/sa-netcopy/images
 #scp_emea_server: 10.50.17.11
 #scp_noram_server: 10.10.17.6
 scp_emea_server: PA7-itnet-329.itnet.pa7.fr.talend.com
-scp_noram_server: sv2-itnet-043.itnet.sv2.us.talend.com
+scp_noram_server: sv2-itnet-043.itnet01.prod.dc4.us.qliktech.com
 scp_apac_server: BEI-itnet-331.itnet.bei.cn.talend.com
 
 portnox_PA7_name: PA7-Portnox
