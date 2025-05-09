@@ -89,7 +89,7 @@
 - name: IOS - Remove SV2 from group Portnox-newTACACS-Group
   nxos_config:
     lines:
-      - no server name sv2-tacacs-001
+      - no server 10.9.32.18
     parents: aaa group server tacacs+ Portnox-newTACACS-Group
   when: ansible_network_os == 'nxos'
   tags:
