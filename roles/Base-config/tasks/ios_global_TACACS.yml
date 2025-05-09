@@ -71,7 +71,6 @@
     parents: aaa group server tacacs+ Portnox-newTACACS-Group
   when: ansible_network_os == 'ios'
   tags:
-    - global
     - newTACACS
 
 # - name: IOS - Configure TACACS Global Config
