@@ -87,18 +87,18 @@
     - convertNAC
 
 
-- name: IOS - Configure Portnox-Radius-SV2
-  ios_config:
-    lines:
-      - address ipv4 {{ portnox_SV2 }} auth-port {{ portnox_auth_port }} acct-port {{ portnox_acct_port }}
-      - timeout 3
-      - key {{ portnox_SV2_radius_key }}
-    parents: radius server {{ portnox_SV2_name }}
-  when: ansible_network_os == 'ios'
-  tags:
-    - NACradius
-    - NACglobal
-    - convertNAC
+# - name: IOS - Configure Portnox-Radius-SV2
+#   ios_config:
+#     lines:
+#       - address ipv4 {{ portnox_SV2 }} auth-port {{ portnox_auth_port }} acct-port {{ portnox_acct_port }}
+#       - timeout 3
+#       - key {{ portnox_SV2_radius_key }}
+#     parents: radius server {{ portnox_SV2_name }}
+#   when: ansible_network_os == 'ios'
+#   tags:
+#     - NACradius
+#     - NACglobal
+#     - convertNAC
 
 - name: IOS - Configure Portnox-Radius-DC4
   ios_config:

@@ -15,15 +15,15 @@ ntp_servers:
 portnox_1: "{{ portnox_EU }}"
 portnox_2: "{{ portnox_US }}"
 portnox_3: "{{ portnox_PA7 }}"
-portnox_4: "{{ portnox_SV2 }}"
+portnox_4: "{{ portnox_DC4 }}"
 portnox_1_name: "{{ portnox_EU_name }}"
 portnox_2_name: "{{ portnox_US_name }}"
 portnox_3_name: "{{ portnox_PA7_name }}"
-portnox_4_name: "{{ portnox_SV2_name }}"
+portnox_4_name: "{{ portnox_DC4_name }}"
 portnox_1_radius_key: "{{ portnox_EU_radius_key }}"
 portnox_2_radius_key: "{{ portnox_US_radius_key }}"
 portnox_3_radius_key: "{{ portnox_PA7_radius_key }}"
-portnox_4_radius_key: "{{ portnox_SV2_radius_key }}"
+portnox_4_radius_key: "{{ portnox_DC4_radius_key }}"
 
 
 talend_radius_1: "{{ talend_radius_PA7 }}"
