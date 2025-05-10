@@ -105,7 +105,7 @@
     lines:
       - address ipv4 {{ portnox_DC4 }} auth-port {{ portnox_auth_port }} acct-port {{ portnox_acct_port }}
       - timeout 3
-      - key {{ portnox_DC4_radius_key }}
+      - key 7 {{ portnox_DC4_radius_key }}
     parents: radius server {{ portnox_DC4_name }}
   when: ansible_network_os == 'ios'
   tags:
