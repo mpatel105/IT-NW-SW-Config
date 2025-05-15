@@ -3,7 +3,7 @@ plugin: netbox.netbox.nb_inventory
 validate_certs: True
 config_context: True
 query_filters:
-  - status: planned
+  - status: active
   - manufacturer: cisco
 flatten_config_context: True
 compose:
