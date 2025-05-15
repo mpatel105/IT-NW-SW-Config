@@ -6,6 +6,17 @@ compose:
 device_query_filters:
   - status: 'active'
   - has_primary_ip: 'true'
+group_by:
+  - region
+  - device_roles
+  - device_types
+  - manufacturers
+  - platforms
+  - sites
+  - site_group
+  - is_virtual
+  - tenants
+
 
 # ['airflow', 'airflow__n', 'asset_tag',
 # 'asset_tag__empty', 'asset_tag__ic', 'asset_tag__ie', 'asset_tag__iew',
