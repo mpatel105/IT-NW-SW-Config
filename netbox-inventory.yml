@@ -18,7 +18,7 @@ group_by:
   - is_virtual
   - tenants
 group_names_raw: True
-interfaces: True
+# interfaces: True
 device_query_filters:
   - status: 'active'
   - has_primary_ip: 'true'
