@@ -2,6 +2,9 @@
 plugin: netbox.netbox.nb_inventory
 validate_certs: True
 config_context: True
+query_filters:
+  - status: active
+  - manufacturer: cisco
 flatten_config_context: True
 compose:
   ansible_network_os: platform.slug
