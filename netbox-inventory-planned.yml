@@ -1,6 +1,6 @@
 ---
-# plugin: netbox.netbox.nb_inventory
-plugin: netbox.netbox.plugins.inventory.nb_inventory
+plugin: netbox.netbox.nb_inventory
+#plugin: netbox.netbox.plugins.inventory.nb_inventory
 validate_certs: True
 config_context: True
 query_filters:
