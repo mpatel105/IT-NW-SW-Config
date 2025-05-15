@@ -2,8 +2,7 @@ plugin: netbox.netbox.nb_inventory
 validate_certs: true
 config_context: True
 compose:
-  - ansible_host: primary_ip
-  - ansible_network_os: platform.slug
+  ansible_network_os: platform.slug
 device_query_filters:
   - status: 'active'
   - has_primary_ip: 'true'
