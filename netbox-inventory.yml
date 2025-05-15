@@ -18,6 +18,10 @@ group_by:
   - is_virtual
   - tenants
 group_names_raw: True
+
+vm_query_filters:
+  name: "__none__"
+
 # interfaces: True
 device_query_filters:
   - status: 'active'
