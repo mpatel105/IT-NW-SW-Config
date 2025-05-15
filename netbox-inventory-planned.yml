@@ -1,20 +1,7 @@
----
 plugin: netbox.netbox.nb_inventory
-#plugin: netbox.netbox.plugins.inventory.nb_inventory
-validate_certs: True
-config_context: True
-query_filters:
-  - status: active
-  - manufacturer: cisco
-flatten_config_context: True
+validate_certs: true  
 compose:
-  ansible_network_os: platform.slug
-group_by:
-  - region
-  - platforms
-  - sites
-group_names_raw: True
-interfaces: True
+  ansible_host: primary_ip
 
 
 # ['airflow', 'airflow__n', 'asset_tag',
