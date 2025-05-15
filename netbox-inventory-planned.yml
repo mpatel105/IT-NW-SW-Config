@@ -10,14 +10,8 @@ compose:
   ansible_network_os: platform.slug
 group_by:
   - region
-  - device_roles
-  - manufacturers
-  - device_types
   - platforms
   - sites
-  - site_group
-  - is_virtual
-  - tenants
 group_names_raw: True
 interfaces: True
 
