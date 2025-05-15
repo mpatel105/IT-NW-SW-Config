@@ -22,7 +22,7 @@ group_names_raw: True
 vm_query_filters:
   name: "__none__"
 
-# interfaces: True
+interfaces: True
 device_query_filters:
   - status: 'active'
   - has_primary_ip: 'true'
