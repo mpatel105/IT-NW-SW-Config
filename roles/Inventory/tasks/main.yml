@@ -26,19 +26,9 @@
     - pan
     - inventory
 
-- name: Ping target hosts from execution environment
-  hosts: localhost
-  gather_facts: no
-  vars:
-    targets:
-      - 8.8.8.8
-      - 1.1.1.1
-  tags:
-    - pinghosts
-
 - name: Ping each target from the EE
   ansible.builtin.shell: "ping -c 2 {{ item }}"
-  loop: "{{ targets }}"
+  loop: "{{ pingtargets }}"
   register: ping_results
   ignore_errors: yes
   tags:
