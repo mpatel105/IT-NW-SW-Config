@@ -26,26 +26,31 @@
     - pan
     - inventory
 
-- name: Ping hosts
-  ansible.builtin.ping:
-  register: ping_result
-  ignore_errors: yes
+- name: Ping target hosts from execution environment
+  hosts: localhost
+  gather_facts: no
+  vars:
+    targets:
+      - 8.8.8.8
+      - 1.1.1.1
   tags:
     - pinghosts
 
-- name: Collect unreachable hosts
-  set_fact:
-    unreachable_hosts: "{{ unreachable_hosts | default([]) + [inventory_hostname] }}"
-  when: ping_result is failed
+- name: Ping each target from the EE
+  ansible.builtin.shell: "ping -c 2 {{ item }}"
+  loop: "{{ targets }}"
+  register: ping_results
+  ignore_errors: yes
   tags:
     - pinghosts
 
 - name: Show unreachable hosts
   debug:
-    msg: "Unreachable hosts: {{ unreachable_hosts | default('None') }}"
-  run_once: true
+    msg: "Unreachable: {{ item.item }}"
+  loop: "{{ ping_results.results }}"
+  when: item.rc != 0
   tags:
-  - pinghosts
+    - pinghosts
 
 - debug:
     msg: '{{ (res.stdout | from_json).response.result.system }}'
