@@ -26,6 +26,27 @@
     - pan
     - inventory
 
+- name: Ping hosts
+      ansible.builtin.ping:
+      register: ping_result
+      ignore_errors: yes
+  tags:
+    - pinghosts
+
+- name: Collect unreachable hosts
+  set_fact:
+    unreachable_hosts: "{{ unreachable_hosts | default([]) + [inventory_hostname] }}"
+  when: ping_result is failed
+  tags:
+    - pinghosts
+
+- name: Show unreachable hosts
+  debug:
+    msg: "Unreachable hosts: {{ unreachable_hosts | default('None') }}"
+  run_once: true
+  tags:
+  - pinghosts
+
 - debug:
     msg: '{{ (res.stdout | from_json).response.result.system }}'
   tags:
