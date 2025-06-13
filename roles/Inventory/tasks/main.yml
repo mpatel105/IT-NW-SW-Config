@@ -27,9 +27,9 @@
     - inventory
 
 - name: Ping hosts
-      ansible.builtin.ping:
-      register: ping_result
-      ignore_errors: yes
+  ansible.builtin.ping:
+  register: ping_result
+  ignore_errors: yes
   tags:
     - pinghosts
 
