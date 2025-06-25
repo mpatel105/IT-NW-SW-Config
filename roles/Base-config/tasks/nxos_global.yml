@@ -137,7 +137,7 @@
       communities:
         - community: "{{ talend_snmp_community }}"
           group: network-operator
-          use_ipv4acl: ACLsnmp
+#          use_ipv4acl: ACLsnmp
       location: "{{ inventory_hostname[:7][:-5] | upper }}"
     state: merged
   when: ansible_network_os == 'nxos'
