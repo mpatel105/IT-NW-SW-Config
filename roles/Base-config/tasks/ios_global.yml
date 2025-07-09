@@ -17,6 +17,7 @@
     - newTACACS
     - configdns
     - configntp
+    - configsnmp
 
 
 - name: IOS - set fact for portfast
@@ -239,6 +240,7 @@
   when: ansible_network_os == 'ios'
   tags:
     - global
+    - configsnmp
 
 - name: IOS - configure logging
   cisco.ios.ios_logging_global:
