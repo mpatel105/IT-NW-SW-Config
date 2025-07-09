@@ -17,7 +17,6 @@
     - newTACACS
     - configdns
     - configntp
-    - configsnmp
 
 
 - name: IOS - set fact for portfast
@@ -235,21 +234,11 @@
       - configure terminal
       - access-list 98 permit any
       - snmp-server community {{ talend_snmp_community }} RO 98
-      - snmp-server community {{ qlik_snmp_community }} RO 98
       - snmp-server location {{ inventory_hostname[:7][:-5] | upper }}
       - exit
   when: ansible_network_os == 'ios'
   tags:
     - global
-    - configsnmp
-
-- name: IOS - save SNMP
-  ios_command:
-    commands:
-      - write memory
-  when: ansible_network_os == 'ios'
-  tags:
-    - configsnmp
 
 - name: IOS - configure logging
   cisco.ios.ios_logging_global:
