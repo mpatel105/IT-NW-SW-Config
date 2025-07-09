@@ -243,6 +243,14 @@
     - global
     - configsnmp
 
+- name: IOS - save SNMP
+  ios_command:
+    commands:
+      - write memory
+  when: ansible_network_os == 'ios'
+  tags:
+    - configsnmp
+
 - name: IOS - configure logging
   cisco.ios.ios_logging_global:
     config:
