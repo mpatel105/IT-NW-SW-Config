@@ -8,7 +8,7 @@ ansible_user: "{{ q_login }}"
 ansible_password: "{{ q_password }}"
 
 logs_servers:
-  - 10.3.1.72 # qtgraylog01.qliktech.com
+  - 10.3.1.126 # qtgraylog01.qliktech.com
 logging_source_interface: Vlan251
 ANSIBLE_HOST_KEY_CHECKING: false
 backup_folder: /tmp/backup
