@@ -362,7 +362,7 @@
 #     - localadmin
 
 - name: IOS - enable secret scrypt
-#  no_log: true
+  no_log: true
   ios_command:
     commands:
       - configure terminal
