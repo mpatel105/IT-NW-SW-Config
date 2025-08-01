@@ -373,3 +373,13 @@
   tags:
     - global
     - localadmin
+
+
+- name: IOS - remove all legacy credentials
+  ios_config:
+    lines:
+      - no username admin
+      - no username qlik20231024
+  when: ansible_network_os == 'ios'
+  tags:
+    - localadmin_cleanup

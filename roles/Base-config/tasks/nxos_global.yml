@@ -196,6 +196,17 @@
   when: ansible_network_os == 'nxos'
   tags:
     - global
+    - localadmin
+
+- name: NXOS - remove all legacy credentials
+  ios_config:
+    lines:
+      - no username admin
+      - no username qlik20231024
+  when: ansible_network_os == 'nxos'
+  tags:
+    - localadmin_cleanup
+
 
 - name: NXOS - Configure Radius servers
   nxos_config:
