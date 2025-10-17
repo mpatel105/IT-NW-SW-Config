@@ -250,8 +250,8 @@
     lines: "{{ snmp_comms.stdout[0].splitlines()
                | map('regex_replace', '.*snmp-server community (\\S+).*', 'no snmp-server community \\1')
                | list }}"
+    save_when: modified
   when: snmp_comms.stdout[0] | trim | length > 0
-  save_when: modified
   tags:
     - global
     - snmp
