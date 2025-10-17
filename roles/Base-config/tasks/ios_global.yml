@@ -239,7 +239,9 @@
 - name: Show found SNMP community lines
   debug:
     var: snmp_comms.stdout[0]
-  tags: [global, snmp]
+  tags:
+    - global
+    - snmp
 
 - name: Remove all SNMP communities
   ios_config:
@@ -248,7 +250,9 @@
                | list }}"
   when: snmp_comms.stdout[0] | trim | length > 0
   save_when: modified
-  tags: [global, snmp]
+  tags:
+    - global
+    - snmp
 
 - name: Configure secure SNMP
   ios_config:
@@ -262,7 +266,9 @@
       - snmp-server community {{ talend_snmp_community }} view NO_BAD_SNMP RO 98
       - snmp-server location {{ inventory_hostname[:7][:-5] | upper }}
     save_when: modified
-  tags: [global, snmp]
+  tags:
+    - global
+    - snmp
 
 - name: IOS - configure logging
   cisco.ios.ios_logging_global:
