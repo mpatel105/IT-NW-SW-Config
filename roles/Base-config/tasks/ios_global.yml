@@ -232,14 +232,19 @@
 - name: Get existing SNMP communities
   ios_command:
     commands:
-      - show running-config | include ^snmp-server community
+      - show running-config | include snmp-server community
   register: snmp_comms
+  tags: [global, snmp]
+
+- name: Show raw SNMP community lines (debug)
+  debug:
+    var: snmp_comms.stdout[0]
   tags: [global, snmp]
 
 - name: Remove all SNMP communities
   ios_config:
-    lines: "{{ snmp_comms.stdout[0].splitlines() 
-               | map('regex_replace', '^snmp-server community (\\S+).*', 'no snmp-server community \\1') 
+    lines: "{{ snmp_comms.stdout[0].splitlines()
+               | map('regex_replace', '^snmp-server community (\\S+).*', 'no snmp-server community \\1')
                | list }}"
   when: snmp_comms.stdout[0] | length > 0
   save_when: modified
