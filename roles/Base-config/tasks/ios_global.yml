@@ -236,7 +236,7 @@
   register: snmp_comms
   tags: [global, snmp]
 
-- name: Show raw SNMP community lines (debug)
+- name: Show found SNMP community lines
   debug:
     var: snmp_comms.stdout[0]
   tags: [global, snmp]
@@ -246,7 +246,7 @@
     lines: "{{ snmp_comms.stdout[0].splitlines()
                | map('regex_replace', '^snmp-server community (\\S+).*', 'no snmp-server community \\1')
                | list }}"
-  when: snmp_comms.stdout[0] | length > 0
+  when: snmp_comms.stdout[0] | trim | length > 0
   save_when: modified
   tags: [global, snmp]
 
