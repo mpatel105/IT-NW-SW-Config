@@ -229,18 +229,24 @@
   tags:
     - global
 
-- name: IOS - reset and secure SNMP configuration
-  vars:
-    snmp_remove_cmds: "{{ lookup('pipe', 'ansible-playbook --version >/dev/null 2>&1 && echo \"\" || true') | ternary([], []) }}"
+- name: Get existing SNMP communities
+  ios_command:
+    commands:
+      - show running-config | include ^snmp-server community
+  register: snmp_comms
+  tags: [global, snmp]
+
+- name: Remove all SNMP communities
   ios_config:
-    before: >-
-      {{
-        (lookup('ansible.builtin.pipe',
-          'ansible-console -m ios_command -a "commands=show running-config | include ^snmp-server community" 2>/dev/null || true')
-        | regex_findall('snmp-server community (\\S+)', '\\1')
-        | map('regex_replace', '^(.*)$', 'no snmp-server community \\1')
-        | list)
-      }}
+    lines: "{{ snmp_comms.stdout[0].splitlines() 
+               | map('regex_replace', '^snmp-server community (\\S+).*', 'no snmp-server community \\1') 
+               | list }}"
+  when: snmp_comms.stdout[0] | length > 0
+  save_when: modified
+  tags: [global, snmp]
+
+- name: Configure secure SNMP
+  ios_config:
     lines:
       - snmp-server view NO_BAD_SNMP iso included
       - snmp-server view NO_BAD_SNMP snmpUsmMIB excluded
@@ -251,7 +257,6 @@
       - snmp-server community {{ talend_snmp_community }} view NO_BAD_SNMP RO 98
       - snmp-server location {{ inventory_hostname[:7][:-5] | upper }}
     save_when: modified
-  when: ansible_network_os == 'ios'
   tags: [global, snmp]
 
 - name: IOS - configure logging
