@@ -230,25 +230,25 @@
     - global
 
 - name: IOS - reset and secure SNMP configuration
+  vars:
+    snmp_remove_cmds: "{{ lookup('pipe', 'ansible-playbook --version >/dev/null 2>&1 && echo \"\" || true') | ternary([], []) }}"
   ios_config:
     before: >-
       {{
-        lookup('ansible.netcommon.cli_command', 'show running-config | include ^snmp-server community')
-        .stdout[0].splitlines()
-        | map('regex_replace', '^snmp-server community (\\S+).*', 'no snmp-server community \\1')
-        | list
+        (lookup('ansible.builtin.pipe',
+          'ansible-console -m ios_command -a "commands=show running-config | include ^snmp-server community" 2>/dev/null || true')
+        | regex_findall('snmp-server community (\\S+)', '\\1')
+        | map('regex_replace', '^(.*)$', 'no snmp-server community \\1')
+        | list)
       }}
     lines:
-      # Define secure view
       - snmp-server view NO_BAD_SNMP iso included
       - snmp-server view NO_BAD_SNMP snmpUsmMIB excluded
       - snmp-server view NO_BAD_SNMP snmpVacmMIB excluded
       - snmp-server view NO_BAD_SNMP snmpCommunityMIB excluded
       - snmp-server view NO_BAD_SNMP cafSessionMethodsInfoEntry excluded
-      # ACL and community
       - access-list 98 permit any
       - snmp-server community {{ talend_snmp_community }} view NO_BAD_SNMP RO 98
-      # Location
       - snmp-server location {{ inventory_hostname[:7][:-5] | upper }}
     save_when: modified
   when: ansible_network_os == 'ios'
