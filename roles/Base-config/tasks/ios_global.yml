@@ -9,6 +9,7 @@
     - global
     - updateTACACS
     - syslog
+    - snmp
     - ntp
     - lldp
     - configvlan
@@ -228,17 +229,24 @@
   tags:
     - global
 
-- name: IOS - configure SNMP
-  ios_command:
-    commands:
-      - configure terminal
+- name: IOS - replace SNMP with standard
+  ios_config:
+    lines:
+      - snmp-server view NO_BAD_SNMP iso included
+      - snmp-server view NO_BAD_SNMP snmpUsmMIB excluded
+      - snmp-server view NO_BAD_SNMP snmpVacmMIB excluded
+      - snmp-server view NO_BAD_SNMP snmpCommunityMIB excluded
+      - snmp-server view NO_BAD_SNMP cafSessionMethodsInfoEntry excluded
       - access-list 98 permit any
-      - snmp-server community {{ talend_snmp_community }} RO 98
+      - snmp-server community {{ talend_snmp_community }} view NO_BAD_SNMP RO 98
       - snmp-server location {{ inventory_hostname[:7][:-5] | upper }}
-      - exit
+    before:
+      - no snmp-server community
+    save_when: modified
   when: ansible_network_os == 'ios'
-  tags:
+  tags: 
     - global
+    - snmp
 
 - name: IOS - configure logging
   cisco.ios.ios_logging_global:
