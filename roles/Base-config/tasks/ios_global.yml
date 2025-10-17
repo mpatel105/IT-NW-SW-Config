@@ -229,24 +229,30 @@
   tags:
     - global
 
-- name: IOS - replace SNMP with standard
+- name: IOS - reset and secure SNMP configuration
   ios_config:
+    before: >-
+      {{
+        lookup('ansible.netcommon.cli_command', 'show running-config | include ^snmp-server community')
+        .stdout[0].splitlines()
+        | map('regex_replace', '^snmp-server community (\\S+).*', 'no snmp-server community \\1')
+        | list
+      }}
     lines:
+      # Define secure view
       - snmp-server view NO_BAD_SNMP iso included
       - snmp-server view NO_BAD_SNMP snmpUsmMIB excluded
       - snmp-server view NO_BAD_SNMP snmpVacmMIB excluded
       - snmp-server view NO_BAD_SNMP snmpCommunityMIB excluded
       - snmp-server view NO_BAD_SNMP cafSessionMethodsInfoEntry excluded
+      # ACL and community
       - access-list 98 permit any
       - snmp-server community {{ talend_snmp_community }} view NO_BAD_SNMP RO 98
+      # Location
       - snmp-server location {{ inventory_hostname[:7][:-5] | upper }}
-    before:
-      - no snmp-server community
     save_when: modified
   when: ansible_network_os == 'ios'
-  tags: 
-    - global
-    - snmp
+  tags: [global, snmp]
 
 - name: IOS - configure logging
   cisco.ios.ios_logging_global:
