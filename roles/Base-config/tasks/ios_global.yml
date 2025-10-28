@@ -225,6 +225,7 @@
       - privilege exec level 3 show running-config view
       - privilege exec level 3 show running-config
       - privilege exec level 3 show
+      - file privilege 3
   when: ansible_network_os == 'ios'
   tags:
     - global
