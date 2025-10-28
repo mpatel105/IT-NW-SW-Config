@@ -1,0 +1,20 @@
+- hosts: "{{ devices }}"
+  gather_facts: no
+  roles:
+    - test
+
+- name: Print os
+  ansible.builtin.debug:
+    msg: {{ ansible_network_os }}
+  when: ansible_default_ipv4.gateway is defined
+
+
+
+- name: test
+  gather_facts: false
+  hosts: "{{ devices }}"
+  tasks:
+
+    - name: print OS
+      ansible.builtin.debug:
+        msg: "{{ ansible_network_os }}"

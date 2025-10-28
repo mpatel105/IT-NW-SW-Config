@@ -1,0 +1,40 @@
+---
+- name: GET SN2Info_from_Cisco
+  uri:
+    url: https://apix.cisco.com/sn2info/v2/coverage/summary/serial_numbers/{{ item.value.serial }}
+    method: GET
+    headers:
+      Authorization: "{{token_type}} {{access_token}}"
+      Cache-Control: no-cache
+      Accept-Encoding: gzip, deflate, br
+      Connection: keep-alive
+      Accept: application/json
+    return_content: yes
+    validate_certs: no
+    force_basic_auth: yes
+    follow_redirects: yes
+  register: Serial2Info
+  delegate_to: localhost
+  ignore_errors: yes
+  when: item.value.serial is defined and item.value.serial
+  tags:
+    - serial2info_netbox
+
+- name: update Netbox custom fields
+  netbox.netbox.netbox_device:
+    netbox_url: "{{ NETBOX_API }}"
+    netbox_token: "{{ NETBOX_TOKEN }}"
+    data:
+      name: "{{ item.value.name }}"
+      custom_fields:
+        is_covered_by_contract: "{% if ('YES' in Serial2Info.json.serial_numbers[0].is_covered) %}True{% elif ('NO' in Serial2Info.json.serial_numbers[0].is_covered) %}False{% endif %}"
+        support_expiry_date: "{{ Serial2Info.json.serial_numbers[0].covered_product_line_end_date }}"
+        support_type: "{{ Serial2Info.json.serial_numbers[0].service_line_descr }}"
+        warranty_end_date: "{{ Serial2Info.json.serial_numbers[0].warranty_end_date }}"
+        warranty_type: "{{ Serial2Info.json.serial_numbers[0].warranty_type }}"
+    state: present
+  when: Serial2Info is defined and Serial2Info.json.serial_numbers is defined and 'bei' not in item.value.name|lower
+  ignore_errors: yes
+  delegate_to: localhost
+  tags:
+    - serial2info_netbox

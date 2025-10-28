@@ -1,0 +1,185 @@
+#ansible_connection: network_cli
+#talend_ntp: ntp.talend.com
+# talend_ntp: 10.44.32.33
+# talend_ntp_server: ntp.talend.com
+#talend_domain_name: talend.com
+domain_name: net.qliktech.com
+ansible_user: "{{ q_login }}"
+ansible_password: "{{ q_password }}"
+
+logs_servers:
+  - 10.3.1.126 # qtgraylog01.qliktech.com
+logging_source_interface: Vlan251
+ANSIBLE_HOST_KEY_CHECKING: false
+backup_folder: /tmp/backup
+
+banner: |
+  *******************************  SECURITY NOTICE  **************************
+  *  Use of this system, its equipment, and resources is monitored at all    *
+  *  times. All programs and information held on this system are private and *
+  *  confidential to Qliktech, and are only lawfully available to            *
+  *  authorised users for authorised purposes only.                          *
+  *                                                                          *
+  *  It is a criminal offence to obtain unauthorised access to any program   *
+  *  or information within this system and/or to make any unauthorised       *
+  *  modifications whatsoever to the contents of this computer system.       *
+  *                                                                          *
+  *  If you are not an authorised user you are violating the regulations of  *
+  *  this system and can, and will be prosecuted to the full extent of the   *
+  *  law. Please disconnect immediately.                                     *
+  ****************************************************************************
+
+hostname: "{{ inventory_hostname }}"
+
+vlan_list_core:
+  ISP1.WAN: 900
+  ISP2.WAN: 901
+  ISP1.LAN: 910
+  ISP2.LAN: 911
+  Network.Management: 251
+  Users.Wired: 208
+  Users.Wireless: 216
+  OPs.Devices: 224
+  IOT.Devices: 248
+  Guest.Wireless: 240
+  Guest.Wired: 169
+  Blackhole: 99
+  OOB.Management: 204
+
+vlan_list_dist:
+  ISP1.WAN: 900
+  ISP2.WAN: 901
+  ISP1.LAN: 910
+  ISP2.LAN: 911
+  Network.Management: 251
+  Users.Wired: 208
+  Users.Wireless: 216
+  OPs.Devices: 224
+  IOT.Devices: 248
+  Guest.Wireless: 240
+  Guest.Wired: 169
+  Blackhole: 99
+  OOB.Management: 204
+
+vlan_list_access:
+  Network.Management: 251
+  Users.Wired: 208
+  Users.Wireless: 216
+  OPs.Devices: 224
+  IOT.Devices: 248
+  Guest.Wireless: 240
+  Guest.Wired: 169
+  Blackhole: 99
+
+vlan_list_access_remove:
+  - 900
+  - 910
+  - 920
+  - 930
+  - 998
+  - 224
+
+vlan_nw_mgmt: Vlan251
+vlan_switchport_standard_endpoint: 208
+NAC_critical_vlan: 169
+
+vlan_quarantine_id: 169
+vlan_quarantine_name: Guest.Wired
+
+vlan_blackhole_id: 99
+vlan_blackhole_name: Blackhole
+
+vlan_tag_24: VLAN24
+vlan_tag_48: VLAN48
+
+model_stp_edge:
+  - WS-C2960X-48FPD-L
+  - WS-C3560CX-8PC-S
+  - WS-C3560CX-12PC-S
+  - WS-C3560X-48T-S
+
+#scp_emea_server: pa7-nwsrv-001.talend.com
+#scp_noram_server: sv2-nwsrv-001.talend.com
+#scp_apac_server: bei-nwsrv-001.talend.com
+scp_image_dir: /home/sa-netcopy/images
+#scp_emea_server: 10.50.17.11
+#scp_noram_server: 10.10.17.6
+scp_emea_server: PA7-itnet-329.itnet.pa7.fr.talend.com
+scp_noram_server: sv2-itnet-043.itnet01.prod.dc4.us.qliktech.com
+scp_apac_server: BEI-itnet-331.itnet.bei.cn.talend.com
+
+portnox_PA7_name: PA7-Portnox
+portnox_SV2_name: SV2-Portnox
+portnox_DC4_name: DC4-Portnox
+portnox_US_name: US-Portnox
+portnox_EU_name: EU-Portnox
+portnox_AZUSEA_name: AZUSEA-Portnox
+portnox_SV2: 10.9.32.19
+portnox_PA7: 10.44.32.19
+portnox_DC4: 10.4.36.11
+portnox_US: 13.90.229.234
+portnox_EU: 52.232.122.157
+portnox_AZUSEA: 172.22.0.5
+portnox_auth_port: 1812
+portnox_acct_port: 1813
+portnox_EU_auth_port: 10356
+portnox_EU_acct_port: 10357
+portnox_US_auth_port: 10444
+portnox_US_acct_port: 10445
+
+talend_radius_PA7_name: PA7-Radius
+talend_radius_SV2_name: SV2-Radius
+talend_radius_PA7: 10.42.20.105
+talend_radius_SV2: 192.168.15.210
+talend_radius_auth_port: 1812
+talend_radius_acct_port: 1813
+
+tacacs_SV2_name: sv2-tacacs-001
+tacacs_SV2: 10.9.32.18
+tacacs_PA7_name: pa7-tacacs-001
+tacacs_PA7: 10.44.32.18
+tacacs_DC4_name: qtusdc4tac01
+tacacs_DC4: 10.4.36.12
+tacacs_azu_weu: 172.21.0.23
+tacacs_azu_weu_name: qtazuweutac01
+tacacs_azu_eus: 172.20.0.143
+tacacs_azu_eus_name: qtazueustac01
+
+pingtargets:
+  - 8.8.8.8
+  - 1.1.1.1
+
+# macro_dot1x_name: Corp_switchport
+# macro_dot1x_corp:
+#   - switchport mode access
+#   - switchport access vlan 99
+#   - authentication event fail action next-method
+#   - authentication event server dead action reinitialize vlan VLAN
+#   - authentication timer reauthenticate server
+#   - authentication timer inactivity server
+#   - authentication order dot1x mab
+#   - authentication priority dot1x mab
+#   - authentication port-control auto
+#   - authentication violation restrict
+#   - authentication periodic
+#   - mab
+#   - dot1x pae authenticator
+#   - dot1x timeout tx-period 5
+#   - authentication timer restart 15
+#
+# macro_mab_name: dot1x_mab.first
+# macro_mab_first:
+#   - switchport mode access
+#   - switchport access vlan 99
+#   - authentication event fail action next-method
+#   - authentication event server dead action reinitialize vlan VLAN
+#   - authentication timer reauthenticate server
+#   - authentication timer inactivity server
+#   - authentication order mab dot1x
+#   - authentication priority mab dot1x
+#   - authentication port-control auto
+#   - authentication violation restrict
+#   - authentication periodic
+#   - mab
+#   - dot1x pae authenticator
+#   - dot1x timeout tx-period 10

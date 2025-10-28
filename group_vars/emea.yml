@@ -1,0 +1,48 @@
+# talend_dns:
+#   - 10.42.100.100
+#   - 192.168.15.30
+
+dns_servers:
+  - 10.253.253.2
+  - 10.253.253.1
+
+ntp_servers:
+  - 10.77.48.231
+  - 10.77.48.232
+  - 10.4.32.200
+  - 10.4.32.201
+
+
+portnox_1: "{{ portnox_EU }}"
+portnox_2: "{{ portnox_PA7 }}"
+portnox_3: "{{ portnox_US }}"
+portnox_4: "{{ portnox_DC4 }}"
+portnox_1_name: "{{ portnox_EU_name }}"
+portnox_2_name: "{{ portnox_PA7_name }}"
+portnox_3_name: "{{ portnox_US_name }}"
+portnox_4_name: "{{ portnox_DC4_name }}"
+portnox_1_radius_key: "{{ portnox_EU_radius_key }}"
+portnox_2_radius_key: "{{ portnox_PA7_radius_key }}"
+portnox_3_radius_key: "{{ portnox_US_radius_key }}"
+portnox_4_radius_key: "{{ portnox_DC4_radius_key }}"
+
+talend_radius_1: "{{ talend_radius_PA7 }}"
+talend_radius_2: "{{ talend_radius_SV2 }}"
+talend_radius_1_name: "{{ talend_radius_PA7_name }}"
+talend_radius_2_name: "{{ talend_radius_SV2_name }}"
+
+scp_emea_server: PA7-itnet-329.itnet.pa7.fr.talend.com
+scp_region_server: "{{ scp_emea_server }}"
+
+
+# tacacs_1_name: "{{ tacacs_PA7_name }}"
+# tacacs_1_ip: "{{ tacacs_PA7 }}"
+# tacacs_2_name: "{{ tacacs_DC4_name }}"
+# tacacs_2_ip: "{{ tacacs_DC4 }}"
+
+tacacs_1_new_name: "{{ tacacs_azu_weu_name }}"
+tacacs_1_new_ip: "{{ tacacs_azu_weu }}"
+tacacs_1_new_key: "{{ tacacs_azu_weu_key }}"
+tacacs_2_new_name: "{{ tacacs_PA7_name }}"
+tacacs_2_new_ip: "{{ tacacs_PA7 }}"
+tacacs_2_new_key: "{{ tacacs_PA7_key }}"

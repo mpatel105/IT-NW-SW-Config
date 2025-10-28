@@ -1,0 +1,401 @@
+---
+
+##############################################################################
+##### IOS
+
+- name: Getting IOS facts
+  ios_facts:
+    gather_subset: hardware
+  when: ansible_network_os == 'ios'
+  tags:
+    - copy-test
+    - copy
+
+
+
+- name: define image to install
+  set_fact:
+    new_ios_image: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_image }}{% elif '2960' in ansible_net_model %}{{ cat2960_image }}{% elif '9300' in ansible_net_model %}{{ cat9300_image }}{% elif '9200' in ansible_net_model %}{{ cat9200_image }}{% elif '3560' in ansible_net_model %}{{ cat3560_image }}{% else %}unknown{% endif %}"
+    ios_md5_value: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_md5_value }}{% elif '2960' in ansible_net_model %}{{ cat2960_md5_value }}{% elif '9300' in ansible_net_model %}{{ cat9300_md5_value }}{% elif '9200' in ansible_net_model %}{{ cat9200_md5_value }}{% elif '3560' in ansible_net_model %}{{ cat3560_md5_value }}{% else %}{% endif %}"
+    space_needed:  "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_space }}{% elif '2960' in ansible_net_model %}{{ cat2960_space }}{% elif '9300' in ansible_net_model %}{{ cat9300_space }}{% elif '9200' in ansible_net_model %}{{ cat9200_space }}{% elif '3560' in ansible_net_model %}{{ cat3560_space }}{% else %}{% endif %}"
+    new_ios_version: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_version }}{% elif '2960' in ansible_net_model %}{{ cat2960_version }}{% elif '9300' in ansible_net_model %}{{ cat9300_version }}{% elif '9200' in ansible_net_model %}{{ cat9200_version }}{% elif '3560' in ansible_net_model %}{{ cat3560_version }}{% else %}{% endif %}"
+    number: "{{ ansible_net_stacked_models | default(1) | length }}"
+  when: ansible_network_os == 'ios'
+  tags:
+    - copy-test
+    - copy
+
+- name: show device details
+  vars:
+    msg: |-
+      Device: {{ inventory_hostname }}
+      Current version: {{ ansible_net_version }}
+      Model: {{ ansible_net_model }}
+      New Image: {{ new_ios_image }}
+      New Version: {{ new_ios_version }}
+  debug:
+    msg: "{{ msg.split('\n') }}"
+  when: ansible_network_os == 'ios'
+  tags:
+    - copy-test
+    - copy
+
+
+  debug:
+    msg: "{{ msg.split('\n') }}"
+  when: ansible_network_os == 'ios'
+  tags:
+    - copy-test
+    - copy
+
+- block:
+    - name: test if hardware model is supported
+      vars:
+        msg: |-
+          Task end for Device : {{ inventory_hostname }}
+          Model: {{ ansible_net_model }}
+          Hardware not supported !
+          Supported models : C3650, C3850, C2960X, C3560, C9200, C9300
+          Stopping playbook for the device {{ inventory_hostname }}
+      debug:
+        msg: "{{ msg.split('\n') }}"
+    - meta: end_host
+  when: ansible_network_os == 'ios' and new_ios_image is defined and new_ios_image == 'unknown'
+  tags:
+    - copy-test
+    - copy
+
+
+- block:
+    - name: test if current installed image is compliant
+      vars:
+        msg: |-
+          Task end for Device : {{ inventory_hostname }}
+          {{ new_ios_version }} is already running on this device
+          Stopping playbook for the device {{ inventory_hostname }}
+      debug:
+        msg: "{{ msg.split('\n') }}"
+    - meta: end_host
+  when: ansible_network_os == 'ios' and new_ios_version is defined and ansible_net_version == new_ios_version
+  tags:
+    - copy-test
+    - copy
+
+- debug:
+    msg:
+      - Image {{ ansible_net_version }} is not compliant.
+  when: ansible_network_os == 'ios' and new_ios_version is defined and ansible_net_version != new_ios_version
+  tags:
+    - copy-test
+    - copy
+
+- name: IOS run dir command
+  ios_command:
+    commands: "dir"
+  register: resultdir
+  when: ansible_network_os == 'ios'
+  tags:
+    - copy
+    - copy-test
+
+- block:
+  - debug:
+      msg: "file {{ new_ios_image }} already exists on device. Stopping playbook for the device {{ inventory_hostname }}"
+  - meta: end_host
+  when: ansible_network_os == 'ios' and new_ios_image|string in resultdir.stdout[0]
+  tags:
+    - copy
+    - copy-test
+
+
+- debug:
+    msg: "IOS Image to install on {{ inventory_hostname }}: {{ new_ios_image }} from {{scp_region_server}}"
+  when: ansible_network_os == 'ios'
+  tags:
+    - copy-test
+    - copy
+
+- name: increase TCP and SSH window
+  ios_config:
+    lines:
+      - ip tcp window-size 65536
+      - ip ssh window-size 65536
+    save_when: modified
+  ignore_errors: yes
+  when: ansible_network_os == 'ios' and ('3650' in ansible_net_model or '3850' in ansible_net_model or '2960' in ansible_net_model or '3560' in ansible_net_model)
+  tags:
+    - copy-window
+    - copy-test
+    - copy
+
+- name: add ip ssh bulk mode for C9300 / C9200
+  ios_config:
+    lines:
+      - ip ssh bulk-mode
+    save_when: modified
+  ignore_errors: yes
+  when: ansible_network_os == 'ios' and ('9300' in ansible_net_model or '9200' in ansible_net_model)
+  tags:
+    - copy-window
+    - copy-test
+    - copy
+
+- name: cleanup switch flash for C3650/C3850
+  cli_command:
+    command: "request platform software package clean switch all"
+    prompt:
+      - 'Do you want to proceed'
+    answer:
+      - 'y'
+  vars:
+    ansible_command_timeout: 120
+  when: ansible_network_os == 'ios' and ('3650' in ansible_net_model or '3850' in ansible_net_model)
+  tags:
+    - copy-clean
+    - copy-test
+    - copy
+
+- name: cleanup switch flash for C9200/C9300
+  cli_command:
+    command: "install remove inactive"
+    prompt:
+      - 'Do you want to remove the above files'
+    answer:
+      - 'y'
+  vars:
+    ansible_command_timeout: 120
+  when: ansible_network_os == 'ios' and ('9200' in ansible_net_model or '9300' in ansible_net_model)
+  tags:
+    - copy-clean
+    - copy-test
+    - copy
+
+- debug:
+    msg: "{{ ansible_net_filesystems_info }}"
+  when: ansible_network_os == 'ios'
+  tags:
+    - copy-test
+    - copy
+
+- name: Getting IOS facts
+  ios_facts:
+    gather_subset: hardware
+  when: ansible_network_os == 'ios'
+  tags:
+    - copy-test
+    - copy
+
+- block:
+    - name: IOS Test if enough space on device
+      vars:
+        msg: |-
+          Task end for Device : {{ inventory_hostname }}
+          Not enough space : {{ ansible_net_filesystems_info[ansible_net_filesystems[0]]['spacefree_kb'] }}
+          Space needed: {{ space_needed }}
+          Stopping playbook for the device {{ inventory_hostname }}
+      debug:
+        msg: "{{ msg.split('\n') }}"
+      failed_when: ansible_net_filesystems_info[ansible_net_filesystems[0]]['spacefree_kb'] < ( space_needed | float )
+    - meta: end_host
+  when: ansible_network_os == 'ios' and ansible_net_filesystems_info[ansible_net_filesystems[0]]['spacefree_kb'] < ( space_needed | float )
+  tags:
+    - copy-test
+    - copy
+
+- name: Copy IOS image using SCP
+  cli_command:
+    command: "copy scp://{{scp_server_username}}@{{scp_region_server}}:/images/{{ new_ios_image }} flash:"
+    check_all: True
+    prompt:
+      - 'Destination filename'
+      - 'Password:'
+    answer:
+      - '{{new_ios_image}}'
+      - '{{scp_server_password}}'
+  vars:
+    ansible_command_timeout: 7200
+  when: ansible_network_os == 'ios'
+  tags:
+    - copy
+
+- name: IOS Image MD5 hash check
+  ios_command:
+    commands: 'verify /md5 flash:{{new_ios_image}} {{ios_md5_value}}'
+  register: ios_md5_result
+  vars:
+    ansible_command_timeout: 300
+  ignore_errors: yes
+  when: ansible_network_os == 'ios'
+  tags:
+    - copy
+
+- block:
+    - name: IOS stop playbook if MD5 is incorrect
+      vars:
+        msg: |
+          Task end for Device : {{ inventory_hostname }}
+          IOS to install : {{ new_ios_image }}
+          MD5 error after copy !
+      debug:
+        msg: "{{ msg.split('\n') }}"
+      failed_when: ios_md5_result.msg is defined and 'Error' in ios_md5_result.msg
+    - meta: end_host
+  when: ansible_network_os == 'ios' and ios_md5_result.msg is defined and 'Error' in ios_md5_result.msg
+  tags:
+    - copy
+
+- debug:
+    msg: "IOS MD5 check Verified successfully"
+  when: ansible_network_os == 'ios'
+  tags:
+    - copy-test
+    - copy
+
+
+##############################################################################
+##### NXOS
+
+- name: NXOS Getting facts
+  nxos_facts:
+    gather_subset: hardware
+  when: ansible_network_os == 'nxos'
+  tags:
+    - copy-test
+    - copy
+    - md5
+    - debug
+
+- debug:
+    msg:
+      - "VRF to use for management: {{ custom_fields.Nexus_VRF_mgmt }}"
+  when: ansible_network_os == 'nxos' and custom_fields is defined
+  tags:
+    - debug
+
+
+
+- block:
+    - name: NXOS test if current installed image is compliant
+      vars:
+        msg: |-
+          Task end for Device : {{ inventory_hostname }}
+          {{ ansible_net_version }} is already running
+          Stopping playbook for the device {{ inventory_hostname }}
+      debug:
+        msg: "{{ msg.split('\n') }}"
+    - meta: end_host
+  when: ansible_network_os == 'nxos' and ansible_net_version == nxos_version
+  tags:
+    - copy-test
+    - copy
+
+- debug:
+    msg:
+      - "Version {{ ansible_net_version }} is not compliant"
+  when: ansible_network_os == 'nxos' and ansible_net_version != nxos_version
+  tags:
+    - copy-test
+    - copy
+
+- name: NXOS run dir command
+  nxos_command:
+    commands: "dir"
+  register: resultdir
+  when: ansible_network_os == 'nxos'
+  tags:
+    - copy
+    - copy-test
+
+- debug:
+    msg:
+      - "{{ resultdir.stdout_lines[0][-2].split(' ')[0] }}"
+  when: ansible_network_os == 'nxos'
+  tags:
+    - copy-test
+    - copy
+
+- block:
+    - name: NXOS Test if enough space on device
+      vars:
+        msg: |-
+          Task end for Device : {{ inventory_hostname }}
+          Not enough space : {{ resultdir.stdout_lines[0][-2].split(' ')[0] }}
+          Space needed: {{ nxos_space }}
+          Stopping playbook for the device {{ inventory_hostname }}
+      debug:
+        msg: "{{ msg.split('\n') }}"
+      failed_when: ( resultdir.stdout_lines[0][-2].split(' ')[0] | int ) < ( nxos_space | int )
+    - meta: end_host
+  when: ansible_network_os == 'nxos' and ( resultdir.stdout_lines[0][-2].split(' ')[0] | int ) < ( nxos_space | int )
+  tags:
+    - copy-test
+    - copy
+
+
+- block:
+  - debug:
+      msg: "file {{ nxos_image }} already exists on device. Stopping playbook for the device {{ inventory_hostname }}"
+  - meta: end_host
+  when: ansible_network_os == 'nxos' and nxos_image|string in resultdir.stdout[0]
+  tags:
+    - copy
+    - copy-test
+
+- name: NXOS clear SSH hosts on devices
+  nxos_command:
+    commands: "clear ssh hosts"
+  when: ansible_network_os == 'nxos'
+  tags:
+    - copy
+
+- name: NXOS Copy image
+  nxos_file_copy:
+    file_pull: true
+    local_file: "{{nxos_image}}"
+    remote_file: "{{scp_image_dir}}/{{nxos_image}}"
+    remote_scp_server: "{{scp_region_server}}"
+    remote_scp_server_user: "{{scp_server_username}}"
+    remote_scp_server_password: "{{scp_server_password}}"
+    vrf: "{{ custom_fields.Nexus_VRF_mgmt }}"
+    file_pull_timeout: 3600
+    file_pull_kstack: True
+  vars:
+    ansible_command_timeout: 3600
+  when: ansible_network_os == 'nxos'
+  tags:
+    - copy
+
+
+- name: NXOS Image MD5 hash check
+  nxos_command:
+    commands: "show file bootflash:{{ nxos_image }} md5sum"
+  register: nxos_md5_result
+  vars:
+    ansible_command_timeout: 180
+  when: ansible_network_os == 'nxos'
+  tags:
+    - copy
+    - md5
+
+- block:
+    - name: NXOS stop playbook if MD5 is incorrect
+      vars:
+        msg: |-
+          Task end for Device : {{ inventory_hostname }}
+          OS to install : {{ nxos_image }}
+          MD5 error after copy !
+      debug:
+        msg: "{{ msg.split('\n') }}"
+      failed_when: nxos_md5_value != nxos_md5_result.stdout[0]
+    - meta: end_host
+  when: ansible_network_os == 'nxos' and nxos_md5_result is defined and nxos_md5_value != nxos_md5_result.stdout[0]
+  tags:
+    - copy
+    - md5
+
+- debug:
+    msg: "MD5 check Verified successfully"
+  when: ansible_network_os == 'nxos'
+  tags:
+    - copy
+    - md5

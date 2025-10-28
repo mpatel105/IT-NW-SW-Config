@@ -1,0 +1,55 @@
+plugin: netbox.netbox.nb_inventory
+validate_certs: true
+config_context: True
+compose:
+  ansible_network_os: platform.slug
+device_query_filters:
+  - status: 'active'
+  - has_primary_ip: 'true'
+group_names_raw: True
+group_by:
+  - region
+  - device_roles
+  - device_types
+  - manufacturers
+  - platforms
+  - sites
+  - site_group
+  - is_virtual
+  - tenants
+
+
+# ['airflow', 'airflow__n', 'asset_tag',
+# 'asset_tag__empty', 'asset_tag__ic', 'asset_tag__ie', 'asset_tag__iew',
+# 'asset_tag__isw', 'asset_tag__n', 'asset_tag__nic', 'asset_tag__nie',
+# 'asset_tag__niew', 'asset_tag__nisw', 'cluster_id', 'cluster_id__n',
+# 'config_template_id', 'config_template_id__n', 'console_ports',
+# 'console_server_ports', 'contact', 'contact__n', 'contact_group',
+# 'contact_group__n', 'contact_role', 'contact_role__n', 'created',
+# 'created__empty', 'created__gt', 'created__gte', 'created__lt', 'created__lte',
+# 'created__n', 'created_by_request', 'device_bays', 'device_type',
+# 'device_type__n', 'device_type_id', 'device_type_id__n', 'face', 'face__n',
+# 'has_oob_ip', 'has_primary_ip', 'id', 'id__empty', 'id__gt', 'id__gte',
+# 'id__lt', 'id__lte', 'id__n', 'interfaces', 'is_full_depth', 'last_updated',
+# 'last_updated__empty', 'last_updated__gt', 'last_updated__gte',
+# 'last_updated__lt', 'last_updated__lte', 'last_updated__n', 'latitude',
+# 'latitude__empty', 'latitude__gt', 'latitude__gte', 'latitude__lt',
+# 'latitude__lte', 'latitude__n', 'limit', 'local_context_data', 'location_id',
+# 'location_id__n', 'longitude', 'longitude__empty', 'longitude__gt',
+# 'longitude__gte', 'longitude__lt', 'longitude__lte', 'longitude__n',
+# 'mac_address', 'mac_address__ic', 'mac_address__ie', 'mac_address__iew',
+# 'mac_address__isw', 'mac_address__n', 'mac_address__nic', 'mac_address__nie',
+# 'mac_address__niew', 'mac_address__nisw', 'manufacturer', 'manufacturer__n',
+# 'manufacturer_id', 'manufacturer_id__n', 'model', 'model__n',
+# 'role__n', 'role_id', 'role_id__n', 'serial', 'serial__empty', 'serial__ic',
+# 'serial__ie', 'serial__iew', 'serial__isw', 'serial__n', 'serial__nic',
+# 'serial__nie', 'serial__niew', 'serial__nisw', 'site', 'site__n', 'site_group',
+# 'site_group__n', 'site_group_id', 'site_group_id__n', 'site_id', 'site_id__n',
+# 'status', 'status__n', 'tag', 'tag__n', 'tenant', 'tenant__n', 'tenant_group',
+# 'tenant_group__n', 'tenant_group_id', 'tenant_group_id__n', 'tenant_id',
+# 'tenant_id__n', 'updated_by_request', 'vc_position', 'vc_position__empty',
+# 'vc_position__gt', 'vc_position__gte', 'vc_position__lt', 'vc_position__lte',
+# 'vc_position__n', 'vc_priority', 'vc_priority__empty', 'vc_priority__gt',
+# 'vc_priority__gte', 'vc_priority__lt', 'vc_priority__lte', 'vc_priority__n',
+# 'virtual_chassis_id', 'virtual_chassis_id__n', 'virtual_chassis_member'] or
+# starting with cf (Custom field)

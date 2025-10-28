@@ -1,0 +1,19 @@
+#ansible_network_os: nxos
+#ansible_connection: network_cli
+
+#ansible_network_cli_ssh_type: libssh
+
+#ansible_connection: httpapi
+#ansible_httpapi_use_ssl: yes
+#ansible_httpapi_validate_certs: no
+ansible_connection: network_cli
+
+mgmt0:
+  - bei-sw-002
+  - bei-sw-003
+  - bei-sw-009
+  - bei-sw-010
+  - sv2-sw-002
+  - sv2-sw-003
+  - sv2-sw-005
+  - sv2-sw-006

@@ -1,0 +1,185 @@
+---
+
+
+- name: Ensure tacacs is enabled
+  cisco.nxos.nxos_feature:
+    feature: tacacs+
+    state: enabled
+  when: ansible_network_os == 'nxos'
+  tags:
+    - global
+    - globalTACACS
+    - newTACACS
+
+
+# - name: NXOS - Configure SV2_Tacacs
+#   cisco.nxos.nxos_aaa_server_host:
+#     state: present
+#     server_type: tacacs
+#     host_timeout: 10
+#     address: "{{ tacacs_SV2 }}"
+#     key: "{{ tacacs_SV2_key }}"
+#     encrypt_type: 0
+#   when: ansible_network_os == 'nxos'
+#   tags:
+#     - global
+#     - globalTACACS
+
+# - name: NXOS - Configure PA7_Tacacs
+#   cisco.nxos.nxos_aaa_server_host:
+#     state: present
+#     server_type: tacacs
+#     host_timeout: 10
+#     address: "{{ tacacs_PA7 }}"
+#     key: "{{ tacacs_PA7_key }}"
+#     encrypt_type: 0
+#   when: ansible_network_os == 'nxos'
+#   tags:
+#     - global
+#     - globalTACACS
+
+- name: NXOS - Configure Tacacs_1
+  cisco.nxos.nxos_aaa_server_host:
+    state: present
+    server_type: tacacs
+    host_timeout: 10
+    address: "{{ tacacs_1_new_ip }}"
+    key: "{{ tacacs_1_new_key }}"
+    encrypt_type: 0
+  when: ansible_network_os == 'nxos'
+  tags:
+    - global
+    - newTACACS
+
+- name: NXOS - Configure Tacacs_2
+  cisco.nxos.nxos_aaa_server_host:
+    state: present
+    server_type: tacacs
+    host_timeout: 10
+    address: "{{ tacacs_2_new_ip }}"
+    key: "{{ tacacs_2_new_key }}"
+    encrypt_type: 0
+  when: ansible_network_os == 'nxos'
+  tags:
+    - global
+    - newTACACS
+
+# - name: NXOS - Configure group Portnox-TACACS-Group
+#   nxos_config:
+#     lines:
+#       - server {{ tacacs_PA7 }}
+#       - server {{ tacacs_SV2 }}
+#     parents: aaa group server tacacs+ Portnox-TACACS-Group
+#   when: ansible_network_os == 'nxos'
+#   tags:
+#     - global
+#     - globalTACACS
+
+- name: NXOS - Configure group Portnox-newTACACS-Group
+  nxos_config:
+    lines:
+      - server {{ tacacs_1_new_ip }}
+      - server {{ tacacs_2_new_ip }}
+    parents: aaa group server tacacs+ Portnox-newTACACS-Group
+  when: ansible_network_os == 'nxos'
+  tags:
+    - global
+    - newTACACS
+
+- name: IOS - Remove SV2 from group Portnox-newTACACS-Group
+  nxos_config:
+    lines:
+      - no server 10.9.32.18
+    parents: aaa group server tacacs+ Portnox-newTACACS-Group
+  when: ansible_network_os == 'nxos'
+  tags:
+    - newTACACS
+
+# - name: NXOS - Configure group Portnox-TACACS-Gr1
+#   nxos_config:
+#     lines:
+#       - server {{ tacacs_1_ip }}
+#     parents: aaa group server tacacs+ Portnox-TACACS-Gr1
+#   when: ansible_network_os == 'nxos'
+#   tags:
+#     - updateTACACS
+
+# - name: NXOS - Configure group Portnox-TACACS-Gr2
+#   nxos_config:
+#     lines:
+#       - server {{ tacacs_2_ip }}
+#     parents: aaa group server tacacs+ Portnox-TACACS-Gr2
+#   when: ansible_network_os == 'nxos'
+#   tags:
+#     - updateTACACS
+
+
+- name: NXOS - Tacacs Server Basic settings
+  cisco.nxos.nxos_aaa_server:
+    server_type: tacacs
+    server_timeout: 10
+    deadtime: 19
+    directed_request: disabled
+  when: ansible_network_os == 'nxos'
+  tags:
+    - global
+    - globalTACACS
+
+
+- name: NXOS - Configure TACACS Global Config
+  nxos_config:
+    lines:
+      - ip tacacs source-interface {% if custom_fields.Nexus_VRF_mgmt == 'default' %}{{ vlan_nw_mgmt }}{% else %}mgmt0{% endif %}
+      - tacacs-server timeout 10
+      - aaa authentication login console local
+      - aaa authentication login default group Portnox-newTACACS-Group local
+      - aaa authorization commands default group Portnox-newTACACS-Group local
+      - aaa accounting default group Portnox-newTACACS-Group
+  when: ansible_network_os == 'nxos'
+  tags:
+    - global
+    - globalTACACS
+    - newTACACS
+
+# - name: NXOS - Configure TACACS Global Config
+#   nxos_config:
+#     lines:
+#       - aaa authentication login default group Portnox-TACACS-Gr1 Portnox-TACACS-Gr2 local
+#       - aaa authorization commands default group Portnox-TACACS-Gr1 Portnox-TACACS-Gr2 local
+#       - aaa accounting default group Portnox-TACACS-Gr1 Portnox-TACACS-Gr2
+#   when: ansible_network_os == 'nxos'
+#   tags:
+#     - updateTACACS
+
+# - name: NXOS - Configure TACACS Global Config New Group
+#   nxos_config:
+#     lines:
+#       - aaa authentication login default group Portnox-newTACACS-Group local
+#       - aaa authorization commands default group Portnox-newTACACS-Group local
+#       - aaa accounting default group Portnox-newTACACS-Group
+#   when: ansible_network_os == 'nxos'
+#   tags:
+#     - newTACACS
+
+- name: NXOS - Save running to startup
+  nxos_config:
+    save_when: always
+  when: ansible_network_os == 'nxos'
+  tags:
+    - updateTACACS
+    - bckConfig
+  
+
+# - name: IOS - Configure TACACS Global Config
+#   ios_config:
+#     lines:
+#       - aaa authentication login default group Portnox-TACACS-Group local
+#       - aaa authorization console
+#       - aaa authorization exec default group Portnox-TACACS-Group if-authenticated
+#       - aaa authorization commands 15 default group Portnox-TACACS-Group if-authenticated
+#       - aaa accounting exec default start-stop group Portnox-TACACS-Group
+#       - ip tacacs source-interface Vlan999
+#   when: ansible_network_os == 'nxos'
+#   tags:
+#     - global
+#     - globalTACACS

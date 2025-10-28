@@ -1,0 +1,6 @@
+---
+# vars file for switch-config
+emea_region_dns:
+  - 10.42.100.100
+  - 192.168.15.30
+

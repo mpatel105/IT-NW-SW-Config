@@ -1,0 +1,26 @@
+---
+- import_tasks: ios_global.yml
+  when: ansible_network_os == 'ios'
+
+#- import_tasks: ios_global_interfaces_deprecated.yml
+#  when: ansible_network_os == 'ios'
+
+- import_tasks: Netbox_pri_IP.yml
+
+- import_tasks: ios_global_TACACS.yml
+  when: ansible_network_os == 'ios'
+
+# - import_tasks: ios_global_RADIUS.yml
+#   when: ansible_network_os == 'ios'
+
+- import_tasks: ios_global_NAC.yml
+  when: ansible_network_os == 'ios'
+
+- import_tasks: ios_interfaces.yml
+  when: ansible_network_os == 'ios'
+
+- import_tasks: nxos_global.yml
+  when: ansible_network_os == 'nxos'
+
+- import_tasks: nxos_global_TACACS.yml
+  when: ansible_network_os == 'nxos'

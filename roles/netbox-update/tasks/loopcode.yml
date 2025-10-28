@@ -1,0 +1,51 @@
+---
+
+
+- name: set facts
+  set_fact:
+    existing_tags: []
+  tags:
+    - OSupdate
+
+# - debug:
+#     msg: "{{ item.slug }}"
+#   loop: "{{ item.value.tags | default({}) }}"
+#   tags:
+#     - OSupdate
+
+- name: get tags
+  set_fact:
+    existing_tags: "{{ existing_tags + [ item.slug ] }}"
+  loop: "{{ item.value.tags | default({}) }}"
+  tags:
+    - OSupdate
+
+- debug:
+    msg: "Existing Tags of {{ item.value.name }}: {{ existing_tags }}"
+  tags:
+    - OSupdate
+
+- name: remove update tag
+  set_fact:
+    existing_tags: "{{ existing_tags | reject('eq', 'update_required') | list }}"
+  tags:
+    - OSupdate
+
+- debug:
+    msg: "Removed Update Tag of {{ item.value.name }}: {{ existing_tags }}"
+  tags:
+    - OSupdate
+
+- name: IOS/NXOS - update custom field OS version
+  netbox.netbox.netbox_device:
+    netbox_url: "{{ NETBOX_API }}"
+    netbox_token: "{{ NETBOX_TOKEN }}"
+    data:
+      name: "{{ item.value.name }}"
+      custom_fields:
+        version: "{{ ansible_net_version }}"
+      tags: "{% if ansible_net_version == new_os_version %}{{ existing_tags }}{% else %}{{ existing_tags + ['update_required'] }}{% endif %}"
+    state: present
+  when: ansible_network_os is defined and ansible_net_model is defined and (ansible_network_os == 'ios' or ansible_network_os == 'nxos')
+  tags:
+    - OSupdate

@@ -1,0 +1,7 @@
+---
+# vars file for Inventory
+inventory_file: Switches_inventory.csv
+panos_inventory_file: panos_inventory.csv
+dest_folder: /tmp/SW-Config
+repo: github.com/TalendIT/IT-Network-Scripts.git
+#repo: github.com/TalendIT/IT-Network-Inventory.git

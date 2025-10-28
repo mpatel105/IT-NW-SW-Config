@@ -1,0 +1,221 @@
+---
+
+- name: IOS get fact
+  cisco.ios.ios_facts:
+    gather_subset: hardware
+  when: ansible_network_os is defined and ansible_network_os == 'ios'
+  tags:
+    - inventory
+    - facts
+
+- name: NXOS get fact
+  cisco.nxos.nxos_facts:
+    gather_subset: hardware
+  when: ansible_network_os is defined and ansible_network_os == 'nxos'
+  tags:
+    - inventory
+    - facts
+
+- name: PANOS get fact
+  paloaltonetworks.panos.panos_op:
+    provider: '{{ device }}'
+    cmd: 'show system info'
+  register: res
+  when: ansible_network_os is defined and ansible_network_os == 'panos'
+  tags:
+    - pan
+    - inventory
+
+- name: Ping each target from the EE
+  ansible.builtin.shell: "ping -c 2 {{ item }}"
+  loop: "{{ pingtargets }}"
+  register: ping_results
+  ignore_errors: yes
+  tags:
+    - pinghosts
+
+- name: Show unreachable hosts
+  debug:
+    msg: "Unreachable: {{ item.item }}"
+  loop: "{{ ping_results.results }}"
+  when: item.rc != 0
+  tags:
+    - pinghosts
+
+- debug:
+    msg: '{{ (res.stdout | from_json).response.result.system }}'
+  tags:
+    - pan
+  when: ansible_network_os is defined and ansible_network_os == 'panos'
+
+- name: define OS Version
+  set_fact:
+    os_version: "{% if ('3850' in ansible_net_model) or ('3650' in ansible_net_model) %}{{ cat3x50_version }}{% elif '2960' in ansible_net_model %}{{ cat2960_version }}{% elif '9200' in ansible_net_model %}{{ cat9200_version }}{% elif '9300' in ansible_net_model %}{{ cat9300_version }}{% elif '3560' in ansible_net_model %}{{ cat3560_version }}{% elif 'Nexus' in ansible_net_model %}{{ nxos_version }}{% else %}{% endif %}"
+  when: ansible_network_os is defined and ansible_network_os == 'ios' or ansible_network_os == 'nxos'
+  tags:
+    - inventory
+
+- name: clone repository
+  run_once: true
+  git:
+    repo: "https://{{awx_user_github}}:{{awx_pwd_github}}@{{repo}}"
+    dest: "{{ dest_folder }}"
+    force: yes
+    version: master
+  when: ansible_network_os is defined
+  tags:
+    - inventory
+    - pan
+
+- name: deleting inventory file
+  run_once: true
+  file:
+    state: absent
+    path: "{{ dest_folder }}/{{ inventory_file }}"
+  when: ansible_network_os is defined and ansible_network_os == 'ios' or ansible_network_os == 'nxos'
+  tags:
+    - inventory
+
+- name: PANOS deleting inventory file
+  run_once: true
+  file:
+    state: absent
+    path: "{{ dest_folder }}/{{ panos_inventory_file }}"
+  when: ansible_network_os is defined and ansible_network_os == 'panos'
+  tags:
+    - pan
+    - inventory
+
+- name: create new inventory file
+  run_once: true
+  file:
+    state: touch
+    path: "{{ dest_folder }}/temp.csv"
+  when: ansible_network_os is defined and ansible_network_os == 'ios' or ansible_network_os == 'nxos'
+  tags:
+    - inventory
+
+- name: PANOS create new panos inventory file
+  run_once: true
+  file:
+    state: touch
+    path: "{{ dest_folder }}/panostemp.csv"
+  when: ansible_network_os is defined and ansible_network_os == 'panos'
+  tags:
+    - pan
+    - inventory
+
+- name: writing to file
+  ansible.builtin.lineinfile:
+    path: "{{ dest_folder}}/temp.csv"
+    line: "{{ ansible_net_hostname[:3]|upper }},
+           {{ ansible_net_hostname }}{% if ansible_net_stacked_models is defined and (ansible_net_stacked_models | length) > 1  %}_{{ansible_loop.index}}{% else %}{% endif %},
+           {{ item }},
+           {{ ansible_net_stacked_serialnums[ansible_loop.index0] | default(ansible_net_serialnum) }},
+           {{ ansible_net_stacked_serialnums[ansible_loop.index0][3:5] | default(ansible_net_serialnum[3:5]) | int + 1996 }},
+           {{ ansible_net_iostype | default('NXOS') }},
+           {{ ansible_net_version }},
+           {% if ansible_net_version == os_version %}-{% else %}Yes{% endif %}"
+    create: yes
+  loop: "{{ ansible_net_stacked_models | default ([ansible_net_model]) }}"
+  loop_control:
+    extended: yes
+  throttle: 1
+  when: ansible_network_os is defined and ansible_network_os == 'ios' or ansible_network_os == 'nxos'
+  tags:
+    - inventory
+
+- name: PANOS writing to file
+  ansible.builtin.lineinfile:
+    path: "{{ dest_folder}}/panostemp.csv"
+    line: "{{ (res.stdout | from_json).response.result.system.hostname[:3]|upper }},
+           {{ (res.stdout | from_json).response.result.system.hostname }},
+           {{ (res.stdout | from_json).response.result.system.model }},
+           {{ (res.stdout | from_json).response.result.system.serial }},
+           {{ (res.stdout | from_json).response.result.system['sw-version'] }},
+           {{ (res.stdout | from_json).response.result.system['app-version'] }},
+           {{ (res.stdout | from_json).response.result.system['av-version'] }},
+           {{ (res.stdout | from_json).response.result.system['threat-version'] }},
+           {{ (res.stdout | from_json).response.result.system['wildfire-version'] }}
+           "
+    create: yes
+  when: ansible_network_os is defined and ansible_network_os == 'panos'
+  tags:
+    - pan
+    - inventory
+
+- name: sort inventory file
+  run_once: true
+  shell:
+    cmd: "sort -t, -k1n temp.csv >> {{ inventory_file }}"
+  args:
+    chdir: "{{ dest_folder }}"
+  when: ansible_network_os is defined and ansible_network_os == 'ios' or ansible_network_os == 'nxos'
+  tags:
+    - inventory
+
+- name: PANOS sort inventory file
+  run_once: true
+  shell:
+    cmd: "sort -t, -k1n panostemp.csv >> {{ panos_inventory_file }}"
+  args:
+    chdir: "{{ dest_folder }}"
+  when: ansible_network_os is defined and ansible_network_os == 'panos'
+  tags:
+    - pan
+    - inventory
+
+- name: add header
+  run_once: true
+  lineinfile:
+    path: "{{ dest_folder }}/{{ inventory_file }}"
+    line: Site,Hostname,Model,Serial_Number,Year,OS_Type,OS_Version,Upgrade_Needed
+    insertbefore: BOF
+  when: ansible_network_os is defined and ansible_network_os == 'ios' or ansible_network_os == 'nxos'
+  tags:
+    - inventory
+
+- name: PANOS add header
+  run_once: true
+  lineinfile:
+    path: "{{ dest_folder }}/{{ panos_inventory_file }}"
+    line: Site,Hostname,Model,Serial_Number,OS_Version,APP_Version,AV_Version,Threat_Version,WildFire_Version
+    insertbefore: BOF
+  when: ansible_network_os is defined and ansible_network_os == 'panos'
+  tags:
+    - pan
+    - inventory
+
+- name: push to git
+  run_once: true
+  shell: |
+    git config --global user.email "networks@talend.com"
+    git config --global user.name "sa-netgit"
+    git add {{ inventory_file }}
+    git add {{ panos_inventory_file }}
+    git commit -m "inventory: $(date +"%Y-%m-%d %H:%M:%S")"
+    git push origin master
+    exit 0
+  args:
+    chdir: "{{ dest_folder }}"
+  when: ansible_network_os is defined
+  tags:
+    - inventory
+    - pan
+
+- name: remove temp folder
+  run_once: true
+  file:
+    state: absent
+    path: "{{ dest_folder}}"
+  when: ansible_network_os is defined
+  tags:
+    - inventory
+    - pan
+
+- debug:
+    msg: "Inventory done"
+  run_once: true
+  tags:
+    - inventory
+    - pan

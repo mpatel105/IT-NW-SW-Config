@@ -1,0 +1,61 @@
+---
+# tasks file for Cisco-contract
+
+# GET TOKEN #
+- name: PUT Get Token
+  uri:
+    url: https://id.cisco.com/oauth2/default/v1/token?grant_type=client_credentials&client_id={{cisco_api_client_id}}&client_secret={{cisco_api_client_secret}}
+    headers:
+      Accept: application/json
+      Content-Type: application/x-www-form-urlencoded
+      host: id.cisco.com
+    method: POST
+    return_content: yes
+    validate_certs: no
+    force_basic_auth: yes
+    follow_redirects: yes
+    body_format: json
+  register: token
+  delegate_to: localhost
+  no_log: true
+  run_once: true
+  tags:
+    - serial2info_netbox
+    - cisco_api
+
+# SET TOKEN #
+- name: Set JSON
+  set_fact:
+    token_type: "{{ token.json.token_type }}"
+    access_token: "{{ token.json.access_token }}"
+  delegate_to: localhost
+  tags:
+    - serial2info_netbox
+    - cisco_api
+
+# GET SERIAL 2 INFO #
+- name: Looping Netbox inventory
+  include_tasks: loopcode.yml
+  loop: "{{ query('netbox.netbox.nb_lookup', 'devices', api_endpoint=NETBOX_API, api_filter=cisco_api_filter, token=NETBOX_TOKEN ) }}"
+  tags:
+    - serial2info_netbox
+
+- name: GET Cisco API
+  uri:
+    url: "{{ cisco_api_url }}"
+    method: GET
+    headers:
+      Authorization: "{{token_type}} {{access_token}}"
+      Cache-Control: no-cache
+      Accept-Encoding: gzip, deflate, br
+      Connection: keep-alive
+      Accept: application/json
+    return_content: yes
+    validate_certs: no
+    force_basic_auth: yes
+    follow_redirects: yes
+  register: Serial2Info
+  delegate_to: localhost
+  ignore_errors: yes
+  tags:
+    - cisco_api

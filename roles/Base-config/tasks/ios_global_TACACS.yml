@@ -1,0 +1,162 @@
+---
+
+- name: IOS - Configure aaa new-model
+  ios_config:
+    lines:
+      - aaa new-model
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+    - globalTACACS
+
+# - name: IOS - Configure SV2_Tacacs
+#   ios_config:
+#     lines:
+#       - address ipv4 {{ tacacs_SV2 }}
+#       - key 0 {{ tacacs_SV2_key }}
+#     parents: tacacs server {{ tacacs_SV2_name }}
+#   when: ansible_network_os == 'ios'
+#   tags:
+#     - global
+#     - globalTACACS
+
+# - name: IOS - Configure PA7_Tacacs
+#   ios_config:
+#     lines:
+#       - address ipv4 {{ tacacs_PA7 }}
+#       - key 0 {{ tacacs_PA7_key }}
+#     parents: tacacs server {{ tacacs_PA7_name }}
+#   when: ansible_network_os == 'ios'
+#   tags:
+#     - global
+#     - globalTACACS
+
+- name: IOS - Configure Tacacs_1
+  ios_config:
+    lines:
+      - address ipv4 {{ tacacs_1_new_ip }}
+      - key 0 {{ tacacs_1_new_key }}
+    parents: tacacs server {{ tacacs_1_new_name }}
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+    - newTACACS
+
+- name: IOS - Configure Tacacs_2
+  ios_config:
+    lines:
+      - address ipv4 {{ tacacs_2_new_ip }}
+      - key 0 {{ tacacs_2_new_key }}
+    parents: tacacs server {{ tacacs_2_new_name }}
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+    - newTACACS
+
+- name: IOS - Configure group Portnox-newTACACS-Group
+  ios_config:
+    lines:
+      - server name {{ tacacs_1_new_name }}
+      - server name {{ tacacs_2_new_name }}
+    parents: aaa group server tacacs+ Portnox-newTACACS-Group
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+    - newTACACS
+
+- name: IOS - Remove SV2 from group Portnox-newTACACS-Group
+  ios_config:
+    lines:
+      - no server name sv2-tacacs-001
+    parents: aaa group server tacacs+ Portnox-newTACACS-Group
+  when: ansible_network_os == 'ios'
+  tags:
+    - newTACACS
+
+# - name: IOS - Configure TACACS Global Config
+#   ios_config:
+#     lines:
+#       - aaa authentication login default group Portnox-newTACACS-Group local
+#       - aaa authorization exec default group Portnox-newTACACS-Group if-authenticated
+#       - aaa authorization commands 15 default group Portnox-newTACACS-Group if-authenticated
+#       - aaa accounting exec default start-stop group Portnox-newTACACS-Group
+#   when: ansible_network_os == 'ios'
+#   tags:
+#     - global
+#     - newTACACS
+
+# - name: IOS - Configure group Portnox-TACACS-Group
+#   ios_config:
+#     lines:
+#       - server name {{ tacacs_1_name }}
+#       - server name {{ tacacs_2_name }}
+#     parents: aaa group server tacacs+ Portnox-TACACS-Group
+#   when: ansible_network_os == 'ios'
+#   tags:
+#     - global
+#     - globalTACACS
+
+# - name: IOS - Configure group Portnox-TACACS-Gr1
+#   ios_config:
+#     lines:
+#       - server name {{ tacacs_1_name }}
+#     parents: aaa group server tacacs+ Portnox-TACACS-Gr1
+#   when: ansible_network_os == 'ios'
+#   tags:
+#     - updateTACACS
+
+# - name: IOS - Configure group Portnox-TACACS-Gr2
+#   ios_config:
+#     lines:
+#       - server name {{ tacacs_2_name }}
+#     parents: aaa group server tacacs+ Portnox-TACACS-Gr2
+#   when: ansible_network_os == 'ios'
+#   tags:
+#     - updateTACACS
+
+# - name: IOS - Configure TACACS Global Config
+#   ios_config:
+#     lines:
+#       - aaa authentication login default group Portnox-TACACS-Gr1 group Portnox-TACACS-Gr2 local
+#       - aaa authorization exec default group Portnox-TACACS-Gr1 group Portnox-TACACS-Gr2 if-authenticated
+#       - aaa authorization commands 15 default group Portnox-TACACS-Gr1 group Portnox-TACACS-Gr2 if-authenticated
+#       - aaa accounting exec default start-stop group Portnox-TACACS-Gr1 group Portnox-TACACS-Gr2
+#   when: ansible_network_os == 'ios'
+#   tags:
+#     - updateTACACS
+
+
+- name: IOS - Configure TACACS Global Config
+  ios_config:
+    lines:
+      - ip tacacs source-interface {{ vlan_nw_mgmt }}
+      - tacacs-server timeout 10
+      - aaa authentication login default group Portnox-newTACACS-Group local
+      - aaa authorization console
+      - aaa authorization exec default group Portnox-newTACACS-Group if-authenticated
+      - aaa authorization commands 15 default group Portnox-newTACACS-Group if-authenticated
+      - aaa accounting exec default start-stop group Portnox-newTACACS-Group
+  when: ansible_network_os == 'ios'
+  tags:
+    - global
+    - globalTACACS
+
+- name: IOS - Save running to startup
+  ios_config:
+    save_when: always
+  when: ansible_network_os == 'ios'
+  tags:
+    - updateTACACS
+    - bckConfig
+#    - newTACACS
+
+- name: IOS - Cleanup old config
+  ios_config:
+    lines:
+      - no aaa group server radius Global-Radius-Servers
+      - no radius server PA7-Radius
+      - no radius server SV2-Radius
+      - no aaa accounting system default
+  when: ansible_network_os == 'ios'
+  tags:
+    - globalTACACS_Cleanup

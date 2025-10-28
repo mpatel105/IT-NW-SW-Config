@@ -1,0 +1,34 @@
+---
+
+# - name: Netbox local connection
+#   connection: local
+#   hosts: localhost
+#   tags:
+#     - sp_primIP
+
+# - name: Retrieve Silver Peak devices
+#   netbox.netbox.netbox_device_type:
+#     netbox_url: "{{ NETBOX_API }}"
+#     netbox_token: "{{ NETBOX_TOKEN }}"
+#     manufacturer: Silver Peak
+#   register: silverpeak_devices
+#   tags:
+#     - sp_primIP
+
+- debug:
+    msg: "{{ groups['silverpeak'] }}"
+  register: silverpeaklist
+  tags:
+    - sp_primIP
+
+- debug:
+    msg: "{{ silverpeaklist['msg'] }}"
+  tags:
+    - sp_primIP
+
+- debug:
+    msg: "{{ hostvars[item]['interfaces'] }}"
+  loop: "{{ silverpeaklist['msg'] }}"
+#  when: hostvars[item]['interfaces'].display=='lo20000'
+  tags:
+    - sp_primIP
